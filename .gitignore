@@ -1,0 +1,13 @@
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+.kotlin/
+captures/
+.direnv/
+scratchpad/
+hablock-release.keystore
+keystore.properties
+CLAUDE.md
+.claude/

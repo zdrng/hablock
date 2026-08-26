@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hablock</string>
+    <string name="accessibility_service_label">Hablock app blocking</string>
+    <string name="accessibility_service_description">Hablock uses this service only to notice which app comes to the foreground so it can lock blocked apps until your daily conditions are met. It never reads screen content.</string>
+
+    <string name="action_grant">Grant</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_add_block">New block</string>
+    <string name="action_check_again">Check again</string>
+    <string name="status_on">On</string>
+</resources>
