@@ -13,8 +13,11 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ContainedLoadingIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.hablock.app.domain.model.ConditionProgress
 import dev.hablock.app.domain.model.GateState
@@ -103,7 +105,16 @@ fun BlockedScreen(
                             MaterialTheme.colorScheme.primaryContainer
                         },
                     ) {
-                        Text("🔒", fontSize = 56.sp)
+                        Icon(
+                            Icons.Rounded.Lock,
+                            contentDescription = null,
+                            modifier = Modifier.size(88.dp),
+                            tint = if (open) {
+                                MaterialTheme.colorScheme.onPrimary
+                            } else {
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            },
+                        )
                     }
                     ShapeBurst(
                         trigger = if (open) "open" else null,
