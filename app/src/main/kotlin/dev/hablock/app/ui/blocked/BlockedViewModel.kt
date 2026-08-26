@@ -43,7 +43,7 @@ class BlockedViewModel(
             BlockedUiState(block, states[blockId], hc && block?.usesHealthConnect() == true)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), BlockedUiState())
 
-    init {
+    fun refreshHcStatus() {
         viewModelScope.launch { updateHcProblem() }
     }
 

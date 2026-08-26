@@ -33,6 +33,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.hablock.app.R
 import dev.hablock.app.domain.model.ConditionProgress
@@ -72,6 +73,10 @@ fun BlockedScreen(
     val open = uiState.state is GateState.Open
     var checking by remember { mutableStateOf(false) }
 
+    LifecycleResumeEffect(Unit) {
+        viewModel.refreshHcStatus()
+        onPauseOrDispose {}
+    }
     LaunchedEffect(uiState.state) {
         if (uiState.state is GateState.SessionActive) onClose()
     }
