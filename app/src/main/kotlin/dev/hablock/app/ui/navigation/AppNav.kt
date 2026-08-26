@@ -1,5 +1,6 @@
 package dev.hablock.app.ui.navigation
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
@@ -42,18 +43,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.Morph
+import dev.hablock.app.R
 import dev.hablock.app.ui.components.HablockIcons
 import dev.hablock.app.ui.components.MorphShape
 import dev.hablock.app.ui.home.HomeScreen
 import dev.hablock.app.ui.screentime.ScreenTimeScreen
 import dev.hablock.app.ui.settings.SettingsScreen
 
-enum class Destination(val label: String) {
-    Blocks("Blocks"),
-    ScreenTime("Time"),
-    Settings("Settings"),
+enum class Destination(@StringRes val labelRes: Int) {
+    Blocks(R.string.nav_blocks),
+    ScreenTime(R.string.nav_time),
+    Settings(R.string.nav_settings),
 }
 
 private val Destination.icon: ImageVector
@@ -94,13 +97,13 @@ fun AppNav() {
                             modifier = Modifier.padding(horizontal = 4.dp),
                             shapes = ToggleButtonDefaults.shapes(),
                         ) {
-                            Icon(entry.icon, contentDescription = entry.label)
+                            Icon(entry.icon, contentDescription = stringResource(entry.labelRes))
                             AnimatedVisibility(
                                 visible = selected,
                                 enter = expandHorizontally() + fadeIn(),
                                 exit = shrinkHorizontally() + fadeOut(),
                             ) {
-                                Text(entry.label, Modifier.padding(start = 8.dp), maxLines = 1)
+                                Text(stringResource(entry.labelRes), Modifier.padding(start = 8.dp), maxLines = 1)
                             }
                         }
                     }
@@ -156,7 +159,7 @@ private fun MorphingFabReveal(visible: Boolean, onClick: () -> Unit) {
                 .clip(MorphShape(morph, t)),
         ) {
             FloatingToolbarDefaults.VibrantFloatingActionButton(onClick = onClick) {
-                Icon(Icons.Rounded.Add, contentDescription = "New block")
+                Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.action_add_block))
             }
         }
     }

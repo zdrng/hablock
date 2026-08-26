@@ -29,9 +29,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.hablock.app.R
 import dev.hablock.app.domain.model.ConditionProgress
 import dev.hablock.app.domain.model.GateState
 import dev.hablock.app.ui.components.AppIconCookie
@@ -55,7 +58,13 @@ fun BlockedScreen(
     onOpenApp: (String) -> Unit,
 ) {
     val viewModel = gateViewModel(key = blockId) { container ->
-        BlockedViewModel(container.blockRepository, container.gateEngine, container.healthRepository, blockId)
+        BlockedViewModel(
+            container.blockRepository,
+            container.gateEngine,
+            container.healthRepository,
+            blockId,
+            container.sessionDuration.inWholeMinutes.toInt(),
+        )
     }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val appLabel = packageName?.let { uiState.block?.blockedLabels?.get(it) ?: it.substringAfterLast('.') }
@@ -91,7 +100,10 @@ fun BlockedScreen(
                     Spacer(Modifier.height(14.dp))
                 }
                 Text(
-                    if (open) "$appLabel is yours to open." else "$appLabel is locked.",
+                    stringResource(
+                        if (open) R.string.blocked_headline_open else R.string.blocked_headline_locked,
+                        appLabel,
+                    ),
                     style = MaterialTheme.typography.titleLargeEmphasized,
                     textAlign = TextAlign.Center,
                 )
@@ -126,7 +138,7 @@ fun BlockedScreen(
                 if (uiState.hcProblem) {
                     Spacer(Modifier.height(12.dp))
                     Text(
-                        "Health Connect can't be read right now, so those goals count as zero. Fix it from the Blocks screen.",
+                        stringResource(R.string.blocked_hc_warning),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error,
                         textAlign = TextAlign.Center,
@@ -142,7 +154,16 @@ fun BlockedScreen(
                     Button(
                         onClick = { packageName?.let(onOpenApp) },
                         modifier = Modifier.fillMaxWidth(),
-                    ) { Text("Open $appLabel — 30 minutes") }
+                    ) {
+                        Text(
+                            pluralStringResource(
+                                R.plurals.blocked_open_button,
+                                viewModel.sessionMinutes,
+                                appLabel,
+                                viewModel.sessionMinutes,
+                            ),
+                        )
+                    }
                 } else {
                     Button(
                         onClick = { checking = true },
@@ -152,7 +173,7 @@ fun BlockedScreen(
                         if (checking) {
                             ContainedLoadingIndicator(Modifier.size(28.dp))
                         } else {
-                            Text("Check again")
+                            Text(stringResource(R.string.action_check_again))
                         }
                     }
                 }

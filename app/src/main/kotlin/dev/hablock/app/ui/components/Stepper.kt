@@ -13,8 +13,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.hablock.app.R
 import dev.hablock.app.ui.theme.numeralStyle
 
 /** Big rolling numerals between two shape-morphing tonal buttons. */
@@ -37,7 +39,7 @@ fun PlayfulStepper(
             shapes = IconButtonDefaults.shapes(),
             modifier = Modifier.size(48.dp),
         ) {
-            Icon(HablockIcons.Minus, contentDescription = "Decrease")
+            Icon(HablockIcons.Minus, contentDescription = stringResource(R.string.stepper_decrease))
         }
         BigNumerals(
             value,
@@ -50,7 +52,7 @@ fun PlayfulStepper(
             shapes = IconButtonDefaults.shapes(),
             modifier = Modifier.size(48.dp),
         ) {
-            Icon(Icons.Rounded.Add, contentDescription = "Increase")
+            Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.stepper_increase))
         }
     }
 }

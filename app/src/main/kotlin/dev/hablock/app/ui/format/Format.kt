@@ -1,5 +1,8 @@
 package dev.hablock.app.ui.format
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import dev.hablock.app.R
 import dev.hablock.app.domain.model.Condition
 import java.time.Instant
 import java.time.ZoneId
@@ -8,22 +11,25 @@ import java.util.Locale
 import kotlin.math.roundToInt
 import kotlin.time.Duration
 
+@Composable
 fun Condition.displayLabel(): String = when (this) {
     is Condition.AppUsage -> appLabel
-    is Condition.Steps -> "Steps"
-    is Condition.Exercise -> "Workout"
-    is Condition.Meditation -> "Meditation"
+    is Condition.Steps -> stringResource(R.string.condition_steps)
+    is Condition.Exercise -> stringResource(R.string.condition_workout)
+    is Condition.Meditation -> stringResource(R.string.condition_meditation)
 }
 
+@Composable
 fun Condition.formatValue(value: Double): String = when (this) {
     is Condition.Steps -> groupedInt(value)
-    else -> "${value.roundToInt()} min"
+    else -> stringResource(R.string.format_minutes_value, value.roundToInt())
 }
 
+@Composable
 fun Condition.formatProgress(current: Double, required: Double): String =
-    "${formatValue(current)} / ${formatValue(required)}"
+    stringResource(R.string.format_progress, formatValue(current), formatValue(required))
 
-fun groupedInt(value: Double): String = String.format(Locale.US, "%,d", value.roundToInt())
+fun groupedInt(value: Double): String = String.format(Locale.getDefault(), "%,d", value.roundToInt())
 
 fun formatMinutes(minutes: Double): String {
     val total = minutes.roundToInt()

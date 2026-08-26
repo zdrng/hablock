@@ -32,6 +32,7 @@ class BlockedViewModel(
     private val gateEngine: GateEngine,
     private val healthRepository: HealthRepository,
     private val blockId: String,
+    val sessionMinutes: Int,
 ) : ViewModel() {
 
     private val hcProblem = MutableStateFlow(false)

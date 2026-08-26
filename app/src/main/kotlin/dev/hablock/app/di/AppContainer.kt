@@ -59,6 +59,8 @@ class AppContainer(context: Context) {
 
     val dayClock = DayClock()
 
+    val sessionDuration = if (BuildConfig.DEBUG) 1.minutes else GateConstants.SESSION_DURATION
+
     val blockRepository: BlockRepository by lazy { DataStoreBlockRepository(dataStore, json) }
     val gateStateRepository: GateStateRepository by lazy { DataStoreGateStateRepository(dataStore, json) }
     val settingsRepository: SettingsRepository by lazy { DataStoreSettingsRepository(dataStore) }
@@ -71,7 +73,7 @@ class AppContainer(context: Context) {
 
     val alarmScheduler: AlarmScheduler by lazy { AndroidAlarmScheduler(appContext) }
     val notifier: Notifier by lazy {
-        GateNotifier(appContext) {
+        GateNotifier(appContext, sessionDuration) {
             PendingIntent.getActivity(
                 appContext,
                 0,
@@ -105,7 +107,7 @@ class AppContainer(context: Context) {
             alarmScheduler = alarmScheduler,
             notifier = notifier,
             enforcement = enforcement,
-            sessionDuration = if (BuildConfig.DEBUG) 1.minutes else GateConstants.SESSION_DURATION,
+            sessionDuration = sessionDuration,
             scope = applicationScope,
         )
     }

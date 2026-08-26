@@ -5,15 +5,17 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import dev.hablock.app.R
 import dev.hablock.app.domain.service.Notifier
+import kotlin.time.Duration
 
 private const val CHANNEL_ID = "hablock"
-private const val CHANNEL_NAME = "Hablock"
 private const val RELINQUISH_NOTIFICATION_ID = 1
 private const val SESSION_NOTIFICATION_ID = 2
 
 class GateNotifier(
     private val context: Context,
+    private val sessionDuration: Duration,
     private val contentIntent: () -> PendingIntent,
 ) : Notifier {
 
@@ -23,11 +25,12 @@ class GateNotifier(
     private var channelReady = false
 
     override fun sessionEnded(blockId: String, blockName: String) {
+        val minutes = sessionDuration.inWholeMinutes.toInt()
         notify(
             tag = blockId,
             id = SESSION_NOTIFICATION_ID,
-            title = "$blockName is locked again",
-            text = "That was your 30. The goals nudged up a little — next round's on you.",
+            title = context.getString(R.string.notif_session_ended_title, blockName),
+            text = context.resources.getQuantityString(R.plurals.notif_session_ended_text, minutes, minutes),
         )
     }
 
@@ -35,8 +38,8 @@ class GateNotifier(
         notify(
             tag = null,
             id = RELINQUISH_NOTIFICATION_ID,
-            title = "The 3-day timer is done",
-            text = "You can now hand back control and uninstall Hablock.",
+            title = context.getString(R.string.notif_relinquish_title),
+            text = context.getString(R.string.notif_relinquish_text),
         )
     }
 
@@ -61,7 +64,7 @@ class GateNotifier(
     private fun ensureChannel() {
         if (channelReady) return
         manager.createNotificationChannel(
-            NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT),
+            NotificationChannel(CHANNEL_ID, context.getString(R.string.notif_channel_name), NotificationManager.IMPORTANCE_DEFAULT),
         )
         channelReady = true
     }

@@ -18,7 +18,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import dev.hablock.app.R
 import dev.hablock.app.ui.theme.HablockTheme
 
 class PermissionsRationaleActivity : ComponentActivity() {
@@ -40,7 +42,7 @@ private fun HealthRationale(onClose: () -> Unit) {
                 .padding(24.dp),
             verticalArrangement = Arrangement.Center,
         ) {
-            Text("Why Hablock reads health data", style = MaterialTheme.typography.headlineMediumEmphasized)
+            Text(stringResource(R.string.rationale_title), style = MaterialTheme.typography.headlineMediumEmphasized)
             Spacer(Modifier.height(20.dp))
             Surface(
                 Modifier.fillMaxWidth(),
@@ -49,19 +51,19 @@ private fun HealthRationale(onClose: () -> Unit) {
             ) {
                 Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
-                        "Hablock reads your steps, exercise sessions and mindfulness minutes to decide whether the day's conditions are met.",
+                        stringResource(R.string.rationale_reads),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
-                        "It reads on the device, only for today's window, and holds no network permission. Nothing leaves the phone.",
+                        stringResource(R.string.rationale_private),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
             Spacer(Modifier.height(28.dp))
-            OutlinedButton(onClick = onClose, Modifier.fillMaxWidth()) { Text("Close") }
+            OutlinedButton(onClick = onClose, Modifier.fillMaxWidth()) { Text(stringResource(R.string.action_close)) }
         }
     }
 }

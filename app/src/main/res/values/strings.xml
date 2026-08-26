@@ -6,7 +6,43 @@
 
     <string name="action_grant">Grant</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_close">Close</string>
     <string name="action_add_block">New block</string>
     <string name="action_check_again">Check again</string>
     <string name="status_on">On</string>
+    <string name="status_done">Done</string>
+
+    <string name="nav_blocks">Blocks</string>
+    <string name="nav_time">Time</string>
+    <string name="nav_settings">Settings</string>
+
+    <string name="blocked_headline_locked">%1$s is locked.</string>
+    <string name="blocked_headline_open">%1$s is yours to open.</string>
+    <plurals name="blocked_open_button">
+        <item quantity="one">Open %1$s — %2$d minute</item>
+        <item quantity="other">Open %1$s — %2$d minutes</item>
+    </plurals>
+    <string name="blocked_hc_warning">Health Connect can\'t be read right now, so those goals count as zero. Fix it from the Blocks screen.</string>
+
+    <string name="notif_channel_name">Hablock</string>
+    <string name="notif_session_ended_title">%1$s is locked again</string>
+    <plurals name="notif_session_ended_text">
+        <item quantity="one">That was your minute. The goals nudged up a little — next round\'s on you.</item>
+        <item quantity="other">That was your %1$d minutes. The goals nudged up a little — next round\'s on you.</item>
+    </plurals>
+    <string name="notif_relinquish_title">The 3-day timer is done</string>
+    <string name="notif_relinquish_text">You can now hand back control and uninstall Hablock.</string>
+
+    <string name="condition_steps">Steps</string>
+    <string name="condition_workout">Workout</string>
+    <string name="condition_meditation">Meditation</string>
+    <string name="format_minutes_value">%1$d min</string>
+    <string name="format_progress">%1$s / %2$s</string>
+
+    <string name="stepper_increase">Increase</string>
+    <string name="stepper_decrease">Decrease</string>
+
+    <string name="rationale_title">Why Hablock reads health data</string>
+    <string name="rationale_reads">Hablock reads your steps, exercise sessions and mindfulness minutes to decide whether the day\'s conditions are met.</string>
+    <string name="rationale_private">It reads on the device, only for today\'s window, and holds no network permission. Nothing leaves the phone.</string>
 </resources>

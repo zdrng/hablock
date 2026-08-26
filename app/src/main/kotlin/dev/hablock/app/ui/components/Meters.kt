@@ -26,8 +26,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import dev.hablock.app.R
 import dev.hablock.app.domain.model.Condition
 import dev.hablock.app.ui.format.displayLabel
 import dev.hablock.app.ui.format.formatProgress
@@ -154,7 +156,7 @@ fun ConditionMeter(
             )
             if (met) {
                 StatusChip(
-                    "Done",
+                    stringResource(R.string.status_done),
                     containerColor = accents.metContainer,
                     contentColor = accents.onMetContainer,
                 )
