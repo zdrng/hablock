@@ -126,12 +126,12 @@ class FakeAlarmScheduler : AlarmScheduler {
 }
 
 class FakeNotifier : Notifier {
-    val sessionsEnded = mutableListOf<String>()
+    val sessionsEnded = mutableListOf<Pair<String, String>>()
     var relinquishReadyCount = 0
         private set
 
-    override fun sessionEnded(blockName: String) {
-        sessionsEnded += blockName
+    override fun sessionEnded(blockId: String, blockName: String) {
+        sessionsEnded += blockId to blockName
     }
 
     override fun relinquishReady() {

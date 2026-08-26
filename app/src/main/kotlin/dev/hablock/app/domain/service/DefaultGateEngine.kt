@@ -92,7 +92,7 @@ class DefaultGateEngine(
             val stored = gateStateRepository.get(blockId)
             if (stored?.activeSession != null) {
                 gateStateRepository.save(stored.copy(activeSession = null))
-                blocks.firstOrNull { it.id == blockId }?.let { notifier.sessionEnded(it.name) }
+                blocks.firstOrNull { it.id == blockId }?.let { notifier.sessionEnded(it.id, it.name) }
             }
             refresh(blocks, refreshMetrics = true)
         }

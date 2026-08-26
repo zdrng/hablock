@@ -20,6 +20,11 @@ interface DeviceOwnerController {
     fun relinquishOwnership(): Boolean
 }
 
+/** Presents the blocked interstitial; implemented in ui/ so enforcement/ needs no ui import. */
+fun interface BlockedScreenLauncher {
+    fun show(packageName: String, blockId: String)
+}
+
 /** Persisted record of what Hablock has suspended, so orphans are released after process death. */
 interface SuspensionStore {
     suspend fun suspended(): Set<String>

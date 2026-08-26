@@ -31,7 +31,7 @@ interface AlarmScheduler {
 }
 
 interface Notifier {
-    fun sessionEnded(blockName: String)
+    fun sessionEnded(blockId: String, blockName: String)
     fun relinquishReady()
 }
 

@@ -1,6 +1,8 @@
 package dev.hablock.app.di
 
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import androidx.datastore.preferences.preferencesDataStore
 import dev.hablock.app.BuildConfig
 import dev.hablock.app.data.AndroidInstalledAppsRepository
@@ -37,6 +39,8 @@ import dev.hablock.app.enforcement.AccessibilityEnforcementBackend
 import dev.hablock.app.enforcement.DeviceOwnerEnforcementBackend
 import dev.hablock.app.system.AndroidAlarmScheduler
 import dev.hablock.app.system.GateNotifier
+import dev.hablock.app.ui.MainActivity
+import dev.hablock.app.ui.blocked.AndroidBlockedScreenLauncher
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -66,14 +70,24 @@ class AppContainer(context: Context) {
     private val suspensionStore: SuspensionStore by lazy { DataStoreSuspensionStore(dataStore) }
 
     val alarmScheduler: AlarmScheduler by lazy { AndroidAlarmScheduler(appContext) }
-    val notifier: Notifier by lazy { GateNotifier(appContext) }
+    val notifier: Notifier by lazy {
+        GateNotifier(appContext) {
+            PendingIntent.getActivity(
+                appContext,
+                0,
+                Intent(appContext, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            )
+        }
+    }
 
     val metricProvider: MetricProvider by lazy {
         DefaultMetricProvider(usageStatsRepository, healthRepository)
     }
 
     private val accessibilityBackend: EnforcementBackend by lazy {
-        AccessibilityEnforcementBackend(appContext, permissionChecker)
+        AccessibilityEnforcementBackend(AndroidBlockedScreenLauncher(appContext), permissionChecker)
     }
     private val deviceOwnerBackend: EnforcementBackend by lazy {
         DeviceOwnerEnforcementBackend(deviceOwnerController, suspensionStore)

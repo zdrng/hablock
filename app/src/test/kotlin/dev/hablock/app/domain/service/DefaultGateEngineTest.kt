@@ -125,7 +125,7 @@ class DefaultGateEngineTest {
 
         engine.onSessionExpired("b1")
 
-        assertEquals(listOf("Block b1"), notifier.sessionsEnded)
+        assertEquals(listOf("b1" to "Block b1"), notifier.sessionsEnded)
         assertNull(gateStateRepository.stored("b1")?.activeSession)
         assertIs<GateState.Locked>(engine.states.value.getValue("b1"))
     }

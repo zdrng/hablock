@@ -13,7 +13,7 @@ class DayClockTest {
 
     private fun clockAt(local: String) = DayClock(
         clock = Clock.fixed(Instant.parse(local), zone),
-        zone = zone,
+        zoneOverride = zone,
     )
 
     @Test

@@ -10,8 +10,11 @@ import java.time.ZonedDateTime
 /** The Gate day runs from DAY_RESET_HOUR to DAY_RESET_HOUR in local time. */
 class DayClock(
     private val clock: Clock = Clock.systemDefaultZone(),
-    private val zone: ZoneId = ZoneId.systemDefault(),
+    private val zoneOverride: ZoneId? = null,
 ) {
+    // Resolved per call so a timezone change on the device takes effect without a new instance.
+    private val zone: ZoneId get() = zoneOverride ?: ZoneId.systemDefault()
+
     fun now(): Instant = clock.instant()
 
     fun dayStart(now: Instant = now()): Instant {

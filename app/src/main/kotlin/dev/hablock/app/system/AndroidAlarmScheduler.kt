@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import dev.hablock.app.domain.GateConstants
 import dev.hablock.app.domain.service.AlarmScheduler
@@ -11,6 +12,7 @@ import java.time.Instant
 
 private const val DAY_RESET_REQUEST_CODE = 0
 private const val RELINQUISH_READY_REQUEST_CODE = 1
+private const val SESSION_REQUEST_CODE = 2
 private const val INEXACT_WINDOW_MILLIS = 2 * 60 * 1000L
 
 class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
@@ -63,12 +65,14 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
     }
 
     private fun sessionPendingIntent(blockId: String, extraFlags: Int): PendingIntent? {
+        // The data URI distinguishes PendingIntents per block; a hashCode request code can collide.
         val intent = Intent(context, AlarmReceiver::class.java)
             .setAction(GateConstants.ACTION_SESSION_EXPIRED)
+            .setData(Uri.parse("hablock://session/${Uri.encode(blockId)}"))
             .putExtra(GateConstants.EXTRA_BLOCK_ID, blockId)
         return PendingIntent.getBroadcast(
             context,
-            blockId.hashCode(),
+            SESSION_REQUEST_CODE,
             intent,
             extraFlags or PendingIntent.FLAG_IMMUTABLE,
         )

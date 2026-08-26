@@ -8,10 +8,18 @@ import java.time.Instant
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class BootReceiver : BroadcastReceiver() {
+/** Re-arms alarms and re-evaluates after events that invalidate absolute RTC schedules. */
+class SystemEventsReceiver : BroadcastReceiver() {
+
+    private val handledActions = setOf(
+        Intent.ACTION_BOOT_COMPLETED,
+        Intent.ACTION_TIME_CHANGED,
+        Intent.ACTION_TIMEZONE_CHANGED,
+        Intent.ACTION_MY_PACKAGE_REPLACED,
+    )
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action != Intent.ACTION_BOOT_COMPLETED) return
+        if (intent.action !in handledActions) return
 
         val container = (context.applicationContext as HablockApplication).container
         val pendingResult = goAsync()
