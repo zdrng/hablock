@@ -9,12 +9,14 @@ import dev.hablock.app.data.AndroidUsageStatsRepository
 import dev.hablock.app.data.DataStoreBlockRepository
 import dev.hablock.app.data.DataStoreGateStateRepository
 import dev.hablock.app.data.DataStoreSettingsRepository
+import dev.hablock.app.data.DataStoreSuspensionStore
 import dev.hablock.app.data.DevicePolicyController
 import dev.hablock.app.data.HealthConnectRepository
 import dev.hablock.app.domain.GateConstants
 import dev.hablock.app.domain.enforcement.DeviceOwnerController
 import dev.hablock.app.domain.enforcement.EnforcementBackend
 import dev.hablock.app.domain.enforcement.EnforcementCoordinator
+import dev.hablock.app.domain.enforcement.SuspensionStore
 import dev.hablock.app.domain.repository.BlockRepository
 import dev.hablock.app.domain.repository.GateStateRepository
 import dev.hablock.app.domain.repository.HealthRepository
@@ -61,6 +63,7 @@ class AppContainer(context: Context) {
     val installedAppsRepository: InstalledAppsRepository by lazy { AndroidInstalledAppsRepository(appContext) }
     val permissionChecker: PermissionChecker by lazy { AndroidPermissionChecker(appContext) }
     val deviceOwnerController: DeviceOwnerController by lazy { DevicePolicyController(appContext) }
+    private val suspensionStore: SuspensionStore by lazy { DataStoreSuspensionStore(dataStore) }
 
     val alarmScheduler: AlarmScheduler by lazy { AndroidAlarmScheduler(appContext) }
     val notifier: Notifier by lazy { GateNotifier(appContext) }
@@ -73,7 +76,7 @@ class AppContainer(context: Context) {
         AccessibilityEnforcementBackend(appContext, permissionChecker)
     }
     private val deviceOwnerBackend: EnforcementBackend by lazy {
-        DeviceOwnerEnforcementBackend(deviceOwnerController, permissionChecker)
+        DeviceOwnerEnforcementBackend(deviceOwnerController, suspensionStore)
     }
     val enforcement: EnforcementBackend by lazy {
         EnforcementCoordinator(accessibilityBackend, deviceOwnerBackend, deviceOwnerController)
@@ -94,6 +97,6 @@ class AppContainer(context: Context) {
     }
 
     val relinquishTimer: RelinquishTimer by lazy {
-        DefaultRelinquishTimer(settingsRepository, deviceOwnerController, dayClock, blockRepository, alarmScheduler)
+        DefaultRelinquishTimer(settingsRepository, deviceOwnerController, dayClock, blockRepository, alarmScheduler, suspensionStore)
     }
 }

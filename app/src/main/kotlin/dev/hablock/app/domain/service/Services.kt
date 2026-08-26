@@ -39,5 +39,7 @@ interface RelinquishTimer {
     val state: Flow<RelinquishState>
     suspend fun start()
     suspend fun cancel()
-    suspend fun confirmRelinquish()
+
+    /** True when device ownership was actually dropped; false leaves the countdown state untouched. */
+    suspend fun confirmRelinquish(): Boolean
 }

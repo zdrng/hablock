@@ -2,6 +2,7 @@ package dev.hablock.app.domain.service
 
 import dev.hablock.app.domain.enforcement.DeviceOwnerController
 import dev.hablock.app.domain.enforcement.EnforcementBackend
+import dev.hablock.app.domain.enforcement.SuspensionStore
 import dev.hablock.app.domain.model.Block
 import dev.hablock.app.domain.model.BlockDayState
 import dev.hablock.app.domain.model.Condition
@@ -170,18 +171,21 @@ class FakeSettingsRepository(deadline: Long? = null) : SettingsRepository {
     fun deadline(): Long? = deadlineState.value
 }
 
-class FakeDeviceOwnerController(private val owner: Boolean = true) : DeviceOwnerController {
+class FakeDeviceOwnerController(private var owner: Boolean = true) : DeviceOwnerController {
     var relinquishCount = 0
         private set
     var applyRestrictionsCount = 0
         private set
+    var relinquishSucceeds = true
+    var failSuspension: Set<String> = emptySet()
     val suspensions = mutableListOf<Pair<Set<String>, Boolean>>()
     val calls = mutableListOf<String>()
 
     override fun isDeviceOwner(): Boolean = owner
-    override fun setPackagesSuspended(packages: Set<String>, suspended: Boolean) {
+    override fun setPackagesSuspended(packages: Set<String>, suspended: Boolean): Set<String> {
         suspensions += packages to suspended
         calls += "setPackagesSuspended"
+        return failSuspension intersect packages
     }
 
     override fun applyRestrictions() {
@@ -189,9 +193,21 @@ class FakeDeviceOwnerController(private val owner: Boolean = true) : DeviceOwner
         calls += "applyRestrictions"
     }
 
-    override fun relinquishOwnership() {
+    override fun relinquishOwnership(): Boolean {
         relinquishCount++
         calls += "relinquishOwnership"
+        if (relinquishSucceeds) owner = false
+        return relinquishSucceeds
+    }
+}
+
+class FakeSuspensionStore(initial: Set<String> = emptySet()) : SuspensionStore {
+    var stored: Set<String> = initial
+        private set
+
+    override suspend fun suspended(): Set<String> = stored
+    override suspend fun setSuspended(packages: Set<String>) {
+        stored = packages
     }
 }
 

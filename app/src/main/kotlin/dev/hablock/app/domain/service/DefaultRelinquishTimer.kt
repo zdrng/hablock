@@ -2,6 +2,7 @@ package dev.hablock.app.domain.service
 
 import dev.hablock.app.domain.GateConstants
 import dev.hablock.app.domain.enforcement.DeviceOwnerController
+import dev.hablock.app.domain.enforcement.SuspensionStore
 import dev.hablock.app.domain.model.RelinquishState
 import dev.hablock.app.domain.repository.BlockRepository
 import dev.hablock.app.domain.repository.SettingsRepository
@@ -22,6 +23,7 @@ class DefaultRelinquishTimer(
     private val dayClock: DayClock,
     private val blockRepository: BlockRepository,
     private val alarmScheduler: AlarmScheduler,
+    private val suspensionStore: SuspensionStore,
 ) : RelinquishTimer {
 
     override val state: Flow<RelinquishState> =
@@ -44,14 +46,17 @@ class DefaultRelinquishTimer(
         alarmScheduler.cancelRelinquishReady()
     }
 
-    override suspend fun confirmRelinquish() {
-        val deadline = settingsRepository.relinquishDeadlineMillis.first() ?: return
-        if (dayClock.now().toEpochMilli() < deadline) return
-        val suspended = blockRepository.current().flatMap { it.blockedPackages }.toSet()
+    override suspend fun confirmRelinquish(): Boolean {
+        val deadline = settingsRepository.relinquishDeadlineMillis.first() ?: return false
+        if (dayClock.now().toEpochMilli() < deadline) return false
+        val suspended = blockRepository.current().flatMapTo(mutableSetOf()) { it.blockedPackages } +
+            suspensionStore.suspended()
         deviceOwnerController.setPackagesSuspended(suspended, false)
-        deviceOwnerController.relinquishOwnership()
+        if (!deviceOwnerController.relinquishOwnership()) return false
+        suspensionStore.setSuspended(emptySet())
         settingsRepository.setRelinquishDeadline(null)
         alarmScheduler.cancelRelinquishReady()
+        return true
     }
 
     private fun ticks(): Flow<Unit> = flow {

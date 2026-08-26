@@ -6,6 +6,7 @@ import java.time.Instant
 import java.time.ZoneId
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -27,8 +28,10 @@ class DefaultRelinquishTimerTest {
         ),
     )
 
+    private val suspensionStore = FakeSuspensionStore()
+
     private fun newTimer(settings: FakeSettingsRepository) =
-        DefaultRelinquishTimer(settings, deviceOwner, dayClock, blockRepository, alarmScheduler)
+        DefaultRelinquishTimer(settings, deviceOwner, dayClock, blockRepository, alarmScheduler, suspensionStore)
 
     @Test
     fun `no deadline is idle`() = runTest {
@@ -109,8 +112,43 @@ class DefaultRelinquishTimerTest {
 
     @Test
     fun `confirm without a pending deadline is a no-op`() = runTest {
-        newTimer(FakeSettingsRepository()).confirmRelinquish()
+        assertFalse(newTimer(FakeSettingsRepository()).confirmRelinquish())
         assertTrue(deviceOwner.calls.isEmpty())
         assertEquals(0, deviceOwner.relinquishCount)
+    }
+
+    @Test
+    fun `a failed relinquish keeps the deadline and reports false`() = runTest {
+        deviceOwner.relinquishSucceeds = false
+        val settings = FakeSettingsRepository()
+        val timer = newTimer(settings)
+        timer.start()
+        clock.advance(GateConstants.RELINQUISH_COOLDOWN.inWholeMilliseconds)
+
+        assertFalse(timer.confirmRelinquish())
+
+        assertEquals(1, deviceOwner.relinquishCount)
+        assertEquals(
+            now.plusMillis(GateConstants.RELINQUISH_COOLDOWN.inWholeMilliseconds).toEpochMilli(),
+            settings.deadline(),
+        )
+        assertEquals(0, alarmScheduler.cancelRelinquishReadyCount)
+    }
+
+    @Test
+    fun `confirm also releases orphans from the suspension ledger and clears it`() = runTest {
+        suspensionStore.setSuspended(setOf("com.example.orphan"))
+        val settings = FakeSettingsRepository()
+        val timer = newTimer(settings)
+        timer.start()
+        clock.advance(GateConstants.RELINQUISH_COOLDOWN.inWholeMilliseconds)
+
+        assertTrue(timer.confirmRelinquish())
+
+        assertEquals(
+            listOf(setOf("com.example.social", "com.example.video", "com.example.news", "com.example.orphan") to false),
+            deviceOwner.suspensions,
+        )
+        assertTrue(suspensionStore.stored.isEmpty())
     }
 }

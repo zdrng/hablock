@@ -13,9 +13,17 @@ interface EnforcementBackend {
 
 interface DeviceOwnerController {
     fun isDeviceOwner(): Boolean
-    fun setPackagesSuspended(packages: Set<String>, suspended: Boolean)
+
+    /** Returns the packages whose suspension state could not be changed. */
+    fun setPackagesSuspended(packages: Set<String>, suspended: Boolean): Set<String>
     fun applyRestrictions()
-    fun relinquishOwnership()
+    fun relinquishOwnership(): Boolean
+}
+
+/** Persisted record of what Hablock has suspended, so orphans are released after process death. */
+interface SuspensionStore {
+    suspend fun suspended(): Set<String>
+    suspend fun setSuspended(packages: Set<String>)
 }
 
 /** Routes to the device-owner backend when ownership is granted, otherwise to accessibility. */
@@ -34,5 +42,6 @@ class EnforcementCoordinator(
     override suspend fun showBlocked(packageName: String, blockId: String) =
         active().showBlocked(packageName, blockId)
 
-    override fun reportsForegroundUse(): Boolean = active().reportsForegroundUse()
+    // The foreground sensor is the accessibility service, which runs regardless of which backend enforces.
+    override fun reportsForegroundUse(): Boolean = accessibilityBackend.reportsForegroundUse()
 }

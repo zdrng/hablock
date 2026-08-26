@@ -18,6 +18,7 @@ data class SettingsUiState(
     val usageAccess: Boolean = false,
     val exactAlarms: Boolean = true,
     val deviceOwner: Boolean = false,
+    val relinquishFailed: Boolean = false,
 )
 
 class SettingsViewModel(
@@ -33,7 +34,7 @@ class SettingsViewModel(
         relinquishTimer.state.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), RelinquishState.Idle)
 
     fun refresh() {
-        _uiState.value = SettingsUiState(
+        _uiState.value = _uiState.value.copy(
             accessibility = permissionChecker.isAccessibilityServiceEnabled(),
             usageAccess = permissionChecker.hasUsageAccess(),
             exactAlarms = permissionChecker.canScheduleExactAlarms(),
@@ -46,7 +47,8 @@ class SettingsViewModel(
     fun cancelRelinquish() = viewModelScope.launch { relinquishTimer.cancel() }
 
     fun confirmRelinquish() = viewModelScope.launch {
-        relinquishTimer.confirmRelinquish()
+        val succeeded = relinquishTimer.confirmRelinquish()
+        _uiState.value = _uiState.value.copy(relinquishFailed = !succeeded)
         refresh()
     }
 }

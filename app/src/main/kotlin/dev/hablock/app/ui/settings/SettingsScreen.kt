@@ -171,6 +171,13 @@ fun SettingsScreen() {
                             onCancel = { viewModel.cancelRelinquish() },
                             onConfirm = { dialog = RelinquishDialog.Confirm },
                         )
+                        if (uiState.relinquishFailed) {
+                            Text(
+                                "Couldn't hand back control. Try again.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.error,
+                            )
+                        }
                     } else {
                         Text(
                             "Without device owner, Hablock blocks apps but can still be uninstalled. Set it up above for a lock that holds.",
