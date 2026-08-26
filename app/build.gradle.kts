@@ -57,6 +57,8 @@ android {
 
     sourceSets.getByName("main").kotlin.srcDir("src/main/kotlin")
     sourceSets.getByName("test").kotlin.srcDir("src/test/kotlin")
+
+    testOptions.unitTests.isReturnDefaultValues = true
 }
 
 kotlin {
