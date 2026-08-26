@@ -98,6 +98,15 @@ class DefaultGateEngine(
         }
     }
 
+    override suspend fun deleteBlock(blockId: String) {
+        mutex.withLock {
+            blockRepository.delete(blockId)
+            gateStateRepository.delete(blockId)
+            alarmScheduler.cancelSessionEnd(blockId)
+            refresh(loadBlocks(), refreshMetrics = false)
+        }
+    }
+
     override suspend fun onDayReset() {
         mutex.withLock {
             val blocks = loadBlocks()
@@ -133,7 +142,7 @@ class DefaultGateEngine(
             val dayState = expireSession(resolveDayState(block, dayKey), now)
             val snapshot = snapshotFor(block.conditions, from, to, now, dayKey, refreshMetrics)
             var state = evaluator.evaluate(block, dayState, snapshot, now)
-            if (autoStart && state is GateState.Open && justUnlocked(previous[block.id])) {
+            if (autoStart && state is GateState.Open && justUnlocked(previous[block.id], dayState)) {
                 startSession(Evaluated(block, dayState, snapshot, state), now)?.let {
                     state = evaluator.evaluate(block, it, snapshot, now)
                 }
@@ -144,7 +153,9 @@ class DefaultGateEngine(
         enforcement.applyState(blocks, next)
     }
 
-    private fun justUnlocked(previous: GateState?): Boolean = previous == null || previous is GateState.Locked
+    /** On a fresh process every previous state is null; only a block with no unlock today gets its auto-session. */
+    private fun justUnlocked(previous: GateState?, dayState: BlockDayState): Boolean =
+        if (previous != null) previous is GateState.Locked else dayState.unlockCount == 0
 
     private suspend fun startSession(evaluated: Evaluated, now: Instant): BlockDayState? {
         if (evaluated.dayState.activeSession != null) return null

@@ -68,8 +68,8 @@ fun BlockedScreen(
     }
     LaunchedEffect(checking) {
         if (checking) {
-            viewModel.refresh()
-            delay(750)
+            viewModel.refresh().join()
+            delay(250)
             checking = false
         }
     }

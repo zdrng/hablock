@@ -7,6 +7,7 @@ import dev.hablock.app.domain.model.ConditionProgress
 import dev.hablock.app.domain.model.GateState
 import dev.hablock.app.domain.repository.BlockRepository
 import dev.hablock.app.domain.service.GateEngine
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -32,7 +33,5 @@ class BlockedViewModel(
             BlockedUiState(blocks.firstOrNull { it.id == blockId }, states[blockId])
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), BlockedUiState())
 
-    fun refresh() {
-        viewModelScope.launch { gateEngine.refreshAll() }
-    }
+    fun refresh(): Job = viewModelScope.launch { gateEngine.refreshAll() }
 }

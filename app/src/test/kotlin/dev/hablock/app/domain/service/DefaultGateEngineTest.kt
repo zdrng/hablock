@@ -233,6 +233,42 @@ class DefaultGateEngineTest {
     }
 
     @Test
+    fun `a process restart does not re-burn a session on an unobservable backend`() = runTest {
+        enforcement.foregroundUseReported = false
+        metricProvider.values = mapOf("steps" to 10_300.0)
+        val engine = newEngine(backgroundScope)
+        engine.refreshAll()
+        clock.advance(31 * 60 * 1_000L)
+        engine.onSessionExpired("b1")
+
+        metricProvider.values = mapOf("steps" to 21_500.0)
+        val restarted = newEngine(backgroundScope)
+        restarted.refreshAll()
+
+        assertIs<GateState.Open>(restarted.states.value.getValue("b1"))
+        assertEquals(1, gateStateRepository.stored("b1")?.unlockCount)
+        assertEquals(1, alarmScheduler.sessionEnds.size)
+    }
+
+    @Test
+    fun `deleting a block removes its state, cancels its alarm and unpublishes it`() = runTest {
+        metricProvider.values = mapOf("steps" to 10_300.0)
+        val engine = newEngine(backgroundScope)
+        engine.onAppForegrounded(SOCIAL)
+        assertNotNull(gateStateRepository.stored("b1")?.activeSession)
+
+        engine.deleteBlock("b1")
+
+        assertTrue(blockRepository.current().isEmpty())
+        assertNull(gateStateRepository.stored("b1"))
+        assertEquals(listOf("b1"), alarmScheduler.cancelledSessions)
+        assertTrue(engine.states.value.isEmpty())
+
+        engine.refreshAll()
+        assertNull(gateStateRepository.stored("b1"))
+    }
+
+    @Test
     fun `a cached snapshot does not survive the day boundary`() = runTest {
         clock.current = Instant.parse("2026-08-22T21:59:55Z")
         val engine = newEngine(backgroundScope)

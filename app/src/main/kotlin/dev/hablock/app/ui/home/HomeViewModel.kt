@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import dev.hablock.app.domain.model.Block
 import dev.hablock.app.domain.model.GateState
 import dev.hablock.app.domain.repository.BlockRepository
-import dev.hablock.app.domain.repository.GateStateRepository
 import dev.hablock.app.domain.service.DayClock
 import dev.hablock.app.domain.service.GateEngine
 import java.time.Instant
@@ -26,7 +25,6 @@ data class HomeUiState(
 
 class HomeViewModel(
     private val blockRepository: BlockRepository,
-    private val gateStateRepository: GateStateRepository,
     private val gateEngine: GateEngine,
     dayClock: DayClock,
 ) : ViewModel() {
@@ -46,11 +44,7 @@ class HomeViewModel(
     }
 
     fun delete(blockId: String) {
-        viewModelScope.launch {
-            blockRepository.delete(blockId)
-            gateStateRepository.delete(blockId)
-            gateEngine.refreshAll()
-        }
+        viewModelScope.launch { gateEngine.deleteBlock(blockId) }
     }
 
     fun refresh() {

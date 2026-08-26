@@ -15,6 +15,7 @@ interface GateEngine {
     suspend fun onAppForegrounded(packageName: String)
     suspend fun onSessionExpired(blockId: String)
     suspend fun onDayReset()
+    suspend fun deleteBlock(blockId: String)
 }
 
 interface MetricProvider {

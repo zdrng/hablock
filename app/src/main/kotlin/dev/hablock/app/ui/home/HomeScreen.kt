@@ -53,7 +53,6 @@ fun HomeScreen(addRequest: Int = 0, onAddHandled: () -> Unit = {}) {
     val viewModel = gateViewModel { container ->
         HomeViewModel(
             container.blockRepository,
-            container.gateStateRepository,
             container.gateEngine,
             container.dayClock,
         )
