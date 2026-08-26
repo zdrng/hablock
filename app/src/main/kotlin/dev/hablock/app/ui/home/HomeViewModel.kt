@@ -4,14 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.hablock.app.domain.model.Block
 import dev.hablock.app.domain.model.GateState
+import dev.hablock.app.domain.model.HcAvailability
+import dev.hablock.app.domain.model.healthConnectProblem
 import dev.hablock.app.domain.repository.BlockRepository
+import dev.hablock.app.domain.repository.HealthRepository
 import dev.hablock.app.domain.service.DayClock
 import dev.hablock.app.domain.service.GateEngine
 import java.time.Instant
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -21,20 +24,29 @@ data class HomeUiState(
     val loading: Boolean = true,
     val blocks: List<BlockUi> = emptyList(),
     val today: Instant = Instant.EPOCH,
+    val hcProblem: Boolean = false,
 )
 
 class HomeViewModel(
     private val blockRepository: BlockRepository,
     private val gateEngine: GateEngine,
+    private val healthRepository: HealthRepository,
     dayClock: DayClock,
 ) : ViewModel() {
 
+    private val hcProblem = MutableStateFlow(false)
+
     val uiState: StateFlow<HomeUiState> =
-        combine(blockRepository.blocks, gateEngine.states) { blocks, states ->
-            blocks.map { BlockUi(it, states[it.id]) }
-        }
-            .map { HomeUiState(loading = false, blocks = it, today = dayClock.now()) }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())
+        combine(blockRepository.blocks, gateEngine.states, hcProblem) { blocks, states, hc ->
+            HomeUiState(
+                loading = false,
+                blocks = blocks.map { BlockUi(it, states[it.id]) },
+                today = dayClock.now(),
+                hcProblem = hc,
+            )
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())
+
+    val healthPermissions: Set<String> get() = healthRepository.requiredPermissions()
 
     fun setEnabled(block: Block, enabled: Boolean) {
         viewModelScope.launch {
@@ -48,6 +60,11 @@ class HomeViewModel(
     }
 
     fun refresh() {
-        viewModelScope.launch { gateEngine.refreshAll() }
+        viewModelScope.launch {
+            gateEngine.refreshAll()
+            val availability = runCatching { healthRepository.availability() }.getOrDefault(HcAvailability.UNAVAILABLE)
+            val granted = runCatching { healthRepository.hasAllPermissions() }.getOrDefault(false)
+            hcProblem.value = healthConnectProblem(blockRepository.current(), availability, granted)
+        }
     }
 }

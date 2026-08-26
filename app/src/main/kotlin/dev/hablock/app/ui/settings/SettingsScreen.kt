@@ -1,6 +1,7 @@
 package dev.hablock.app.ui.settings
 
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -40,6 +41,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.health.connect.client.PermissionController
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.hablock.app.BuildConfig
@@ -67,8 +69,16 @@ private enum class RelinquishDialog { Start, Confirm }
 @Composable
 fun SettingsScreen() {
     val viewModel = gateViewModel { container ->
-        SettingsViewModel(container.permissionChecker, container.deviceOwnerController, container.relinquishTimer)
+        SettingsViewModel(
+            container.permissionChecker,
+            container.deviceOwnerController,
+            container.relinquishTimer,
+            container.healthRepository,
+        )
     }
+    val healthLauncher = rememberLauncherForActivityResult(
+        PermissionController.createRequestPermissionResultContract(),
+    ) { viewModel.refresh() }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val relinquish by viewModel.relinquish.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -112,26 +122,40 @@ fun SettingsScreen() {
                 granted = uiState.accessibility,
             ) { context.openAccessibilitySettings() }
             GrantItem(
-                position = if (hasExactAlarms) GroupPosition.Middle else GroupPosition.Last,
+                position = GroupPosition.Middle,
                 index = 1,
                 label = "Usage access",
                 granted = uiState.usageAccess,
             ) { context.openUsageAccessSettings() }
             if (hasExactAlarms) {
                 GrantItem(
-                    position = GroupPosition.Last,
+                    position = GroupPosition.Middle,
                     index = 2,
                     label = "Exact alarms",
                     granted = uiState.exactAlarms,
                 ) { context.openExactAlarmSettings() }
-                if (!uiState.exactAlarms) {
-                    Text(
-                        "Without exact alarms, re-locks and day resets fire late.",
-                        Modifier.padding(start = 18.dp, top = 8.dp),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
+            }
+            if (uiState.healthSupported) {
+                GrantItem(
+                    position = GroupPosition.Last,
+                    index = 3,
+                    label = "Health Connect",
+                    granted = uiState.health,
+                ) { healthLauncher.launch(viewModel.healthPermissions) }
+            } else {
+                GroupedListItem(
+                    position = GroupPosition.Last,
+                    title = "Health Connect",
+                    supporting = "Not available on this device",
+                )
+            }
+            if (hasExactAlarms && !uiState.exactAlarms) {
+                Text(
+                    "Without exact alarms, re-locks and day resets fire late.",
+                    Modifier.padding(start = 18.dp, top = 8.dp),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
 
             SectionHeader("Uninstall lock")

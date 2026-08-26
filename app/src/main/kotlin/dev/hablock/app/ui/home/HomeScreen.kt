@@ -1,5 +1,6 @@
 package dev.hablock.app.ui.home
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -36,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.health.connect.client.PermissionController
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.hablock.app.domain.model.Block
@@ -54,6 +57,7 @@ fun HomeScreen(addRequest: Int = 0, onAddHandled: () -> Unit = {}) {
         HomeViewModel(
             container.blockRepository,
             container.gateEngine,
+            container.healthRepository,
             container.dayClock,
         )
     }
@@ -99,6 +103,14 @@ fun HomeScreen(addRequest: Int = 0, onAddHandled: () -> Unit = {}) {
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 140.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
+                if (uiState.hcProblem) {
+                    item(key = "hc-problem") {
+                        HealthConnectBanner(
+                            permissions = viewModel.healthPermissions,
+                            onGranted = { viewModel.refresh() },
+                        )
+                    }
+                }
                 val single = uiState.blocks.size == 1
                 items(uiState.blocks, key = { it.block.id }) { item ->
                     BlockCard(
@@ -165,6 +177,27 @@ fun HomeScreen(addRequest: Int = 0, onAddHandled: () -> Unit = {}) {
 sealed interface WizardTarget {
     data object New : WizardTarget
     data class Edit(val blockId: String) : WizardTarget
+}
+
+@Composable
+private fun HealthConnectBanner(permissions: Set<String>, onGranted: () -> Unit) {
+    val healthLauncher = rememberLauncherForActivityResult(
+        PermissionController.createRequestPermissionResultContract(),
+    ) { onGranted() }
+    Surface(
+        Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.errorContainer,
+    ) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text(
+                "Health Connect can't be read — step, workout and meditation goals count as zero.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onErrorContainer,
+            )
+            Button(onClick = { healthLauncher.launch(permissions) }) { Text("Fix") }
+        }
+    }
 }
 
 @Composable

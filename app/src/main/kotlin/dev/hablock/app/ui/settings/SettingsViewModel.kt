@@ -3,7 +3,9 @@ package dev.hablock.app.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.hablock.app.domain.enforcement.DeviceOwnerController
+import dev.hablock.app.domain.model.HcAvailability
 import dev.hablock.app.domain.model.RelinquishState
+import dev.hablock.app.domain.repository.HealthRepository
 import dev.hablock.app.domain.repository.PermissionChecker
 import dev.hablock.app.domain.service.RelinquishTimer
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,12 +21,15 @@ data class SettingsUiState(
     val exactAlarms: Boolean = true,
     val deviceOwner: Boolean = false,
     val relinquishFailed: Boolean = false,
+    val healthSupported: Boolean = true,
+    val health: Boolean = false,
 )
 
 class SettingsViewModel(
     private val permissionChecker: PermissionChecker,
     private val deviceOwnerController: DeviceOwnerController,
     private val relinquishTimer: RelinquishTimer,
+    private val healthRepository: HealthRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -33,6 +38,8 @@ class SettingsViewModel(
     val relinquish: StateFlow<RelinquishState> =
         relinquishTimer.state.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), RelinquishState.Idle)
 
+    val healthPermissions: Set<String> get() = healthRepository.requiredPermissions()
+
     fun refresh() {
         _uiState.value = _uiState.value.copy(
             accessibility = permissionChecker.isAccessibilityServiceEnabled(),
@@ -40,6 +47,14 @@ class SettingsViewModel(
             exactAlarms = permissionChecker.canScheduleExactAlarms(),
             deviceOwner = deviceOwnerController.isDeviceOwner(),
         )
+        viewModelScope.launch {
+            val availability = runCatching { healthRepository.availability() }.getOrDefault(HcAvailability.UNAVAILABLE)
+            val granted = runCatching { healthRepository.hasAllPermissions() }.getOrDefault(false)
+            _uiState.value = _uiState.value.copy(
+                healthSupported = availability == HcAvailability.FULL || availability == HcAvailability.NO_MINDFULNESS,
+                health = granted,
+            )
+        }
     }
 
     fun startRelinquish() = viewModelScope.launch { relinquishTimer.start() }

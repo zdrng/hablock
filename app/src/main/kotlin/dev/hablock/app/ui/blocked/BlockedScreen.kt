@@ -55,7 +55,7 @@ fun BlockedScreen(
     onOpenApp: (String) -> Unit,
 ) {
     val viewModel = gateViewModel(key = blockId) { container ->
-        BlockedViewModel(container.blockRepository, container.gateEngine, blockId)
+        BlockedViewModel(container.blockRepository, container.gateEngine, container.healthRepository, blockId)
     }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val appLabel = packageName?.let { uiState.block?.blockedLabels?.get(it) ?: it.substringAfterLast('.') }
@@ -123,6 +123,15 @@ fun BlockedScreen(
                 }
                 Spacer(Modifier.height(28.dp))
                 ConditionGroup(uiState.progress)
+                if (uiState.hcProblem) {
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        "Health Connect can't be read right now, so those goals count as zero. Fix it from the Blocks screen.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center,
+                    )
+                }
                 Spacer(Modifier.height(20.dp))
             }
             Column(
