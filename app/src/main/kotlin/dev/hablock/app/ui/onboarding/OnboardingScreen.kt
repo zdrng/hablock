@@ -41,11 +41,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.PermissionController
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.hablock.app.R
+import dev.hablock.app.domain.GateConstants
 import dev.hablock.app.ui.components.BreathingGateBadge
 import dev.hablock.app.ui.components.GrantBadge
 import dev.hablock.app.ui.components.GroupPosition
@@ -88,7 +92,7 @@ fun OnboardingScreen(onFinished: () -> Unit) {
             ) {
                 PageDots(pagerState.currentPage)
                 if (pagerState.currentPage < 2) {
-                    TextButton(onClick = { goTo(2) }) { Text("Skip") }
+                    TextButton(onClick = { goTo(2) }) { Text(stringResource(R.string.onboarding_skip)) }
                 }
             }
             HorizontalPager(pagerState, Modifier.weight(1f)) { page ->
@@ -138,39 +142,35 @@ private fun WelcomePage(onStart: () -> Unit) {
             BreathingGateBadge(Modifier.size(210.dp), color = MaterialTheme.colorScheme.primaryContainer)
         }
         Text(
-            "Your apps, earned.",
+            stringResource(R.string.onboarding_welcome_title),
             style = MaterialTheme.typography.displayMediumEmphasized,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            "Hablock keeps the tempting stuff shut until the day's habits land. You set the terms.",
+            stringResource(R.string.onboarding_welcome_body),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(26.dp))
-        Button(onClick = onStart, Modifier.fillMaxWidth()) { Text("Show me how") }
+        Button(onClick = onStart, Modifier.fillMaxWidth()) { Text(stringResource(R.string.onboarding_welcome_cta)) }
         Spacer(Modifier.height(28.dp))
     }
 }
 
 private data class Explainer(val title: String, val detail: String)
 
-private val explainers = listOf(
-    Explainer("Choose the apps", "The ones that eat your evenings."),
-    Explainer("Choose what opens them", "Steps, a workout, a sit, or time in an app that deserves it."),
-    Explainer("Open on 2 of 3", "You decide how many have to land."),
-    Explainer("30 minutes at a time", "Then it closes again. No cliff-edge."),
-    Explainer("It grows with you", "Every reopen nudges the goals up. The day starts fresh at midnight."),
-)
-
 @Composable
 private fun ExplainPage(onNext: () -> Unit) {
+    val sessionMinutes = GateConstants.SESSION_DURATION.inWholeMinutes.toInt()
+    val titles = stringArrayResource(R.array.onboarding_explainer_titles)
+    val details = stringArrayResource(R.array.onboarding_explainer_details)
+    val explainers = titles.mapIndexed { index, title -> Explainer(title.format(sessionMinutes), details[index]) }
     Column(Modifier.fillMaxSize().padding(horizontal = 24.dp)) {
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
             Spacer(Modifier.height(14.dp))
-            Text("How a block works", style = MaterialTheme.typography.headlineMediumEmphasized)
+            Text(stringResource(R.string.onboarding_explain_title), style = MaterialTheme.typography.headlineMediumEmphasized)
             Spacer(Modifier.height(18.dp))
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 explainers.forEachIndexed { index, item ->
@@ -198,14 +198,14 @@ private fun ExplainPage(onNext: () -> Unit) {
             Spacer(Modifier.height(14.dp))
             Surface(shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.secondaryContainer) {
                 Column(Modifier.fillMaxWidth().padding(18.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text("2 of 3 met", style = MaterialTheme.typography.titleMediumEmphasized)
+                    Text(stringResource(R.string.onboarding_demo_title), style = MaterialTheme.typography.titleMediumEmphasized)
                     LinearWavyProgressIndicator(
                         progress = { 0.66f },
                         modifier = Modifier.fillMaxWidth(),
                         amplitude = { it },
                     )
                     Text(
-                        "One more and the block opens.",
+                        stringResource(R.string.onboarding_demo_hint),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSecondaryContainer,
                     )
@@ -213,7 +213,7 @@ private fun ExplainPage(onNext: () -> Unit) {
             }
             Spacer(Modifier.height(18.dp))
         }
-        Button(onClick = onNext, Modifier.fillMaxWidth().padding(bottom = 28.dp)) { Text("Got it") }
+        Button(onClick = onNext, Modifier.fillMaxWidth().padding(bottom = 28.dp)) { Text(stringResource(R.string.onboarding_explain_cta)) }
     }
 }
 
@@ -235,22 +235,22 @@ private fun GrantsPage(
     Column(Modifier.fillMaxSize().padding(horizontal = 24.dp)) {
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
             Spacer(Modifier.height(14.dp))
-            Text("A few permissions", style = MaterialTheme.typography.headlineMediumEmphasized)
+            Text(stringResource(R.string.onboarding_grants_title), style = MaterialTheme.typography.headlineMediumEmphasized)
             Spacer(Modifier.height(8.dp))
             Text(
-                "Grant what you can now, the rest whenever. Nothing leaves your phone — Hablock can't even reach the internet.",
+                stringResource(R.string.onboarding_grants_body),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(Modifier.height(18.dp))
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                OnboardingGrant(GroupPosition.First, 0, "Accessibility", "Notices which app comes to the front", grants.accessibility) {
+                OnboardingGrant(GroupPosition.First, 0, stringResource(R.string.onboarding_grant_accessibility), stringResource(R.string.onboarding_grant_accessibility_detail), grants.accessibility) {
                     context.openAccessibilitySettings()
                 }
-                OnboardingGrant(GroupPosition.Middle, 1, "Usage access", "Counts minutes in your apps", grants.usageAccess) {
+                OnboardingGrant(GroupPosition.Middle, 1, stringResource(R.string.onboarding_grant_usage), stringResource(R.string.onboarding_grant_usage_detail), grants.usageAccess) {
                     context.openUsageAccessSettings()
                 }
-                OnboardingGrant(GroupPosition.Middle, 2, "Notifications", "A heads-up when a session ends", grants.notifications) {
+                OnboardingGrant(GroupPosition.Middle, 2, stringResource(R.string.onboarding_grant_notifications), stringResource(R.string.onboarding_grant_notifications_detail), grants.notifications) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                     } else {
@@ -258,20 +258,20 @@ private fun GrantsPage(
                     }
                 }
                 if (grants.healthSupported) {
-                    OnboardingGrant(GroupPosition.Last, 3, "Health Connect", "Steps, workouts and meditation", grants.health) {
+                    OnboardingGrant(GroupPosition.Last, 3, stringResource(R.string.onboarding_grant_health), stringResource(R.string.onboarding_grant_health_detail), grants.health) {
                         healthLauncher.launch(healthPermissions)
                     }
                 } else {
                     GroupedListItem(
                         position = GroupPosition.Last,
-                        title = "Health Connect",
-                        supporting = "Not available on this device",
+                        title = stringResource(R.string.onboarding_grant_health),
+                        supporting = stringResource(R.string.onboarding_grant_health_unavailable),
                     )
                 }
             }
             Spacer(Modifier.height(18.dp))
         }
-        Button(onClick = onContinue, Modifier.fillMaxWidth().padding(bottom = 28.dp)) { Text("Let's go") }
+        Button(onClick = onContinue, Modifier.fillMaxWidth().padding(bottom = 28.dp)) { Text(stringResource(R.string.onboarding_grants_cta)) }
     }
 }
 
@@ -293,9 +293,9 @@ private fun OnboardingGrant(
         leading = { GrantBadge(index, granted, Modifier.size(30.dp)) },
         trailing = {
             if (granted) {
-                Icon(Icons.Rounded.Check, contentDescription = "Granted", tint = accents.met)
+                Icon(Icons.Rounded.Check, contentDescription = stringResource(R.string.onboarding_granted), tint = accents.met)
             } else {
-                Button(onClick = onGrant) { Text("Grant") }
+                Button(onClick = onGrant) { Text(stringResource(R.string.action_grant)) }
             }
         },
     )

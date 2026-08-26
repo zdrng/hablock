@@ -21,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.LinearWavyProgressIndicator
@@ -39,12 +40,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.health.connect.client.PermissionController
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.hablock.app.BuildConfig
+import dev.hablock.app.R
 import dev.hablock.app.domain.GateConstants
 import dev.hablock.app.domain.model.RelinquishState
 import dev.hablock.app.ui.components.BigNumerals
@@ -96,7 +99,7 @@ fun SettingsScreen() {
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             LargeFlexibleTopAppBar(
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.settings_title)) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
                     scrolledContainerColor = MaterialTheme.colorScheme.background,
@@ -114,24 +117,24 @@ fun SettingsScreen() {
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             val hasExactAlarms = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-            SectionHeader("Enforcement")
+            SectionHeader(stringResource(R.string.settings_section_enforcement))
             GrantItem(
                 position = GroupPosition.First,
                 index = 0,
-                label = "Accessibility service",
+                label = stringResource(R.string.settings_accessibility_service),
                 granted = uiState.accessibility,
             ) { context.openAccessibilitySettings() }
             GrantItem(
                 position = GroupPosition.Middle,
                 index = 1,
-                label = "Usage access",
+                label = stringResource(R.string.settings_usage_access),
                 granted = uiState.usageAccess,
             ) { context.openUsageAccessSettings() }
             if (hasExactAlarms) {
                 GrantItem(
                     position = GroupPosition.Middle,
                     index = 2,
-                    label = "Exact alarms",
+                    label = stringResource(R.string.settings_exact_alarms),
                     granted = uiState.exactAlarms,
                 ) { context.openExactAlarmSettings() }
             }
@@ -139,37 +142,37 @@ fun SettingsScreen() {
                 GrantItem(
                     position = GroupPosition.Last,
                     index = 3,
-                    label = "Health Connect",
+                    label = stringResource(R.string.settings_health_connect),
                     granted = uiState.health,
                 ) { healthLauncher.launch(viewModel.healthPermissions) }
             } else {
                 GroupedListItem(
                     position = GroupPosition.Last,
-                    title = "Health Connect",
-                    supporting = "Not available on this device",
+                    title = stringResource(R.string.settings_health_connect),
+                    supporting = stringResource(R.string.settings_health_unavailable),
                 )
             }
             if (hasExactAlarms && !uiState.exactAlarms) {
                 Text(
-                    "Without exact alarms, re-locks and day resets fire late.",
+                    stringResource(R.string.settings_exact_alarms_warning),
                     Modifier.padding(start = 18.dp, top = 8.dp),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
-            SectionHeader("Uninstall lock")
+            SectionHeader(stringResource(R.string.settings_section_uninstall_lock))
             GroupedListItem(
                 position = GroupPosition.First,
                 onClick = if (uiState.deviceOwner) null else ({ guideOpen = !guideOpen }),
-                title = "Device owner",
-                supporting = if (uiState.deviceOwner) null else "Optional — makes the lock uninstall-proof",
+                title = stringResource(R.string.settings_device_owner),
+                supporting = if (uiState.deviceOwner) null else stringResource(R.string.settings_device_owner_optional),
                 trailing = {
                     if (uiState.deviceOwner) {
                         MetChip()
                     } else {
                         TextButton(onClick = { guideOpen = !guideOpen }) {
-                            Text(if (guideOpen) "Hide" else "Set up")
+                            Text(stringResource(if (guideOpen) R.string.settings_hide else R.string.settings_set_up))
                         }
                     }
                 },
@@ -185,7 +188,7 @@ fun SettingsScreen() {
                 Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                     if (uiState.deviceOwner) {
                         Text(
-                            "Hablock owns this device. It can't be uninstalled or switched off while the lock stands.",
+                            stringResource(R.string.settings_owner_active),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -197,14 +200,14 @@ fun SettingsScreen() {
                         )
                         if (uiState.relinquishFailed) {
                             Text(
-                                "Couldn't hand back control. Try again.",
+                                stringResource(R.string.settings_relinquish_failed),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.error,
                             )
                         }
                     } else {
                         Text(
-                            "Without device owner, Hablock blocks apps but can still be uninstalled. Set it up above for a lock that holds.",
+                            stringResource(R.string.settings_owner_missing),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -212,13 +215,13 @@ fun SettingsScreen() {
                 }
             }
 
-            SectionHeader("About")
+            SectionHeader(stringResource(R.string.settings_section_about))
             GroupedListItem(
                 position = GroupPosition.First,
-                title = "Version",
+                title = stringResource(R.string.settings_version),
                 trailing = {
                     Text(
-                        "Hablock ${BuildConfig.VERSION_NAME}",
+                        stringResource(R.string.settings_version_value, BuildConfig.VERSION_NAME),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -226,8 +229,8 @@ fun SettingsScreen() {
             )
             GroupedListItem(
                 position = GroupPosition.Last,
-                title = "Fully offline",
-                supporting = "No network permission — nothing Hablock reads can leave this phone.",
+                title = stringResource(R.string.settings_offline_title),
+                supporting = stringResource(R.string.settings_offline_body),
                 trailing = { MetChip() },
             )
         }
@@ -235,9 +238,9 @@ fun SettingsScreen() {
 
     when (dialog) {
         RelinquishDialog.Start -> HablockDialog(
-            title = "Start the 3-day timer?",
-            message = "Hablock keeps enforcing for three days. After that you can hand back control and uninstall. Cancel any time before then.",
-            confirmLabel = "Start timer",
+            title = stringResource(R.string.settings_relinquish_start_title),
+            message = stringResource(R.string.settings_relinquish_start_message),
+            confirmLabel = stringResource(R.string.settings_relinquish_start_confirm),
             onConfirm = {
                 viewModel.startRelinquish()
                 dialog = null
@@ -246,9 +249,9 @@ fun SettingsScreen() {
         )
 
         RelinquishDialog.Confirm -> HablockDialog(
-            title = "Give up the lock?",
-            message = "Hablock stops owning this device and can be uninstalled. Getting the lock back takes a full factory reset.",
-            confirmLabel = "Give it up",
+            title = stringResource(R.string.settings_relinquish_confirm_title),
+            message = stringResource(R.string.settings_relinquish_confirm_message),
+            confirmLabel = stringResource(R.string.settings_relinquish_confirm_label),
             destructive = true,
             onConfirm = {
                 viewModel.confirmRelinquish()
@@ -264,7 +267,7 @@ fun SettingsScreen() {
 @Composable
 private fun MetChip() {
     val accents = LocalHablockAccents.current
-    StatusChip("On", containerColor = accents.metContainer, contentColor = accents.onMetContainer)
+    StatusChip(stringResource(R.string.status_on), containerColor = accents.metContainer, contentColor = accents.onMetContainer)
 }
 
 @Composable
@@ -282,9 +285,9 @@ private fun GrantItem(
         leading = { GrantBadge(index, granted, Modifier.size(28.dp)) },
         trailing = {
             if (granted) {
-                Icon(Icons.Rounded.Check, contentDescription = "Granted", tint = LocalHablockAccents.current.met)
+                Icon(Icons.Rounded.Check, contentDescription = stringResource(R.string.settings_granted), tint = LocalHablockAccents.current.met)
             } else {
-                Button(onClick = onGrant) { Text("Grant") }
+                Button(onClick = onGrant) { Text(stringResource(R.string.action_grant)) }
             }
         },
     )
@@ -303,7 +306,7 @@ private fun RelinquishControls(
     onConfirm: () -> Unit,
 ) {
     when (state) {
-        RelinquishState.Idle -> OutlinedButton(onClick = onStart) { Text("Start the 3-day timer") }
+        RelinquishState.Idle -> OutlinedButton(onClick = onStart) { Text(stringResource(R.string.settings_relinquish_start_button)) }
 
         is RelinquishState.Counting -> {
             val tick by rememberTicker(30_000L)
@@ -317,7 +320,7 @@ private fun RelinquishControls(
                         color = MaterialTheme.colorScheme.error,
                     )
                     Text(
-                        "until you can let go",
+                        stringResource(R.string.settings_relinquish_countdown_label),
                         Modifier.padding(bottom = 4.dp),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -331,16 +334,16 @@ private fun RelinquishControls(
                     color = MaterialTheme.colorScheme.error,
                     amplitude = { 0f },
                 )
-                TextButton(onClick = onCancel) { Text("Cancel — keep the lock") }
+                TextButton(onClick = onCancel) { Text(stringResource(R.string.settings_relinquish_cancel)) }
             }
         }
 
         RelinquishState.Ready -> Button(
             onClick = onConfirm,
-            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+            colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.error,
                 contentColor = MaterialTheme.colorScheme.onError,
             ),
-        ) { Text("Relinquish now") }
+        ) { Text(stringResource(R.string.settings_relinquish_now)) }
     }
 }

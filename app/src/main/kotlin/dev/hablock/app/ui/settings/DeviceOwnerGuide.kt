@@ -19,27 +19,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import dev.hablock.app.R
 import dev.hablock.app.ui.components.HablockIcons
-
-private val steps = listOf(
-    "Remove every Google and work account from the device (Settings → Accounts).",
-    "Turn on developer options, then USB debugging.",
-    "Connect the phone to a computer with adb installed.",
-    "Run the command below, exactly as written.",
-    "Reopen Hablock. Device owner reads On.",
-)
-
-private const val ADB_COMMAND =
-    "adb shell dpm set-device-owner dev.hablock.app/.system.HablockDeviceAdminReceiver"
 
 @Composable
 fun DeviceOwnerGuide(modifier: Modifier = Modifier) {
+    val steps = stringArrayResource(R.array.settings_guide_steps)
+    val adbCommand = stringResource(R.string.settings_guide_adb_command)
     Surface(modifier, shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surfaceContainer) {
         Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-            Text("Set up device owner", style = MaterialTheme.typography.titleMediumEmphasized)
+            Text(stringResource(R.string.settings_guide_title), style = MaterialTheme.typography.titleMediumEmphasized)
             steps.forEachIndexed { index, step ->
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Box(
@@ -73,13 +67,13 @@ fun DeviceOwnerGuide(modifier: Modifier = Modifier) {
             ) {
                 SelectionContainer(Modifier.weight(1f)) {
                     Text(
-                        ADB_COMMAND,
+                        adbCommand,
                         style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
                         color = MaterialTheme.colorScheme.primary,
                     )
                 }
-                IconButton(onClick = { clipboard.setText(AnnotatedString(ADB_COMMAND)) }) {
-                    Icon(HablockIcons.Copy, contentDescription = "Copy command", Modifier.size(18.dp))
+                IconButton(onClick = { clipboard.setText(AnnotatedString(adbCommand)) }) {
+                    Icon(HablockIcons.Copy, contentDescription = stringResource(R.string.settings_guide_copy_command), Modifier.size(18.dp))
                 }
             }
             Surface(
@@ -88,7 +82,7 @@ fun DeviceOwnerGuide(modifier: Modifier = Modifier) {
                 contentColor = MaterialTheme.colorScheme.onErrorContainer,
             ) {
                 Text(
-                    "This works only on a freshly reset device with no accounts. Once Hablock owns the device, the only way back is the 3-day relinquish timer below.",
+                    stringResource(R.string.settings_guide_warning),
                     Modifier.padding(14.dp),
                     style = MaterialTheme.typography.bodySmall,
                 )

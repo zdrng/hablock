@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wizard_back">Back</string>
+    <string name="wizard_title_apps">What should we lock away?</string>
+    <string name="wizard_title_conditions">What opens it back up?</string>
+    <string name="wizard_title_review">Check it over, then arm it.</string>
+    <string name="wizard_title_name">Name it, then arm it.</string>
+    <string name="wizard_search_apps">Search apps</string>
+    <string name="wizard_pick_hint">Pick at least one app</string>
+    <plurals name="wizard_picked_count">
+        <item quantity="one">%1$d picked</item>
+        <item quantity="other">%1$d picked</item>
+    </plurals>
+    <string name="wizard_next">Next</string>
+    <string name="wizard_conditions_hint">Switch on at least one condition</string>
+    <string name="wizard_helper_prompt">Which app earns the others?</string>
+    <string name="wizard_helper_label">Earning app</string>
+    <string name="wizard_threshold_prefix">"Open when "</string>
+    <string name="wizard_n_of_m">%1$d of %2$d</string>
+    <string name="wizard_threshold_suffix">" land."</string>
+    <string name="wizard_ratchet_prefix">"Each reopen raises every goal by "</string>
+    <string name="wizard_ratchet_suffix">.</string>
+    <string name="wizard_name_label">Name</string>
+    <string name="wizard_suggest_name">Suggest a name</string>
+    <string name="wizard_default_name">Block %1$d</string>
+    <string name="wizard_summary_locked_apps">Locked apps</string>
+    <string name="wizard_summary_conditions">Conditions</string>
+    <string name="wizard_summary_opens_on">Opens on</string>
+    <string name="wizard_summary_ratchet">Ratchet</string>
+    <string name="wizard_save_changes">Save changes</string>
+    <string name="wizard_lock_it_in">Lock it in</string>
+    <string-array name="wizard_name_ideas">
+        <item>Doomscroll</item>
+        <item>Rabbit hole</item>
+        <item>The time sink</item>
+        <item>Sugar jar</item>
+        <item>Night owl</item>
+        <item>Bottomless feed</item>
+        <item>The vortex</item>
+        <item>Candy shelf</item>
+        <item>Snooze trap</item>
+    </string-array>
+    <string name="wizard_condition_app_usage">Time in a good app</string>
+    <string name="wizard_hint_steps">Move first, scroll later</string>
+    <string name="wizard_hint_workout">Minutes of exercise, via Health Connect</string>
+    <string name="wizard_hint_meditation">Minutes of mindfulness, via Health Connect</string>
+    <string name="wizard_hint_app_usage">Minutes in an app that earns its keep</string>
+    <string name="wizard_unit_steps">steps</string>
+    <string name="wizard_unit_minutes">minutes</string>
+</resources>

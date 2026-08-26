@@ -96,7 +96,7 @@ fun BlockedScreen(
             ) {
                 Spacer(Modifier.height(28.dp))
                 if (packageName != null) {
-                    AppIconCookie(packageName, appLabel, size = 56.dp)
+                    AppIconCookie(packageName, appLabel, size = 56.dp, contentDescription = appLabel)
                     Spacer(Modifier.height(14.dp))
                 }
                 Text(

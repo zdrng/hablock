@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screentime_title">Time</string>
+    <string name="screentime_since">since %1$s</string>
+    <string name="screentime_on_screen_today">on screen today</string>
+    <string name="screentime_loading">Reading today\'s app time…</string>
+    <string name="screentime_empty">No app time recorded since the day reset.</string>
+    <string name="screentime_no_access_title">No usage access yet.</string>
+    <string name="screentime_no_access_body">Hablock reads app time from Android\'s usage stats. Grant access to see the day\'s tally.</string>
+    <string name="screentime_grant_usage">Grant usage access</string>
+</resources>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_enforcement">Enforcement</string>
+    <string name="settings_accessibility_service">Accessibility service</string>
+    <string name="settings_usage_access">Usage access</string>
+    <string name="settings_exact_alarms">Exact alarms</string>
+    <string name="settings_health_connect">Health Connect</string>
+    <string name="settings_health_unavailable">Not available on this device</string>
+    <string name="settings_exact_alarms_warning">Without exact alarms, re-locks and day resets fire late.</string>
+    <string name="settings_section_uninstall_lock">Uninstall lock</string>
+    <string name="settings_device_owner">Device owner</string>
+    <string name="settings_device_owner_optional">Optional — makes the lock uninstall-proof</string>
+    <string name="settings_hide">Hide</string>
+    <string name="settings_set_up">Set up</string>
+    <string name="settings_owner_active">Hablock owns this device. It can\'t be uninstalled or switched off while the lock stands.</string>
+    <string name="settings_relinquish_failed">Couldn\'t hand back control. Try again.</string>
+    <string name="settings_owner_missing">Without device owner, Hablock blocks apps but can still be uninstalled. Set it up above for a lock that holds.</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_version_value">Hablock %1$s</string>
+    <string name="settings_offline_title">Fully offline</string>
+    <string name="settings_offline_body">No network permission — nothing Hablock reads can leave this phone.</string>
+    <string name="settings_relinquish_start_title">Start the 3-day timer?</string>
+    <string name="settings_relinquish_start_message">Hablock keeps enforcing for three days. After that you can hand back control and uninstall. Cancel any time before then.</string>
+    <string name="settings_relinquish_start_confirm">Start timer</string>
+    <string name="settings_relinquish_confirm_title">Give up the lock?</string>
+    <string name="settings_relinquish_confirm_message">Hablock stops owning this device and can be uninstalled. Getting the lock back takes a full factory reset.</string>
+    <string name="settings_relinquish_confirm_label">Give it up</string>
+    <string name="settings_granted">Granted</string>
+    <string name="settings_relinquish_start_button">Start the 3-day timer</string>
+    <string name="settings_relinquish_countdown_label">until you can let go</string>
+    <string name="settings_relinquish_cancel">Cancel — keep the lock</string>
+    <string name="settings_relinquish_now">Relinquish now</string>
+    <string name="settings_guide_title">Set up device owner</string>
+    <string-array name="settings_guide_steps">
+        <item>Remove every Google and work account from the device (Settings → Accounts).</item>
+        <item>Turn on developer options, then USB debugging.</item>
+        <item>Connect the phone to a computer with adb installed.</item>
+        <item>Run the command below, exactly as written.</item>
+        <item>Reopen Hablock. Device owner reads On.</item>
+    </string-array>
+    <string name="settings_guide_adb_command" translatable="false">adb shell dpm set-device-owner dev.hablock.app/.system.HablockDeviceAdminReceiver</string>
+    <string name="settings_guide_copy_command">Copy command</string>
+    <string name="settings_guide_warning">This works only on a freshly reset device with no accounts. Once Hablock owns the device, the only way back is the 3-day relinquish timer below.</string>
+</resources>

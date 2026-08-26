@@ -32,6 +32,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Hablock">
 
+        <!-- singleTask so the notification content intent lands in the existing task. -->
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"

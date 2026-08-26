@@ -25,15 +25,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.hablock.app.R
+import dev.hablock.app.ui.components.AppIconCookie
 import dev.hablock.app.ui.components.BigNumerals
 import dev.hablock.app.ui.components.BreathingDial
 import dev.hablock.app.ui.components.BreathingGateBadge
-import dev.hablock.app.ui.components.AppIconCookie
 import dev.hablock.app.ui.components.GroupedListItem
 import dev.hablock.app.ui.components.groupPositionOf
 import dev.hablock.app.ui.format.formatClock
@@ -67,9 +69,9 @@ fun ScreenTimeScreen() {
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             MediumFlexibleTopAppBar(
-                title = { Text("Time") },
+                title = { Text(stringResource(R.string.screentime_title)) },
                 subtitle = if (uiState.hasAccess) {
-                    { Text("since ${formatClock(uiState.since)}") }
+                    { Text(stringResource(R.string.screentime_since, formatClock(uiState.since))) }
                 } else {
                     null
                 },
@@ -102,7 +104,7 @@ fun ScreenTimeScreen() {
                                 color = MaterialTheme.colorScheme.onSurface,
                             )
                             Text(
-                                "on screen today",
+                                stringResource(R.string.screentime_on_screen_today),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -113,7 +115,7 @@ fun ScreenTimeScreen() {
             if (uiState.rows.isEmpty()) {
                 item {
                     Text(
-                        if (uiState.loading) "Reading today's app time…" else "No app time recorded since the day reset.",
+                        stringResource(if (uiState.loading) R.string.screentime_loading else R.string.screentime_empty),
                         Modifier.padding(18.dp),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -155,18 +157,18 @@ private fun NoAccessState(modifier: Modifier = Modifier) {
         BreathingGateBadge(Modifier.size(140.dp), color = MaterialTheme.colorScheme.secondaryContainer)
         Spacer(Modifier.height(24.dp))
         Text(
-            "No usage access yet.",
+            stringResource(R.string.screentime_no_access_title),
             style = MaterialTheme.typography.headlineMediumEmphasized,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            "Hablock reads app time from Android's usage stats. Grant access to see the day's tally.",
+            stringResource(R.string.screentime_no_access_body),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(24.dp))
-        Button(onClick = { context.openUsageAccessSettings() }) { Text("Grant usage access") }
+        Button(onClick = { context.openUsageAccessSettings() }) { Text(stringResource(R.string.screentime_grant_usage)) }
     }
 }

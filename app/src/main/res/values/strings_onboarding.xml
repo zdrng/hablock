@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_welcome_title">Your apps, earned.</string>
+    <string name="onboarding_welcome_body">Hablock keeps the tempting stuff shut until the day\'s habits land. You set the terms.</string>
+    <string name="onboarding_welcome_cta">Show me how</string>
+    <string name="onboarding_explain_title">How a block works</string>
+    <string-array name="onboarding_explainer_titles">
+        <item>Choose the apps</item>
+        <item>Choose what opens them</item>
+        <item>Open on 2 of 3</item>
+        <item>%1$d minutes at a time</item>
+        <item>It grows with you</item>
+    </string-array>
+    <string-array name="onboarding_explainer_details">
+        <item>The ones that eat your evenings.</item>
+        <item>Steps, a workout, a sit, or time in an app that deserves it.</item>
+        <item>You decide how many have to land.</item>
+        <item>Then it closes again. No cliff-edge.</item>
+        <item>Every reopen nudges the goals up. The day starts fresh at midnight.</item>
+    </string-array>
+    <string name="onboarding_demo_title">2 of 3 met</string>
+    <string name="onboarding_demo_hint">One more and the block opens.</string>
+    <string name="onboarding_explain_cta">Got it</string>
+    <string name="onboarding_grants_title">A few permissions</string>
+    <string name="onboarding_grants_body">Grant what you can now, the rest whenever. Nothing leaves your phone — Hablock can\'t even reach the internet.</string>
+    <string name="onboarding_grant_accessibility">Accessibility</string>
+    <string name="onboarding_grant_accessibility_detail">Notices which app comes to the front</string>
+    <string name="onboarding_grant_usage">Usage access</string>
+    <string name="onboarding_grant_usage_detail">Counts minutes in your apps</string>
+    <string name="onboarding_grant_notifications">Notifications</string>
+    <string name="onboarding_grant_notifications_detail">A heads-up when a session ends</string>
+    <string name="onboarding_grant_health">Health Connect</string>
+    <string name="onboarding_grant_health_detail">Steps, workouts and meditation</string>
+    <string name="onboarding_grant_health_unavailable">Not available on this device</string>
+    <string name="onboarding_granted">Granted</string>
+    <string name="onboarding_grants_cta">Let\'s go</string>
+</resources>

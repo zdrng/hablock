@@ -64,6 +64,7 @@ fun AppIconCookie(
     modifier: Modifier = Modifier,
     size: Dp = 32.dp,
     polygon: RoundedPolygon = MaterialShapes.Cookie6Sided,
+    contentDescription: String? = null,
 ) {
     val packageManager = LocalContext.current.packageManager
     val icon = rememberAppIcon(packageManager, packageName)
@@ -75,7 +76,7 @@ fun AppIconCookie(
         if (icon != null) {
             Image(
                 icon,
-                contentDescription = null,
+                contentDescription = contentDescription,
                 modifier = Modifier.size(size * 1.25f),
                 contentScale = ContentScale.Crop,
             )

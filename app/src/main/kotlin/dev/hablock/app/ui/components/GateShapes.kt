@@ -35,9 +35,9 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.graphics.shapes.Morph
 import androidx.graphics.shapes.RoundedPolygon
 import androidx.graphics.shapes.toPath
-import kotlinx.coroutines.delay
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlinx.coroutines.delay
 
 /**
  * The app's mascot: a gate that blooms. Cookie12Sided (screwed shut) morphs into

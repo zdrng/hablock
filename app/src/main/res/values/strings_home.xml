@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_title">Blocks</string>
+    <string name="home_subtitle">%1$s · resets at midnight</string>
+    <string name="home_hc_banner">Health Connect can\'t be read — step, workout and meditation goals count as zero.</string>
+    <string name="home_hc_fix">Fix</string>
+    <string name="home_empty_title">Nothing\'s locked up yet.</string>
+    <string name="home_empty_body">Pick an app that keeps stealing your evenings, then decide what earns it back.</string>
+    <string name="home_empty_cta">Build your first block</string>
+    <string name="home_action_edit">Edit</string>
+    <string name="home_action_pause">Pause</string>
+    <string name="home_action_resume">Resume</string>
+    <string name="home_action_delete">Delete</string>
+    <string name="home_delete_title">Remove %1$s?</string>
+    <string name="home_delete_message">These apps open freely again. This can\'t be undone.</string>
+    <string name="home_delete_confirm">Remove</string>
+    <string name="home_card_status_paused">Paused</string>
+    <string name="home_card_status_open_until">Open until %1$s</string>
+    <string name="home_card_status_open">Open — go ahead</string>
+    <string name="home_card_status_locked">Locked · %1$d of %2$d so far</string>
+    <string name="home_card_of">of %1$d</string>
+    <string name="home_card_session_left">left in this session</string>
+    <string name="home_card_click_label">Show details</string>
+    <string name="home_card_long_click_label">Block actions</string>
+</resources>

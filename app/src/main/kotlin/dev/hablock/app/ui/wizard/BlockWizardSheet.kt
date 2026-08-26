@@ -43,6 +43,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.SpanStyle
@@ -51,6 +54,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.hablock.app.R
 import dev.hablock.app.domain.model.InstalledApp
 import dev.hablock.app.ui.components.AppIconCookie
 import dev.hablock.app.ui.components.GroupedListItem
@@ -122,14 +126,14 @@ private fun WizardHeader(step: Int, editing: Boolean, onBack: () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             IconButton(onClick = onBack, shapes = IconButtonDefaults.shapes()) {
-                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back")
+                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = stringResource(R.string.wizard_back))
             }
             Text(
                 when {
-                    step == 0 -> "What should we lock away?"
-                    step == 1 -> "What opens it back up?"
-                    editing -> "Check it over, then arm it."
-                    else -> "Name it, then arm it."
+                    step == 0 -> stringResource(R.string.wizard_title_apps)
+                    step == 1 -> stringResource(R.string.wizard_title_conditions)
+                    editing -> stringResource(R.string.wizard_title_review)
+                    else -> stringResource(R.string.wizard_title_name)
                 },
                 style = MaterialTheme.typography.titleLargeEmphasized,
             )
@@ -149,7 +153,7 @@ private fun StepApps(uiState: WizardUiState, viewModel: BlockWizardViewModel) {
             value = uiState.query,
             onValueChange = viewModel::setQuery,
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Search apps") },
+            placeholder = { Text(stringResource(R.string.wizard_search_apps)) },
             leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
             shape = CircleShape,
             singleLine = true,
@@ -186,11 +190,11 @@ private fun StepApps(uiState: WizardUiState, viewModel: BlockWizardViewModel) {
         }
         WizardFooter(
             hint = if (uiState.selectedPackages.isEmpty()) {
-                "Pick at least one app"
+                stringResource(R.string.wizard_pick_hint)
             } else {
-                "${uiState.selectedPackages.size} picked"
+                pluralStringResource(R.plurals.wizard_picked_count, uiState.selectedPackages.size, uiState.selectedPackages.size)
             },
-            label = "Next",
+            label = stringResource(R.string.wizard_next),
             enabled = uiState.canAdvance,
             onClick = { viewModel.setStep(1) },
         )
@@ -211,8 +215,8 @@ private fun StepConditions(uiState: WizardUiState, viewModel: BlockWizardViewMod
             item { RatchetPanel(uiState, viewModel) }
         }
         WizardFooter(
-            hint = if (uiState.conditionCount == 0) "Switch on at least one condition" else "",
-            label = "Next",
+            hint = if (uiState.conditionCount == 0) stringResource(R.string.wizard_conditions_hint) else "",
+            label = stringResource(R.string.wizard_next),
             enabled = uiState.canAdvance,
             onClick = { viewModel.setStep(2) },
         )
@@ -232,9 +236,9 @@ private fun ConditionCard(draft: ConditionDraft, uiState: WizardUiState, viewMod
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text(draft.kind.friendlyName, style = MaterialTheme.typography.titleMediumEmphasized)
+                    Text(draft.kind.friendlyName(), style = MaterialTheme.typography.titleMediumEmphasized)
                     Text(
-                        draft.kind.friendlyHint,
+                        draft.kind.friendlyHint(),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -249,7 +253,7 @@ private fun ConditionCard(draft: ConditionDraft, uiState: WizardUiState, viewMod
                     canIncrease = draft.value < draft.kind.max,
                 )
                 Text(
-                    draft.kind.goalUnit,
+                    draft.kind.goalUnit(),
                     Modifier.fillMaxWidth(),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -267,7 +271,11 @@ private fun ConditionCard(draft: ConditionDraft, uiState: WizardUiState, viewMod
 private fun HelperAppPicker(draft: ConditionDraft, uiState: WizardUiState, viewModel: BlockWizardViewModel) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
-            if (draft.packageName == null) "Which app earns the others?" else "Earning app",
+            if (draft.packageName == null) {
+                stringResource(R.string.wizard_helper_prompt)
+            } else {
+                stringResource(R.string.wizard_helper_label)
+            },
             style = MaterialTheme.typography.labelLarge,
         )
         val candidates = uiState.apps.filter { it.packageName !in uiState.selectedPackages }
@@ -311,11 +319,11 @@ private fun ThresholdPanel(uiState: WizardUiState, viewModel: BlockWizardViewMod
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(
                 buildAnnotatedString {
-                    append("Open when ")
+                    append(stringResource(R.string.wizard_threshold_prefix))
                     withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)) {
-                        append("${uiState.thresholdN} of $count")
+                        append(stringResource(R.string.wizard_n_of_m, uiState.thresholdN, count))
                     }
-                    append(" land.")
+                    append(stringResource(R.string.wizard_threshold_suffix))
                 },
                 style = MaterialTheme.typography.titleMediumEmphasized,
             )
@@ -337,11 +345,11 @@ private fun RatchetPanel(uiState: WizardUiState, viewModel: BlockWizardViewModel
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(
                 buildAnnotatedString {
-                    append("Each reopen raises every goal by ")
+                    append(stringResource(R.string.wizard_ratchet_prefix))
                     withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)) {
                         append(formatPercent(uiState.incrementPct))
                     }
-                    append(".")
+                    append(stringResource(R.string.wizard_ratchet_suffix))
                 },
                 style = MaterialTheme.typography.titleMediumEmphasized,
             )
@@ -357,16 +365,18 @@ private fun RatchetPanel(uiState: WizardUiState, viewModel: BlockWizardViewModel
 
 @Composable
 private fun StepName(uiState: WizardUiState, viewModel: BlockWizardViewModel) {
+    val defaultName = stringResource(R.string.wizard_default_name, uiState.defaultBlockNumber)
+    val nameIdeas = stringArrayResource(R.array.wizard_name_ideas)
     Column(Modifier.padding(top = 10.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
         OutlinedTextField(
             value = uiState.name,
             onValueChange = viewModel::setName,
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(uiState.defaultName) },
-            label = { Text("Name") },
+            placeholder = { Text(defaultName) },
+            label = { Text(stringResource(R.string.wizard_name_label)) },
             trailingIcon = {
-                IconButton(onClick = { viewModel.setName(suggestName(uiState.name)) }) {
-                    Icon(Icons.Rounded.Refresh, contentDescription = "Suggest a name")
+                IconButton(onClick = { viewModel.setName(suggestName(nameIdeas, uiState.name)) }) {
+                    Icon(Icons.Rounded.Refresh, contentDescription = stringResource(R.string.wizard_suggest_name))
                 }
             },
             shape = MaterialTheme.shapes.medium,
@@ -374,17 +384,20 @@ private fun StepName(uiState: WizardUiState, viewModel: BlockWizardViewModel) {
         )
         Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surfaceContainer) {
             Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                SummaryRow("Locked apps", "${uiState.selectedPackages.size}")
-                SummaryRow("Conditions", "${uiState.conditionCount}")
-                SummaryRow("Opens on", "${uiState.thresholdN} of ${uiState.conditionCount}")
-                SummaryRow("Ratchet", formatPercent(uiState.incrementPct))
+                SummaryRow(stringResource(R.string.wizard_summary_locked_apps), "${uiState.selectedPackages.size}")
+                SummaryRow(stringResource(R.string.wizard_summary_conditions), "${uiState.conditionCount}")
+                SummaryRow(
+                    stringResource(R.string.wizard_summary_opens_on),
+                    stringResource(R.string.wizard_n_of_m, uiState.thresholdN, uiState.conditionCount),
+                )
+                SummaryRow(stringResource(R.string.wizard_summary_ratchet), formatPercent(uiState.incrementPct))
             }
         }
         Box(contentAlignment = Alignment.Center) {
             Button(
-                onClick = viewModel::save,
+                onClick = { viewModel.save(defaultName) },
                 modifier = Modifier.fillMaxWidth(),
-            ) { Text(if (uiState.editing) "Save changes" else "Lock it in") }
+            ) { Text(stringResource(if (uiState.editing) R.string.wizard_save_changes else R.string.wizard_lock_it_in)) }
         }
         Spacer(Modifier.height(12.dp))
     }
@@ -410,34 +423,29 @@ private fun WizardFooter(hint: String, label: String, enabled: Boolean, onClick:
     }
 }
 
-private val nameIdeas = listOf(
-    "Doomscroll", "Rabbit hole", "The time sink", "Sugar jar", "Night owl",
-    "Bottomless feed", "The vortex", "Candy shelf", "Snooze trap",
-)
-
-private fun suggestName(current: String): String {
-    val next = nameIdeas.filterNot { it == current }
+private fun suggestName(ideas: Array<String>, current: String): String {
+    val next = ideas.filterNot { it == current }
     return next.random()
 }
 
-private val ConditionKind.friendlyName: String
-    get() = when (this) {
-        ConditionKind.Steps -> "Steps"
-        ConditionKind.Workout -> "Workout"
-        ConditionKind.Meditation -> "Meditation"
-        ConditionKind.AppUsage -> "Time in a good app"
-    }
+@Composable
+private fun ConditionKind.friendlyName(): String = when (this) {
+    ConditionKind.Steps -> stringResource(R.string.condition_steps)
+    ConditionKind.Workout -> stringResource(R.string.condition_workout)
+    ConditionKind.Meditation -> stringResource(R.string.condition_meditation)
+    ConditionKind.AppUsage -> stringResource(R.string.wizard_condition_app_usage)
+}
 
-private val ConditionKind.friendlyHint: String
-    get() = when (this) {
-        ConditionKind.Steps -> "Move first, scroll later"
-        ConditionKind.Workout -> "Minutes of exercise, via Health Connect"
-        ConditionKind.Meditation -> "Minutes of mindfulness, via Health Connect"
-        ConditionKind.AppUsage -> "Minutes in an app that earns its keep"
-    }
+@Composable
+private fun ConditionKind.friendlyHint(): String = when (this) {
+    ConditionKind.Steps -> stringResource(R.string.wizard_hint_steps)
+    ConditionKind.Workout -> stringResource(R.string.wizard_hint_workout)
+    ConditionKind.Meditation -> stringResource(R.string.wizard_hint_meditation)
+    ConditionKind.AppUsage -> stringResource(R.string.wizard_hint_app_usage)
+}
 
-private val ConditionKind.goalUnit: String
-    get() = when (this) {
-        ConditionKind.Steps -> "steps"
-        else -> "minutes"
-    }
+@Composable
+private fun ConditionKind.goalUnit(): String = when (this) {
+    ConditionKind.Steps -> stringResource(R.string.wizard_unit_steps)
+    else -> stringResource(R.string.wizard_unit_minutes)
+}

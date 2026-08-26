@@ -30,9 +30,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.hablock.app.R
 import dev.hablock.app.domain.model.Block
 import dev.hablock.app.domain.model.GateState
 import dev.hablock.app.ui.components.AppShapeCluster
@@ -88,6 +90,8 @@ fun BlockCard(
             .combinedClickable(
                 interactionSource = interaction,
                 indication = null,
+                onClickLabel = stringResource(R.string.home_card_click_label),
+                onLongClickLabel = stringResource(R.string.home_card_long_click_label),
                 onClick = onClick,
                 onLongClick = onLongPress,
             )
@@ -149,10 +153,10 @@ fun BlockCard(
 @Composable
 private fun statusLine(paused: Boolean, session: GateState.SessionActive?, open: Boolean, met: Int, threshold: Int): String =
     when {
-        paused -> "Paused"
-        session != null -> "Open until ${formatClock(session.endsAt)}"
-        open -> "Open — go ahead"
-        else -> "Locked · $met of $threshold so far"
+        paused -> stringResource(R.string.home_card_status_paused)
+        session != null -> stringResource(R.string.home_card_status_open_until, formatClock(session.endsAt))
+        open -> stringResource(R.string.home_card_status_open)
+        else -> stringResource(R.string.home_card_status_locked, met, threshold)
     }
 
 /** The big "2 of 3" numeral in a tonal container — the clock-screen look. */
@@ -171,7 +175,7 @@ private fun MetCountPanel(met: Int, threshold: Int, open: Boolean) {
         ) {
             BigNumerals(met.toString(), style = numeralStyle(40.sp))
             Text(
-                "of $threshold",
+                stringResource(R.string.home_card_of, threshold),
                 Modifier.padding(bottom = 6.dp),
                 style = MaterialTheme.typography.labelLarge,
             )
@@ -192,7 +196,7 @@ private fun SessionCountdown(session: GateState.SessionActive) {
             color = MaterialTheme.colorScheme.onTertiaryContainer,
         )
         Text(
-            "left in this session",
+            stringResource(R.string.home_card_session_left),
             Modifier.padding(bottom = 6.dp),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onTertiaryContainer,

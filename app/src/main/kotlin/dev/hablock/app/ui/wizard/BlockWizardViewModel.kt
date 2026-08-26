@@ -57,7 +57,7 @@ data class WizardUiState(
     val thresholdN: Int = 1,
     val incrementPct: Float = 0.20f,
     val name: String = "",
-    val defaultName: String = "Block 1",
+    val defaultBlockNumber: Int = 1,
     val availability: HcAvailability = HcAvailability.UNAVAILABLE,
 ) {
     val activeDrafts: List<ConditionDraft> get() = drafts.filter { it.ready }
@@ -108,7 +108,7 @@ class BlockWizardViewModel(
                     loading = false,
                     apps = apps.sortedBy { it.label.lowercase() },
                     availability = availability,
-                    defaultName = "Block ${blocks.size + 1}",
+                    defaultBlockNumber = blocks.size + 1,
                     editing = existing != null,
                     drafts = defaultDrafts(),
                 )
@@ -207,7 +207,7 @@ class BlockWizardViewModel(
 
     fun setName(name: String) = _uiState.update { it.copy(name = name) }
 
-    fun save() {
+    fun save(fallbackName: String) {
         val state = _uiState.value
         if (state.selectedPackages.isEmpty() || state.conditionCount == 0) return
         viewModelScope.launch {
@@ -215,7 +215,7 @@ class BlockWizardViewModel(
             blockRepository.upsert(
                 Block(
                     id = existing?.id ?: UUID.randomUUID().toString(),
-                    name = state.name.ifBlank { state.defaultName },
+                    name = state.name.ifBlank { fallbackName },
                     blockedPackages = state.selectedPackages,
                     blockedLabels = state.selectedPackages.associateWith {
                         labels[it] ?: it.substringAfterLast('.')

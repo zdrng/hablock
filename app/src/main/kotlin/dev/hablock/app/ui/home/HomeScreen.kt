@@ -36,11 +36,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.PermissionController
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.hablock.app.R
 import dev.hablock.app.domain.model.Block
 import dev.hablock.app.ui.components.BreathingGateBadge
 import dev.hablock.app.ui.components.GroupPosition
@@ -85,8 +87,8 @@ fun HomeScreen(addRequest: Int = 0, onAddHandled: () -> Unit = {}) {
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             LargeFlexibleTopAppBar(
-                title = { Text("Blocks") },
-                subtitle = { Text("${formatWeekday(uiState.today)} · resets at midnight") },
+                title = { Text(stringResource(R.string.home_title)) },
+                subtitle = { Text(stringResource(R.string.home_subtitle, formatWeekday(uiState.today))) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
                     scrolledContainerColor = MaterialTheme.colorScheme.background,
@@ -161,9 +163,9 @@ fun HomeScreen(addRequest: Int = 0, onAddHandled: () -> Unit = {}) {
 
     pendingDelete?.let { block ->
         HablockDialog(
-            title = "Remove ${block.name}?",
-            message = "These apps open freely again. This can't be undone.",
-            confirmLabel = "Remove",
+            title = stringResource(R.string.home_delete_title, block.name),
+            message = stringResource(R.string.home_delete_message),
+            confirmLabel = stringResource(R.string.home_delete_confirm),
             destructive = true,
             onConfirm = {
                 viewModel.delete(block.id)
@@ -191,11 +193,11 @@ private fun HealthConnectBanner(permissions: Set<String>, onGranted: () -> Unit)
     ) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(
-                "Health Connect can't be read — step, workout and meditation goals count as zero.",
+                stringResource(R.string.home_hc_banner),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onErrorContainer,
             )
-            Button(onClick = { healthLauncher.launch(permissions) }) { Text("Fix") }
+            Button(onClick = { healthLauncher.launch(permissions) }) { Text(stringResource(R.string.home_hc_fix)) }
         }
     }
 }
@@ -210,19 +212,19 @@ private fun EmptyState(modifier: Modifier = Modifier, onAdd: () -> Unit) {
         BreathingGateBadge(Modifier.size(180.dp), color = MaterialTheme.colorScheme.primaryContainer)
         Spacer(Modifier.height(28.dp))
         Text(
-            "Nothing's locked up yet.",
+            stringResource(R.string.home_empty_title),
             style = MaterialTheme.typography.headlineLargeEmphasized,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            "Pick an app that keeps stealing your evenings, then decide what earns it back.",
+            stringResource(R.string.home_empty_body),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(28.dp))
-        Button(onClick = onAdd) { Text("Build your first block") }
+        Button(onClick = onAdd) { Text(stringResource(R.string.home_empty_cta)) }
         Spacer(Modifier.height(96.dp))
     }
 }
@@ -253,14 +255,14 @@ private fun BlockActionsSheet(
                 position = GroupPosition.First,
                 onClick = onEdit,
                 containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                title = "Edit",
+                title = stringResource(R.string.home_action_edit),
                 leading = { Icon(Icons.Rounded.Edit, contentDescription = null) },
             )
             GroupedListItem(
                 position = GroupPosition.Middle,
                 onClick = onTogglePause,
                 containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                title = if (block.enabled) "Pause" else "Resume",
+                title = stringResource(if (block.enabled) R.string.home_action_pause else R.string.home_action_resume),
                 leading = { Icon(HablockIcons.Pause, contentDescription = null) },
             )
             GroupedListItem(
@@ -268,7 +270,7 @@ private fun BlockActionsSheet(
                 onClick = onDelete,
                 containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 contentColor = MaterialTheme.colorScheme.error,
-                title = "Delete",
+                title = stringResource(R.string.home_action_delete),
                 leading = {
                     Icon(Icons.Rounded.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error)
                 },
