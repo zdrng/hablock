@@ -11,6 +11,7 @@ import dev.hablock.app.domain.repository.HealthRepository
 import dev.hablock.app.domain.service.DayClock
 import dev.hablock.app.domain.service.GateEngine
 import java.time.Instant
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -59,12 +60,10 @@ class HomeViewModel(
         viewModelScope.launch { gateEngine.deleteBlock(blockId) }
     }
 
-    fun refresh() {
-        viewModelScope.launch {
-            gateEngine.refreshAll()
-            val availability = runCatching { healthRepository.availability() }.getOrDefault(HcAvailability.UNAVAILABLE)
-            val granted = runCatching { healthRepository.hasAllPermissions() }.getOrDefault(false)
-            hcProblem.value = healthConnectProblem(blockRepository.current(), availability, granted)
-        }
+    fun refresh(): Job = viewModelScope.launch {
+        gateEngine.refreshAll()
+        val availability = runCatching { healthRepository.availability() }.getOrDefault(HcAvailability.UNAVAILABLE)
+        val granted = runCatching { healthRepository.hasAllPermissions() }.getOrDefault(false)
+        hcProblem.value = healthConnectProblem(blockRepository.current(), availability, granted)
     }
 }

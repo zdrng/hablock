@@ -8,7 +8,6 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_close">Close</string>
     <string name="action_add_block">New block</string>
-    <string name="action_check_again">Check again</string>
     <string name="status_on">On</string>
     <string name="status_done">Done</string>
 

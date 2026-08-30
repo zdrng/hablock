@@ -41,6 +41,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
@@ -77,6 +78,9 @@ fun BlockWizardSheet(blockId: String?, onDismiss: () -> Unit) {
     }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val titleAppsIdeas = stringArrayResource(R.array.wizard_title_apps_ideas)
+    val titleConditionsIdeas = stringArrayResource(R.array.wizard_title_conditions_ideas)
+    val titleNameIdeas = stringArrayResource(R.array.wizard_title_name_ideas)
 
     LaunchedEffect(blockId) { viewModel.open(blockId) }
     LaunchedEffect(Unit) { viewModel.saved.collect { onDismiss() } }
@@ -97,6 +101,9 @@ fun BlockWizardSheet(blockId: String?, onDismiss: () -> Unit) {
             WizardHeader(
                 step = uiState.step,
                 editing = uiState.editing,
+                titleApps = remember(blockId) { titleAppsIdeas.random() },
+                titleConditions = remember(blockId) { titleConditionsIdeas.random() },
+                titleName = remember(blockId) { titleNameIdeas.random() },
                 onBack = {
                     if (uiState.step == 0) onDismiss() else viewModel.setStep(uiState.step - 1)
                 },
@@ -122,7 +129,14 @@ fun BlockWizardSheet(blockId: String?, onDismiss: () -> Unit) {
 }
 
 @Composable
-private fun WizardHeader(step: Int, editing: Boolean, onBack: () -> Unit) {
+private fun WizardHeader(
+    step: Int,
+    editing: Boolean,
+    titleApps: String,
+    titleConditions: String,
+    titleName: String,
+    onBack: () -> Unit,
+) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             IconButton(onClick = onBack, shapes = IconButtonDefaults.shapes()) {
@@ -130,10 +144,10 @@ private fun WizardHeader(step: Int, editing: Boolean, onBack: () -> Unit) {
             }
             Text(
                 when {
-                    step == 0 -> stringResource(R.string.wizard_title_apps)
-                    step == 1 -> stringResource(R.string.wizard_title_conditions)
+                    step == 0 -> titleApps
+                    step == 1 -> titleConditions
                     editing -> stringResource(R.string.wizard_title_review)
-                    else -> stringResource(R.string.wizard_title_name)
+                    else -> titleName
                 },
                 style = MaterialTheme.typography.titleLargeEmphasized,
             )

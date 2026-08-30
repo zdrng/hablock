@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="wizard_back">Back</string>
-    <string name="wizard_title_apps">What should we lock away?</string>
-    <string name="wizard_title_conditions">What opens it back up?</string>
     <string name="wizard_title_review">Check it over, then arm it.</string>
-    <string name="wizard_title_name">Name it, then arm it.</string>
+    <string-array name="wizard_title_apps_ideas">
+        <item>Scroll call.</item>
+        <item>The usual suspects.</item>
+        <item>Point at the problem.</item>
+        <item>Time\'s most wanted.</item>
+        <item>Who\'s got you hooked?</item>
+        <item>Rehab starts here.</item>
+    </string-array>
+    <string-array name="wizard_title_conditions_ideas">
+        <item>Outrun the feed.</item>
+        <item>Earn it, don\'t doom it.</item>
+        <item>Steps &gt; swipes.</item>
+        <item>Sweating &gt; scrolling.</item>
+        <item>Stay hard.</item>
+    </string-array>
+    <string-array name="wizard_title_name_ideas">
+        <item>Seal the deal.</item>
+        <item>You vs. you.</item>
+        <item>Give it a name.</item>
+    </string-array>
     <string name="wizard_search_apps">Search apps</string>
     <string name="wizard_pick_hint">Pick at least one app</string>
     <plurals name="wizard_picked_count">

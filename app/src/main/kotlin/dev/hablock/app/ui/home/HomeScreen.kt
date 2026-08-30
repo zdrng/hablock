@@ -25,12 +25,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -52,6 +54,7 @@ import dev.hablock.app.ui.components.HablockIcons
 import dev.hablock.app.ui.format.formatWeekday
 import dev.hablock.app.ui.gateViewModel
 import dev.hablock.app.ui.wizard.BlockWizardSheet
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(addRequest: Int = 0, onAddHandled: () -> Unit = {}) {
@@ -69,6 +72,8 @@ fun HomeScreen(addRequest: Int = 0, onAddHandled: () -> Unit = {}) {
     var pendingDelete by remember { mutableStateOf<Block?>(null) }
     var expandedId by rememberSaveable { mutableStateOf<String?>(null) }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val scope = rememberCoroutineScope()
+    var isRefreshing by remember { mutableStateOf(false) }
 
     LifecycleResumeEffect(Unit) {
         viewModel.refresh()
@@ -97,39 +102,51 @@ fun HomeScreen(addRequest: Int = 0, onAddHandled: () -> Unit = {}) {
             )
         },
     ) { insets ->
-        if (uiState.blocks.isEmpty() && !uiState.loading) {
-            EmptyState(Modifier.padding(insets), onAdd = { wizardTarget = WizardTarget.New })
-        } else {
-            LazyColumn(
-                Modifier.fillMaxSize().padding(top = insets.calculateTopPadding()),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 140.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                if (uiState.hcProblem) {
-                    item(key = "hc-problem") {
-                        HealthConnectBanner(
-                            permissions = viewModel.healthPermissions,
-                            onGranted = { viewModel.refresh() },
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = {
+                isRefreshing = true
+                scope.launch {
+                    viewModel.refresh().join()
+                    isRefreshing = false
+                }
+            },
+            modifier = Modifier.fillMaxSize().padding(top = insets.calculateTopPadding()),
+        ) {
+            if (uiState.blocks.isEmpty() && !uiState.loading) {
+                EmptyState(onAdd = { wizardTarget = WizardTarget.New })
+            } else {
+                LazyColumn(
+                    Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 140.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    if (uiState.hcProblem) {
+                        item(key = "hc-problem") {
+                            HealthConnectBanner(
+                                permissions = viewModel.healthPermissions,
+                                onGranted = { viewModel.refresh() },
+                            )
+                        }
+                    }
+                    val single = uiState.blocks.size == 1
+                    items(uiState.blocks, key = { it.block.id }) { item ->
+                        BlockCard(
+                            block = item.block,
+                            state = item.state,
+                            expanded = single || item.block.id == expandedId,
+                            onClick = {
+                                if (single) {
+                                    wizardTarget = WizardTarget.Edit(item.block.id)
+                                } else {
+                                    expandedId = if (expandedId == item.block.id) null else item.block.id
+                                }
+                            },
+                            onToggle = { viewModel.setEnabled(item.block, it) },
+                            onLongPress = { actionsFor = item.block },
+                            modifier = Modifier.fillMaxWidth(),
                         )
                     }
-                }
-                val single = uiState.blocks.size == 1
-                items(uiState.blocks, key = { it.block.id }) { item ->
-                    BlockCard(
-                        block = item.block,
-                        state = item.state,
-                        expanded = single || item.block.id == expandedId,
-                        onClick = {
-                            if (single) {
-                                wizardTarget = WizardTarget.Edit(item.block.id)
-                            } else {
-                                expandedId = if (expandedId == item.block.id) null else item.block.id
-                            }
-                        },
-                        onToggle = { viewModel.setEnabled(item.block, it) },
-                        onLongPress = { actionsFor = item.block },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
                 }
             }
         }

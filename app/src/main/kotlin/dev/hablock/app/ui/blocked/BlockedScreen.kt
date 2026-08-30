@@ -16,16 +16,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material3.Button
-import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +46,7 @@ import dev.hablock.app.ui.components.ShapeBurst
 import dev.hablock.app.ui.components.ShapeShiftingBadge
 import dev.hablock.app.ui.components.groupPositionOf
 import dev.hablock.app.ui.gateViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * The screen that decides whether Hablock feels supportive or smug. Rule: specific and
@@ -71,7 +72,8 @@ fun BlockedScreen(
     val appLabel = packageName?.let { uiState.block?.blockedLabels?.get(it) ?: it.substringAfterLast('.') }
         ?: uiState.block?.name.orEmpty()
     val open = uiState.state is GateState.Open
-    var checking by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    var isRefreshing by remember { mutableStateOf(false) }
 
     LifecycleResumeEffect(Unit) {
         viewModel.refreshHcStatus()
@@ -79,13 +81,6 @@ fun BlockedScreen(
     }
     LaunchedEffect(uiState.state) {
         if (uiState.state is GateState.SessionActive) onClose()
-    }
-    LaunchedEffect(checking) {
-        if (checking) {
-            viewModel.refresh().join()
-            delay(250)
-            checking = false
-        }
     }
 
     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -95,67 +90,79 @@ fun BlockedScreen(
                 .safeDrawingPadding()
                 .padding(horizontal = 24.dp),
         ) {
-            Column(
-                Modifier.weight(1f).verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Spacer(Modifier.height(28.dp))
-                if (packageName != null) {
-                    AppIconCookie(packageName, appLabel, size = 56.dp, contentDescription = appLabel)
-                    Spacer(Modifier.height(14.dp))
-                }
-                Text(
-                    stringResource(
-                        if (open) R.string.blocked_headline_open else R.string.blocked_headline_locked,
-                        appLabel,
-                    ),
-                    style = MaterialTheme.typography.titleLargeEmphasized,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(Modifier.height(28.dp))
-                Box(contentAlignment = Alignment.Center) {
-                    ShapeShiftingBadge(
-                        modifier = Modifier.size(170.dp),
-                        color = if (open) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.primaryContainer
-                        },
-                    ) {
-                        Icon(
-                            Icons.Rounded.Lock,
-                            contentDescription = null,
-                            modifier = Modifier.size(88.dp),
-                            tint = if (open) {
-                                MaterialTheme.colorScheme.onPrimary
-                            } else {
-                                MaterialTheme.colorScheme.onPrimaryContainer
-                            },
-                        )
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = {
+                    isRefreshing = true
+                    scope.launch {
+                        viewModel.refresh().join()
+                        isRefreshing = false
                     }
-                    ShapeBurst(
-                        trigger = if (open) "open" else null,
-                        modifier = Modifier.size(280.dp),
-                    )
-                }
-                Spacer(Modifier.height(28.dp))
-                ConditionGroup(uiState.progress)
-                if (uiState.hcProblem) {
-                    Spacer(Modifier.height(12.dp))
+                },
+                modifier = Modifier.weight(1f),
+            ) {
+                Column(
+                    Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Spacer(Modifier.height(28.dp))
+                    if (packageName != null) {
+                        AppIconCookie(packageName, appLabel, size = 56.dp, contentDescription = appLabel)
+                        Spacer(Modifier.height(14.dp))
+                    }
                     Text(
-                        stringResource(R.string.blocked_hc_warning),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
+                        stringResource(
+                            if (open) R.string.blocked_headline_open else R.string.blocked_headline_locked,
+                            appLabel,
+                        ),
+                        style = MaterialTheme.typography.titleLargeEmphasized,
                         textAlign = TextAlign.Center,
                     )
+                    Spacer(Modifier.height(28.dp))
+                    Box(contentAlignment = Alignment.Center) {
+                        ShapeShiftingBadge(
+                            modifier = Modifier.size(170.dp),
+                            color = if (open) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.primaryContainer
+                            },
+                        ) {
+                            Icon(
+                                Icons.Rounded.Lock,
+                                contentDescription = null,
+                                modifier = Modifier.size(88.dp),
+                                tint = if (open) {
+                                    MaterialTheme.colorScheme.onPrimary
+                                } else {
+                                    MaterialTheme.colorScheme.onPrimaryContainer
+                                },
+                            )
+                        }
+                        ShapeBurst(
+                            trigger = if (open) "open" else null,
+                            modifier = Modifier.size(280.dp),
+                        )
+                    }
+                    Spacer(Modifier.height(28.dp))
+                    ConditionGroup(uiState.progress)
+                    if (uiState.hcProblem) {
+                        Spacer(Modifier.height(12.dp))
+                        Text(
+                            stringResource(R.string.blocked_hc_warning),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                    Spacer(Modifier.height(20.dp))
                 }
-                Spacer(Modifier.height(20.dp))
             }
-            Column(
-                Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                if (open) {
+            if (open) {
+                Column(
+                    Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
                     Button(
                         onClick = { packageName?.let(onOpenApp) },
                         modifier = Modifier.fillMaxWidth(),
@@ -168,18 +175,6 @@ fun BlockedScreen(
                                 viewModel.sessionMinutes,
                             ),
                         )
-                    }
-                } else {
-                    Button(
-                        onClick = { checking = true },
-                        enabled = !checking,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        if (checking) {
-                            ContainedLoadingIndicator(Modifier.size(28.dp))
-                        } else {
-                            Text(stringResource(R.string.action_check_again))
-                        }
                     }
                 }
             }

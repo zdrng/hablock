@@ -19,8 +19,13 @@ import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -43,6 +48,7 @@ import dev.hablock.app.ui.format.formatMinutes
 import dev.hablock.app.ui.gateViewModel
 import dev.hablock.app.ui.system.openUsageAccessSettings
 import dev.hablock.app.ui.theme.numeralStyle
+import kotlinx.coroutines.launch
 
 private const val FULL_DIAL_MINUTES = 8 * 60f
 
@@ -58,6 +64,8 @@ fun ScreenTimeScreen() {
     }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val scope = rememberCoroutineScope()
+    var isRefreshing by remember { mutableStateOf(false) }
 
     LifecycleResumeEffect(Unit) {
         viewModel.refresh()
@@ -87,59 +95,71 @@ fun ScreenTimeScreen() {
             NoAccessState(Modifier.padding(insets))
             return@Scaffold
         }
-        LazyColumn(
-            Modifier.fillMaxSize().padding(top = insets.calculateTopPadding()),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 140.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = {
+                isRefreshing = true
+                scope.launch {
+                    viewModel.refresh().join()
+                    isRefreshing = false
+                }
+            },
+            modifier = Modifier.fillMaxSize().padding(top = insets.calculateTopPadding()),
         ) {
-            item {
-                Box(Modifier.fillMaxWidth().padding(vertical = 24.dp), contentAlignment = Alignment.Center) {
-                    BreathingDial(
-                        progress = { (uiState.totalMinutes / FULL_DIAL_MINUTES).toFloat().coerceIn(0f, 1f) },
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            BigNumerals(
-                                formatMinutes(uiState.totalMinutes),
-                                style = numeralStyle(44.sp),
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                            Text(
-                                stringResource(R.string.screentime_on_screen_today),
-                                style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
+            LazyColumn(
+                Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 140.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                item {
+                    Box(Modifier.fillMaxWidth().padding(vertical = 24.dp), contentAlignment = Alignment.Center) {
+                        BreathingDial(
+                            progress = { (uiState.totalMinutes / FULL_DIAL_MINUTES).toFloat().coerceIn(0f, 1f) },
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                BigNumerals(
+                                    formatMinutes(uiState.totalMinutes),
+                                    style = numeralStyle(44.sp),
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                )
+                                Text(
+                                    stringResource(R.string.screentime_on_screen_today),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
                         }
                     }
                 }
-            }
-            if (uiState.rows.isEmpty()) {
-                item {
-                    Text(
-                        stringResource(if (uiState.loading) R.string.screentime_loading else R.string.screentime_empty),
-                        Modifier.padding(18.dp),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            } else {
-                val peak = uiState.rows.first().minutes
-                itemsIndexed(uiState.rows, key = { _, row -> row.packageName }) { index, row ->
-                    GroupedListItem(
-                        position = groupPositionOf(index, uiState.rows.size),
-                        leading = { AppIconCookie(row.packageName, row.label, size = 32.dp) },
-                        title = row.label,
-                        trailing = {
-                            Text(formatMinutes(row.minutes), style = MaterialTheme.typography.titleMediumEmphasized)
-                        },
-                        content = {
-                            Spacer(Modifier.height(6.dp))
-                            LinearWavyProgressIndicator(
-                                progress = { (row.minutes / peak).toFloat() },
-                                modifier = Modifier.fillMaxWidth(),
-                                amplitude = { (row.minutes / peak).toFloat() },
-                            )
-                        },
-                    )
+                if (uiState.rows.isEmpty()) {
+                    item {
+                        Text(
+                            stringResource(if (uiState.loading) R.string.screentime_loading else R.string.screentime_empty),
+                            Modifier.padding(18.dp),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                } else {
+                    val peak = uiState.rows.first().minutes
+                    itemsIndexed(uiState.rows, key = { _, row -> row.packageName }) { index, row ->
+                        GroupedListItem(
+                            position = groupPositionOf(index, uiState.rows.size),
+                            leading = { AppIconCookie(row.packageName, row.label, size = 32.dp) },
+                            title = row.label,
+                            trailing = {
+                                Text(formatMinutes(row.minutes), style = MaterialTheme.typography.titleMediumEmphasized)
+                            },
+                            content = {
+                                Spacer(Modifier.height(6.dp))
+                                LinearWavyProgressIndicator(
+                                    progress = { (row.minutes / peak).toFloat() },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    amplitude = { (row.minutes / peak).toFloat() },
+                                )
+                            },
+                        )
+                    }
                 }
             }
         }
