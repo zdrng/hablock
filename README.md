@@ -3,6 +3,16 @@
 A playful, fully-offline Android app blocker that opens your distracting apps only after the
 day's habits are done.
 
+<p align="center">
+  <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22dev.hablock.app%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2Fzdrng%2Fhablock%22%2C%22author%22%3A%22zdrng%22%2C%22name%22%3A%22Hablock%22%7D">
+    <img src="docs/badge_obtainium.png" width="161" alt="Get it on Obtainium" />
+  </a>
+  &nbsp;
+  <a href="https://github.com/zdrng/hablock/releases">
+    <img src="https://img.shields.io/github/v/release/zdrng/hablock?display_name=tag&label=Download" alt="Latest release" />
+  </a>
+</p>
+
 Pick the apps that steal your evenings ("Blocks"), attach conditions — minutes in a helper app,
 steps, workout or meditation minutes from Health Connect — and choose how many of them (N of M)
 unlock the day. Opening an unlocked app starts a 30-minute session; when it ends, each met

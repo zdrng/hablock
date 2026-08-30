@@ -11,3 +11,6 @@ hablock-release.keystore
 keystore.properties
 CLAUDE.md
 .claude/
+.opencode/
+opencode.json
+AGENTS.md
