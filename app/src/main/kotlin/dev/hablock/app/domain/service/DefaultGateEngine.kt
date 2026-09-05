@@ -187,11 +187,21 @@ class DefaultGateEngine(
         }
         _states.value = next
         enforcement.applyState(blocks, next)
+        restoreSessionNotifications(blocks, next)
     }
 
     /** On a fresh process every previous state is null; only a block with no unlock today gets its auto-session. */
     private fun justUnlocked(previous: GateState?, dayState: BlockDayState): Boolean =
         if (previous != null) previous is GateState.Locked else dayState.unlockCount == 0
+
+    private fun restoreSessionNotifications(blocks: List<Block>, states: Map<String, GateState>) {
+        val blockById = blocks.associateBy { it.id }
+        for ((blockId, state) in states) {
+            if (state is GateState.SessionActive) {
+                blockById[blockId]?.let { notifier.restoreSessionNotification(blockId, it.name, state.endsAt) }
+            }
+        }
+    }
 
     private suspend fun startSession(evaluated: Evaluated, now: Instant): BlockDayState? {
         if (evaluated.dayState.activeSession != null) return null

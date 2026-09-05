@@ -68,7 +68,7 @@ class AppContainer(context: Context) {
 
     val alarmScheduler: AlarmScheduler by lazy { AndroidAlarmScheduler(appContext) }
     val notifier: Notifier by lazy {
-        GateNotifier(appContext) {
+        GateNotifier(appContext, applicationScope) {
             PendingIntent.getActivity(
                 appContext,
                 0,

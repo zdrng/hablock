@@ -131,6 +131,7 @@ class FakeAlarmScheduler : AlarmScheduler {
 class FakeNotifier : Notifier {
     val sessionsStarted = mutableListOf<Triple<String, String, Instant>>()
     val sessionsEnded = mutableListOf<Triple<String, String, Int>>()
+    val restoredNotifications = mutableListOf<Triple<String, String, Instant>>()
     var relinquishReadyCount = 0
         private set
     val cancelledNotifications = mutableListOf<String>()
@@ -149,6 +150,10 @@ class FakeNotifier : Notifier {
 
     override fun relinquishReady() {
         relinquishReadyCount++
+    }
+
+    override fun restoreSessionNotification(blockId: String, blockName: String, endsAt: Instant) {
+        restoredNotifications += Triple(blockId, blockName, endsAt)
     }
 }
 

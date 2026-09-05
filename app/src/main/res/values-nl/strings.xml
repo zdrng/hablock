@@ -63,6 +63,7 @@
     <string name="notif_channel_name">Hablock</string>
     <string name="notif_session_ended_title">%1$s staat weer op slot</string>
     <string name="notif_session_active_title">%1$s is ontgrendeld</string>
+    <string name="notif_session_remaining">Nog %1$d:%2$02d</string>
     <string name="notif_session_active_text">De tijd tikt — tik om vroeger op slot te zetten.</string>
     <string name="notif_session_relock">Nu vergrendelen</string>
     <plurals name="notif_session_ended_text">

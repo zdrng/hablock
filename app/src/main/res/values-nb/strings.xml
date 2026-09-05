@@ -63,6 +63,7 @@
     <string name="notif_channel_name">Hablock</string>
     <string name="notif_session_ended_title">%1$s er låst igjen</string>
     <string name="notif_session_active_title">%1$s er låst opp</string>
+    <string name="notif_session_remaining"> %1$d:%2$02d igjen</string>
     <string name="notif_session_active_text">Tiden tikker — trykk for å låse tidlig.</string>
     <string name="notif_session_relock">Lås nå</string>
     <plurals name="notif_session_ended_text">

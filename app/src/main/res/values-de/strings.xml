@@ -63,6 +63,7 @@
     <string name="notif_channel_name">Hablock</string>
     <string name="notif_session_ended_title">%1$s ist wieder gesperrt</string>
     <string name="notif_session_active_title">%1$s ist entsperrt</string>
+    <string name="notif_session_remaining">Noch %1$d:%2$02d</string>
     <string name="notif_session_active_text">Die Zeit läuft — tippe zum vorzeitigen Sperren.</string>
     <string name="notif_session_relock">Jetzt sperren</string>
     <plurals name="notif_session_ended_text">

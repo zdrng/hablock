@@ -37,6 +37,7 @@ interface Notifier {
     fun sessionEnded(blockId: String, blockName: String, sessionMinutes: Int)
     fun cancelSessionNotification(blockId: String)
     fun relinquishReady()
+    fun restoreSessionNotification(blockId: String, blockName: String, endsAt: Instant)
 }
 
 interface RelinquishTimer {

@@ -63,6 +63,7 @@
     <string name="notif_channel_name">Hablock</string>
     <string name="notif_session_ended_title">%1$s is locked again</string>
     <string name="notif_session_active_title">%1$s is unlocked</string>
+    <string name="notif_session_remaining">%1$d:%2$02d remaining</string>
     <string name="notif_session_active_text">Time\'s ticking — tap to lock early.</string>
     <string name="notif_session_relock">Lock now</string>
     <plurals name="notif_session_ended_text">
