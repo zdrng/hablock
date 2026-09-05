@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_title">Blokeringer</string>
+    <string name="home_subtitle">%1$s · nulstilles ved midnat</string>
+    <string name="home_hc_banner">Health Connect kan ikke aflæses — skridt-, trænings- og meditationsmål tæller som nul.</string>
+    <string name="home_hc_fix">Ret</string>
+    <string name="home_empty_title">Intet er låst endnu.</string>
+    <string name="home_empty_body">Vælg en app, der altid stjæler dine aftener, og beslut, hvad der tjener den tilbage.</string>
+    <string name="home_empty_cta">Byg din første blokering</string>
+    <string name="home_action_edit">Rediger</string>
+    <string name="home_action_pause">Sæt på pause</string>
+    <string name="home_action_resume">Genoptag</string>
+    <string name="home_action_delete">Slet</string>
+    <string name="home_delete_title">Fjern %1$s?</string>
+    <string name="home_delete_message">Disse apps åbner frit igen. Det kan ikke fortrydes.</string>
+    <string name="home_delete_confirm">Fjern</string>
+    <string name="home_card_status_paused">På pause</string>
+    <string name="home_card_status_open_until">Åben indtil %1$s</string>
+    <string name="home_card_status_open">Åben — bare kom i gang</string>
+    <string name="home_card_status_locked">Låst · %1$d af %2$d indtil videre</string>
+    <string name="home_card_of">af %1$d</string>
+    <string name="home_card_session_left">tilbage i denne session</string>
+    <string name="home_card_relock">Lås nu</string>
+    <string name="home_card_click_label">Vis detaljer</string>
+    <string name="home_card_long_click_label">Blokering-handlinger</string>
+    <string name="home_card_lock_changes">Lås ændringer</string>
+    <string name="home_card_unlock_changes">Lås ændringer op</string>
+    <string name="home_card_locked_until">Låst indtil %1$s</string>
+</resources>

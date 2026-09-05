@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wizard_back">Retour</string>
+    <string name="wizard_title_review">Vérifie tout, puis active-le.</string>
+    <string name="wizard_title_apps">Choisis tes apps</string>
+    <string name="wizard_title_conditions">Règle les conditions</string>
+    <string name="wizard_title_name">Nomme ton bloc</string>
+    <string name="wizard_search_apps">Rechercher des apps</string>
+    <string name="wizard_pick_hint">Choisis au moins une app</string>
+    <plurals name="wizard_picked_count">
+        <item quantity="one">%1$d choisie</item>
+        <item quantity="other">%1$d choisies</item>
+    </plurals>
+    <string name="wizard_next">Suivant</string>
+    <string name="wizard_conditions_hint">Active au moins une condition</string>
+    <string name="wizard_helper_prompt">Quelle app mérite les autres ?</string>
+    <string name="wizard_helper_label">App méritoire</string>
+    <string name="wizard_threshold_prefix">"Ouvre quand "</string>
+    <string name="wizard_n_of_m">%1$d sur %2$d</string>
+    <string name="wizard_threshold_suffix">" tombent."</string>
+    <string name="wizard_ratchet_prefix">"Chaque réouverture augmente chaque objectif de "</string>
+    <string name="wizard_ratchet_suffix">.</string>
+    <string name="wizard_name_label">Nom</string>
+    <string name="wizard_suggest_name">Suggérer un nom</string>
+    <string name="wizard_default_name">Bloc %1$d</string>
+    <string name="wizard_summary_locked_apps">Apps verrouillées</string>
+    <string name="wizard_summary_conditions">Conditions</string>
+    <string name="wizard_summary_opens_on">S\'ouvre sur</string>
+    <string name="wizard_summary_ratchet">Progression</string>
+    <string name="wizard_summary_unlock_duration">Durée de déverrouillage</string>
+    <string name="wizard_summary_changes_lock">Verrouillage des modifications</string>
+    <string name="wizard_summary_changes_locked">Verrouillé</string>
+    <string name="wizard_unlock_prefix">"Les apps se déverrouillent pour "</string>
+    <string name="wizard_unlock_suffix">"."</string>
+    <plurals name="wizard_unlock_minutes">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1$d minutes</item>
+    </plurals>
+    <string name="wizard_save_changes">Enregistrer les modifications</string>
+    <string name="wizard_lock_it_in">Verrouiller</string>
+    <string-array name="wizard_name_ideas">
+        <item>Scroll à mort</item>
+        <item>Trou de lapin</item>
+        <item>Le puits à temps</item>
+        <item>Pot à bonbons</item>
+        <item>Oiseau de nuit</item>
+        <item>Fil sans fond</item>
+        <item>Le vortex</item>
+        <item>Étagère à sucre</item>
+        <item>Piège à sieste</item>
+    </string-array>
+    <string name="wizard_condition_app_usage">Temps dans une bonne app</string>
+    <string name="wizard_hint_steps">Bouge d\'abord, scrolle ensuite</string>
+    <string name="wizard_hint_workout">Minutes d\'exercice, via Health Connect</string>
+    <string name="wizard_hint_meditation">Minutes de pleine conscience, via Health Connect</string>
+    <string name="wizard_hint_app_usage">Minutes dans une app qui le mérite</string>
+    <string name="wizard_unit_steps">pas</string>
+    <string name="wizard_unit_minutes">minutes</string>
+</resources>

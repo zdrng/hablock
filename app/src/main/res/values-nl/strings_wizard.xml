@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wizard_back">Terug</string>
+    <string name="wizard_title_review">Controleer alles, en zet het vast.</string>
+    <string name="wizard_title_apps">Kies je apps</string>
+    <string name="wizard_title_conditions">Stel de voorwaarden in</string>
+    <string name="wizard_title_name">Benoem je blok</string>
+    <string name="wizard_search_apps">Apps zoeken</string>
+    <string name="wizard_pick_hint">Kies minstens één app</string>
+    <plurals name="wizard_picked_count">
+        <item quantity="one">%1$d gekozen</item>
+        <item quantity="other">%1$d gekozen</item>
+    </plurals>
+    <string name="wizard_next">Volgende</string>
+    <string name="wizard_conditions_hint">Zet minstens één voorwaarde aan</string>
+    <string name="wizard_helper_prompt">Welke app verdient de rest?</string>
+    <string name="wizard_helper_label">Verdienende app</string>
+    <string name="wizard_threshold_prefix">"Open wanneer "</string>
+    <string name="wizard_n_of_m">%1$d van %2$d</string>
+    <string name="wizard_threshold_suffix">" behaald zijn."</string>
+    <string name="wizard_ratchet_prefix">"Elke heropening verhoogt elk doel met "</string>
+    <string name="wizard_ratchet_suffix">.</string>
+    <string name="wizard_name_label">Naam</string>
+    <string name="wizard_suggest_name">Stel een naam voor</string>
+    <string name="wizard_default_name">Blok %1$d</string>
+    <string name="wizard_summary_locked_apps">Geblokkeerde apps</string>
+    <string name="wizard_summary_conditions">Voorwaarden</string>
+    <string name="wizard_summary_opens_on">Opent bij</string>
+    <string name="wizard_summary_ratchet">Verhoging</string>
+    <string name="wizard_summary_unlock_duration">Ontgrendelduur</string>
+    <string name="wizard_summary_changes_lock">Wijzigingsvergrendeling</string>
+    <string name="wizard_summary_changes_locked">Vergrendeld</string>
+    <string name="wizard_unlock_prefix">"Apps ontgrendelen voor "</string>
+    <string name="wizard_unlock_suffix">".</string>
+    <plurals name="wizard_unlock_minutes">
+        <item quantity="one">%1$d minuut</item>
+        <item quantity="other">%1$d minuten</item>
+    </plurals>
+    <string name="wizard_save_changes">Wijzigingen opslaan</string>
+    <string name="wizard_lock_it_in">Zet vast</string>
+    <string-array name="wizard_name_ideas">
+        <item>Doomscroll</item>
+        <item>Konijnenhol</item>
+        <item>Tijdvreter</item>
+        <item>Snoeppot</item>
+        <item>Nachtuil</item>
+        <item>Bodemloze feed</item>
+        <item>De wervelstorm</item>
+        <item>Snoeppak</item>
+        <item>Snoozestrik</item>
+    </string-array>
+    <string name="wizard_condition_app_usage">Tijd in een goede app</string>
+    <string name="wizard_hint_steps">Eerst bewegen, dan scrollen</string>
+    <string name="wizard_hint_workout">Minuten beweging, via Health Connect</string>
+    <string name="wizard_hint_meditation">Minuten mindfulness, via Health Connect</string>
+    <string name="wizard_hint_app_usage">Minuten in een app die zich verdient</string>
+    <string name="wizard_unit_steps">stappen</string>
+    <string name="wizard_unit_minutes">minuten</string>
+</resources>

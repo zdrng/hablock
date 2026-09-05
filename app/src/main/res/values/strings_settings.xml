@@ -10,6 +10,10 @@
     <string name="settings_exact_alarms_warning">Without exact alarms, re-locks and day resets fire late.</string>
     <string name="settings_section_uninstall_lock">Uninstall lock</string>
     <string name="settings_section_emergency">Emergency unlocks</string>
+    <string name="settings_section_language">Language</string>
+    <string name="settings_language_system">System default</string>
+    <string name="settings_language_dialog_title">Choose language</string>
+    <string name="settings_language_current">%1$s</string>
     <string name="settings_emergency_body">Use these to unlock a block\'s changes in an emergency. They refill after 30 days.</string>
     <string name="settings_device_owner">Device owner</string>
     <string name="settings_device_owner_optional">Optional — makes the lock uninstall-proof</string>

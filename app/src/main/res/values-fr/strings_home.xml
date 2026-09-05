@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_title">Blocs</string>
+    <string name="home_subtitle">%1$s · réinitialise à minuit</string>
+    <string name="home_hc_banner">Health Connect ne peut pas être lu — les objectifs de pas, d\'exercice et de méditation comptent comme zéro.</string>
+    <string name="home_hc_fix">Corriger</string>
+    <string name="home_empty_title">Rien n\'est encore verrouillé.</string>
+    <string name="home_empty_body">Choisis une app qui te vole tes soirées, puis décide ce qui te permet de la mériter.</string>
+    <string name="home_empty_cta">Crée ton premier bloc</string>
+    <string name="home_action_edit">Modifier</string>
+    <string name="home_action_pause">Mettre en pause</string>
+    <string name="home_action_resume">Reprendre</string>
+    <string name="home_action_delete">Supprimer</string>
+    <string name="home_delete_title">Retirer %1$s ?</string>
+    <string name="home_delete_message">Ces apps s\'ouvriront librement à nouveau. Ça ne peut pas être annulé.</string>
+    <string name="home_delete_confirm">Retirer</string>
+    <string name="home_card_status_paused">En pause</string>
+    <string name="home_card_status_open_until">Ouvert jusqu\'à %1$s</string>
+    <string name="home_card_status_open">Ouvert — vas-y</string>
+    <string name="home_card_status_locked">Verrouillé · %1$d sur %2$d jusqu\'ici</string>
+    <string name="home_card_of">sur %1$d</string>
+    <string name="home_card_session_left">restantes dans cette session</string>
+    <string name="home_card_relock">Verrouiller maintenant</string>
+    <string name="home_card_click_label">Afficher les détails</string>
+    <string name="home_card_long_click_label">Actions du bloc</string>
+    <string name="home_card_lock_changes">Verrouiller les modifications</string>
+    <string name="home_card_unlock_changes">Déverrouiller les modifications</string>
+    <string name="home_card_locked_until">Verrouillé jusqu\'au %1$s</string>
+</resources>

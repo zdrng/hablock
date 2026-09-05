@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screentime_title">Tijd</string>
+    <string name="screentime_since">sinds %1$s</string>
+    <string name="screentime_on_screen_today">vandaag op scherm</string>
+    <string name="screentime_loading">App-tijd van vandaag uitlezen…</string>
+    <string name="screentime_empty">Geen app-tijd geregistreerd sinds de dag reset.</string>
+    <string name="screentime_no_access_title">Nog geen toegang tot gebruik.</string>
+    <string name="screentime_no_access_body">Hablock leest app-tijd uit de gebruikstatistieken van Android. Geef toegang om de dagtelling te zien.</string>
+    <string name="screentime_grant_usage">Toegang tot gebruik toestaan</string>
+</resources>

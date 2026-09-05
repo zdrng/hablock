@@ -57,6 +57,8 @@
     <string name="emergency_unlock_none">No emergency unlocks available</string>
     <string name="emergency_unlock_hold">Hold to unlock</string>
     <string name="emergency_unlocked">Changes unlocked</string>
+    <string name="emergency_pill_available">Emergency</string>
+    <string name="emergency_pill_ready">Ready</string>
 
     <string name="notif_channel_name">Hablock</string>
     <string name="notif_session_ended_title">%1$s is locked again</string>

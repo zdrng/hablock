@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hablock</string>
+    <string name="accessibility_service_label">Hablock app-blokering</string>
+    <string name="accessibility_service_description">Hablock bruger denne tjeneste udelukkende til at lægge mærke til, hvilken app der kommer i forgrunden, så den kan låse blokerede apps indtil dine daglige betingelser er opfyldt. Den læser aldrig skærmindhold.</string>
+
+    <string name="action_grant">Giv adgang</string>
+    <string name="action_cancel">Annullér</string>
+    <string name="action_close">Luk</string>
+    <string name="action_add_block">Ny blokering</string>
+    <string name="status_on">Til</string>
+    <string name="status_done">Færdig</string>
+
+    <string name="nav_blocks">Blokeringer</string>
+    <string name="nav_time">Tid</string>
+    <string name="nav_settings">Indstillinger</string>
+
+    <string name="blocked_headline_locked">%1$s er låst.</string>
+    <string name="blocked_headline_open">%1$s er din at åbne.</string>
+    <plurals name="blocked_open_button">
+        <item quantity="one">Åbn %1$s — %2$d minut</item>
+        <item quantity="other">Åbn %1$s — %2$d minutter</item>
+    </plurals>
+    <string name="blocked_hc_warning">Health Connect kan ikke aflæses lige nu, så de mål tæller som nul. Ret det fra Blokeringer-skærmen.</string>
+    <string name="blocked_unlock_button">Lås op i %1$d min</string>
+    <string name="blocked_unlock_title">Lås %1$s op?</string>
+    <string name="blocked_unlock_message">Du får %1$d minutter. Derefter går målene lidt op, og du skal tjene det igen.</string>
+    <string name="blocked_unlock_confirm">Lås op</string>
+    <string name="blocked_locked_hint">Opfyld %1$d af %2$d mål for at låse op</string>
+
+    <string name="changes_lock_title">Lås ændringer til %1$s</string>
+    <string name="changes_lock_message">Mens den er låst, kan du ikke redigere, sætte på pause eller slette denne blokering.</string>
+    <string name="changes_lock_confirm">Lås</string>
+    <string name="changes_lock_preset_1d">1 dag</string>
+    <string name="changes_lock_preset_3d">3 dage</string>
+    <string name="changes_lock_preset_1w">1 uge</string>
+    <string name="changes_lock_preset_1m">1 måned</string>
+    <string name="changes_lock_preset_1y">1 år</string>
+    <string name="changes_lock_preset_password">Adgangskode</string>
+    <string name="changes_lock_custom_label">Brugerdefineret (dage)</string>
+    <string name="changes_lock_preset_custom">Brugerdefineret</string>
+    <string name="changes_lock_step_custom">Brugerdefinerede dage</string>
+    <string name="changes_lock_custom_message">Vælg hvor mange dage ændringer skal låses.</string>
+    <string name="changes_lock_custom_days_unit">dage</string>
+    <string name="changes_lock_until">Låst indtil %1$s</string>
+    <string name="changes_lock_step_method">Låsemetode</string>
+    <string name="changes_lock_step_password">Indstil adgangskode</string>
+    <string name="changes_lock_set_password_title">Indstil en adgangskode</string>
+    <string name="changes_lock_set_password_message">Indtast en 6-cifret kode. Du skal bruge den for at låse ændringer op.</string>
+    <string name="changes_lock_enter_password_title">Indtast adgangskode</string>
+    <string name="changes_lock_enter_password_message">Indtast din 6-cifrede kode for at låse ændringer op.</string>
+    <string name="changes_lock_wrong_password">Forkert kode, prøv igen</string>
+    <string name="changes_lock_password_locked">Låst med adgangskode</string>
+    <string name="emergency_unlock_title">Ændringer låst</string>
+    <string name="emergency_unlock_message">%1$s er låst indtil %2$s. Hold en pille i 10 sekunder for at låse op tidligt.</string>
+    <string name="emergency_unlock_available">%1$d af %2$d tilgængelige</string>
+    <string name="emergency_unlock_none">Ingen nødlåsninger tilgængelige</string>
+    <string name="emergency_unlock_hold">Hold for at låse op</string>
+    <string name="emergency_unlocked">Ændringer låst op</string>
+    <string name="emergency_pill_available">Nød</string>
+    <string name="emergency_pill_ready">Klar</string>
+
+    <string name="notif_channel_name">Hablock</string>
+    <string name="notif_session_ended_title">%1$s er låst igen</string>
+    <string name="notif_session_active_title">%1$s er låst op</string>
+    <string name="notif_session_active_text">Tiden flyver — tryk for at låse tidligt.</string>
+    <string name="notif_session_relock">Lås nu</string>
+    <plurals name="notif_session_ended_text">
+        <item quantity="one">Det var dit minut. Målene gik lidt op — næste runde er op til dig.</item>
+        <item quantity="other">Det var dine %1$d minutter. Målene gik lidt op — næste runde er op til dig.</item>
+    </plurals>
+    <string name="notif_relinquish_title">3-dages timeren er færdig</string>
+    <string name="notif_relinquish_text">Du kan nu give kontrollen tilbage og afinstallere Hablock.</string>
+
+    <string name="condition_steps">Skridt</string>
+    <string name="condition_workout">Træning</string>
+    <string name="condition_meditation">Meditation</string>
+    <string name="format_minutes_value">%1$d min</string>
+    <string name="format_progress">%1$s / %2$s</string>
+
+    <string name="stepper_increase">Forøg</string>
+    <string name="stepper_decrease">Formindsk</string>
+
+    <string name="rationale_title">Hvorfor Hablock læser sundhedsdata</string>
+    <string name="rationale_reads">Hablock læser dine skridt, træningspas og mindfulness-minutter for at vurdere, om dagens betingelser er opfyldt.</string>
+    <string name="rationale_private">Det læser på enheden, kun for dagens vindue, og har ingen netværkstilladelse. Intet forlader telefonen.</string>
+</resources>

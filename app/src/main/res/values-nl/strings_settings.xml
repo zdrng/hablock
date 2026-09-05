@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Instellingen</string>
+    <string name="settings_section_enforcement">Handhaving</string>
+    <string name="settings_accessibility_service">Toegankelijkheidsdienst</string>
+    <string name="settings_usage_access">Toegang tot gebruik</string>
+    <string name="settings_exact_alarms">Exacte alarmen</string>
+    <string name="settings_health_connect">Health Connect</string>
+    <string name="settings_health_unavailable">Niet beschikbaar op dit apparaat</string>
+    <string name="settings_exact_alarms_warning">Zonder exacte alarmen worden hervergrendelingen en dagreset te laat uitgevoerd.</string>
+    <string name="settings_section_uninstall_lock">Verwijderingsvergrendeling</string>
+    <string name="settings_section_emergency">Noodontgrendelingen</string>
+    <string name="settings_section_language">Taal</string>
+    <string name="settings_language_system">Systeemstandaard</string>
+    <string name="settings_language_dialog_title">Taal kiezen</string>
+    <string name="settings_language_current">%1$s</string>
+    <string name="settings_emergency_body">Gebruik deze om in noodgevallen de wijzigingen van een blok te ontgrendelen. Ze vullen zich na 30 dagen bij.</string>
+    <string name="settings_device_owner">Apparaateigenaar</string>
+    <string name="settings_device_owner_optional">Optioneel — maakt het slot verwijderingsbestendig</string>
+    <string name="settings_hide">Verbergen</string>
+    <string name="settings_set_up">Instellen</string>
+    <string name="settings_owner_active">Hablock is eigenaar van dit apparaat. Het kan niet worden verwijderd of uitgeschakeld zolang het slot staat.</string>
+    <string name="settings_relinquish_failed">Kon de controle niet teruggeven. Probeer opnieuw.</string>
+    <string name="settings_owner_missing">Zonder apparaateigenaar blokkeert Hablock apps, maar kan nog steeds verwijderd worden. Stel het hierboven in voor een slot dat houdt.</string>
+    <string name="settings_section_about">Over</string>
+    <string name="settings_version">Versie</string>
+    <string name="settings_version_value">Hablock %1$s</string>
+    <string name="settings_offline_title">Volledig offline</string>
+    <string name="settings_offline_body">Geen netwerktoestemming — niets wat Hablock leest kan deze telefoon verlaten.</string>
+    <string name="settings_relinquish_start_title">De timer van 3 dagen starten?</string>
+    <string name="settings_relinquish_start_message">Hablock blijft drie dagen lang handhaven. Daarna kun je de controle teruggeven en verwijderen. Totdien kun je altijd annuleren.</string>
+    <string name="settings_relinquish_start_confirm">Timer starten</string>
+    <string name="settings_relinquish_confirm_title">Het slot opgeven?</string>
+    <string name="settings_relinquish_confirm_message">Hablock stopt met eigenaar zijn van dit apparaat en kan verwijderd worden. Het slot terugkrijgen vereist een volledige fabrieksreset.</string>
+    <string name="settings_relinquish_confirm_label">Geef op</string>
+    <string name="settings_granted">Toegekend</string>
+    <string name="settings_relinquish_start_button">Start de timer van 3 dagen</string>
+    <string name="settings_relinquish_countdown_label">tot je het los kunt laten</string>
+    <string name="settings_relinquish_cancel">Annuleer — behoud het slot</string>
+    <string name="settings_relinquish_now">Nu loslaten</string>
+    <string name="settings_guide_title">Apparaateigenaar instellen</string>
+    <string-array name="settings_guide_steps">
+        <item>Verwijder elk Google- en werkaccount van het apparaat (Instellingen → Accounts).</item>
+        <item>Zet ontwikkelaarsopties aan, dan USB-foutopsporing.</item>
+        <item>Verbind de telefoon met een computer waarop adb is geïnstalleerd.</item>
+        <item>Voer het onderstaande commando uit, exact zoals geschreven.</item>
+        <item>Heropen Hablock. Apparaateigenaar staat op Aan.</item>
+    </string-array>
+    <string name="settings_guide_adb_command" translatable="false">adb shell dpm set-device-owner dev.hablock.app/.system.HablockDeviceAdminReceiver</string>
+    <string name="settings_guide_copy_command">Commando kopiëren</string>
+    <string name="settings_guide_warning">Dit werkt alleen op een apparaat dat net is gereset zonder accounts. Zodra Hablock eigenaar is, is de enige weg terug de timer van 3 dagen hieronder.</string>
+</resources>

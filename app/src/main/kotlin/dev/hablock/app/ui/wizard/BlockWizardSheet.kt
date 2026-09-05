@@ -80,9 +80,6 @@ fun BlockWizardSheet(blockId: String?, onDismiss: () -> Unit) {
     }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val titleAppsIdeas = stringArrayResource(R.array.wizard_title_apps_ideas)
-    val titleConditionsIdeas = stringArrayResource(R.array.wizard_title_conditions_ideas)
-    val titleNameIdeas = stringArrayResource(R.array.wizard_title_name_ideas)
 
     LaunchedEffect(blockId) { viewModel.open(blockId) }
     LaunchedEffect(Unit) { viewModel.saved.collect { onDismiss() } }
@@ -103,9 +100,6 @@ fun BlockWizardSheet(blockId: String?, onDismiss: () -> Unit) {
             WizardHeader(
                 step = uiState.step,
                 editing = uiState.editing,
-                titleApps = remember(blockId) { titleAppsIdeas.random() },
-                titleConditions = remember(blockId) { titleConditionsIdeas.random() },
-                titleName = remember(blockId) { titleNameIdeas.random() },
                 onBack = {
                     if (uiState.step == 0) onDismiss() else viewModel.setStep(uiState.step - 1)
                 },
@@ -134,9 +128,6 @@ fun BlockWizardSheet(blockId: String?, onDismiss: () -> Unit) {
 private fun WizardHeader(
     step: Int,
     editing: Boolean,
-    titleApps: String,
-    titleConditions: String,
-    titleName: String,
     onBack: () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -146,10 +137,10 @@ private fun WizardHeader(
             }
             Text(
                 when {
-                    step == 0 -> titleApps
-                    step == 1 -> titleConditions
+                    step == 0 -> stringResource(R.string.wizard_title_apps)
+                    step == 1 -> stringResource(R.string.wizard_title_conditions)
                     editing -> stringResource(R.string.wizard_title_review)
-                    else -> titleName
+                    else -> stringResource(R.string.wizard_title_name)
                 },
                 style = MaterialTheme.typography.titleLargeEmphasized,
             )

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screentime_title">Tid</string>
+    <string name="screentime_since">siden %1$s</string>
+    <string name="screentime_on_screen_today">på skærm i dag</string>
+    <string name="screentime_loading">Læser dagens app-tid…</string>
+    <string name="screentime_empty">Ingen app-tid registreret siden dagen nulstillede.</string>
+    <string name="screentime_no_access_title">Ingen forbrugsadgang endnu.</string>
+    <string name="screentime_no_access_body">Hablock læser app-tid fra Androids forbrugsstatistik. Giv adgang for at se dagens tal.</string>
+    <string name="screentime_grant_usage">Giv forbrugsadgang</string>
+</resources>

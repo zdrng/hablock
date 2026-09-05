@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hablock</string>
+    <string name="accessibility_service_label">Hablock app-blokkering</string>
+    <string name="accessibility_service_description">Hablock gebruikt deze dienst alleen om te zien welke app naar de voorgrond komt, zodat geblokkeerde apps op slot blijven tot je dagelijkse doelen behaald zijn. Het leest nooit scherminhoud.</string>
+
+    <string name="action_grant">Toestaan</string>
+    <string name="action_cancel">Annuleer</string>
+    <string name="action_close">Sluiten</string>
+    <string name="action_add_block">Nieuw blok</string>
+    <string name="status_on">Aan</string>
+    <string name="status_done">Klaar</string>
+
+    <string name="nav_blocks">Blokken</string>
+    <string name="nav_time">Tijd</string>
+    <string name="nav_settings">Instellingen</string>
+
+    <string name="blocked_headline_locked">%1$s staat op slot.</string>
+    <string name="blocked_headline_open">%1$s is van jou om te openen.</string>
+    <plurals name="blocked_open_button">
+        <item quantity="one">Open %1$s — %2$d minuut</item>
+        <item quantity="other">Open %1$s — %2$d minuten</item>
+    </plurals>
+    <string name="blocked_hc_warning">Health Connect kan nu niet worden uitgelezen, dus die doelen tellen mee als nul. Los het op via het Blokken-scherm.</string>
+    <string name="blocked_unlock_button">Ontgrendel voor %1$d min</string>
+    <string name="blocked_unlock_title">%1$s ontgrendelen?</string>
+    <string name="blocked_unlock_message">Je krijgt %1$d minuten. Daarna gaan de doelen omhoog en moet je het weer verdienen.</string>
+    <string name="blocked_unlock_confirm">Ontgrendel</string>
+    <string name="blocked_locked_hint">Behaal %1$d van %2$d doelen om te ontgrendelen</string>
+
+    <string name="changes_lock_title">Wijzigingen vergrendelen voor %1$s</string>
+    <string name="changes_lock_message">Tijdens het slot kun je dit blok niet bewerken, pauzeren of verwijderen.</string>
+    <string name="changes_lock_confirm">Vergrendel</string>
+    <string name="changes_lock_preset_1d">1 dag</string>
+    <string name="changes_lock_preset_3d">3 dagen</string>
+    <string name="changes_lock_preset_1w">1 week</string>
+    <string name="changes_lock_preset_1m">1 maand</string>
+    <string name="changes_lock_preset_1y">1 jaar</string>
+    <string name="changes_lock_preset_password">Wachtwoord</string>
+    <string name="changes_lock_custom_label">Aangepast (dagen)</string>
+    <string name="changes_lock_preset_custom">Aangepast</string>
+    <string name="changes_lock_step_custom">Aangepaste dagen</string>
+    <string name="changes_lock_custom_message">Kies hoeveel dagen wijzigingen op slot blijven.</string>
+    <string name="changes_lock_custom_days_unit">dagen</string>
+    <string name="changes_lock_until">Vergrendeld tot %1$s</string>
+    <string name="changes_lock_step_method">Vergrendelmethode</string>
+    <string name="changes_lock_step_password">Wachtwoord instellen</string>
+    <string name="changes_lock_set_password_title">Stel een wachtwoord in</string>
+    <string name="changes_lock_set_password_message">Voer een 6-cijferige code in. Je hebt hem nodig om wijzigingen te ontgrendelen.</string>
+    <string name="changes_lock_enter_password_title">Wachtwoord invoeren</string>
+    <string name="changes_lock_enter_password_message">Voer je 6-cijferige code in om wijzigingen te ontgrendelen.</string>
+    <string name="changes_lock_wrong_password">Verkeerde code, probeer opnieuw</string>
+    <string name="changes_lock_password_locked">Vergrendeld met wachtwoord</string>
+    <string name="emergency_unlock_title">Wijzigingen vergrendeld</string>
+    <string name="emergency_unlock_message">%1$s is vergrendeld tot %2$s. Houd een pil 10 seconden ingedrukt om vroegtijdig te ontgrendelen.</string>
+    <string name="emergency_unlock_available">%1$d van %2$d beschikbaar</string>
+    <string name="emergency_unlock_none">Geen noodontgrendelingen beschikbaar</string>
+    <string name="emergency_unlock_hold">Ingedrukt houden om te ontgrendelen</string>
+    <string name="emergency_unlocked">Wijzigingen ontgrendeld</string>
+    <string name="emergency_pill_available">Nood</string>
+    <string name="emergency_pill_ready">Klaar</string>
+
+    <string name="notif_channel_name">Hablock</string>
+    <string name="notif_session_ended_title">%1$s staat weer op slot</string>
+    <string name="notif_session_active_title">%1$s is ontgrendeld</string>
+    <string name="notif_session_active_text">De tijd tikt — tik om vroeger op slot te zetten.</string>
+    <string name="notif_session_relock">Nu vergrendelen</string>
+    <plurals name="notif_session_ended_text">
+        <item quantity="one">Dat was je minuut. De doelen gingen een beetje omhoog — de volgende ronde is aan jou.</item>
+        <item quantity="other">Dat waren je %1$d minuten. De doelen gingen een beetje omhoog — de volgende ronde is aan jou.</item>
+    </plurals>
+    <string name="notif_relinquish_title">De timer van 3 dagen is voorbij</string>
+    <string name="notif_relinquish_text">Je kunt nu de controle teruggeven en Hablock verwijderen.</string>
+
+    <string name="condition_steps">Stappen</string>
+    <string name="condition_workout">Workout</string>
+    <string name="condition_meditation">Meditatie</string>
+    <string name="format_minutes_value">%1$d min</string>
+    <string name="format_progress">%1$s / %2$s</string>
+
+    <string name="stepper_increase">Verhogen</string>
+    <string name="stepper_decrease">Verlagen</string>
+
+    <string name="rationale_title">Waarom Hablock gezondheidsdata leest</string>
+    <string name="rationale_reads">Hablock leest je stappen, trainingssessies en mindful-minuten om te bepalen of de doelen van de dag behaald zijn.</string>
+    <string name="rationale_private">Het leest op het apparaat, alleen voor het venster van vandaag, en heeft geen netwerktoestemming. Niets verlaat de telefoon.</string>
+</resources>

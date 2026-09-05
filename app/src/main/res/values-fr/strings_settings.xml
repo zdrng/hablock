@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Réglages</string>
+    <string name="settings_section_enforcement">Application</string>
+    <string name="settings_accessibility_service">Service d\'accessibilité</string>
+    <string name="settings_usage_access">Accès aux données d\'utilisation</string>
+    <string name="settings_exact_alarms">Alarmes exactes</string>
+    <string name="settings_health_connect">Health Connect</string>
+    <string name="settings_health_unavailable">Indisponible sur cet appareil</string>
+    <string name="settings_exact_alarms_warning">Sans alarmes exactes, les reverrouillages et les réinitialisations du jour se déclenchent en retard.</string>
+    <string name="settings_section_uninstall_lock">Verrouillage de désinstallation</string>
+    <string name="settings_section_emergency">Déverrouillages d\'urgence</string>
+    <string name="settings_section_language">Langue</string>
+    <string name="settings_language_system">Valeur système</string>
+    <string name="settings_language_dialog_title">Choisir la langue</string>
+    <string name="settings_language_current">%1$s</string>
+    <string name="settings_emergency_body">Sers-t\'en pour déverrouiller les modifications d\'un bloc en cas d\'urgence. Ils se rechargent après 30 jours.</string>
+    <string name="settings_device_owner">Propriétaire de l\'appareil</string>
+    <string name="settings_device_owner_optional">Optionnel — rend le verrouillage résistant à la désinstallation</string>
+    <string name="settings_hide">Masquer</string>
+    <string name="settings_set_up">Configurer</string>
+    <string name="settings_owner_active">Hablock possède cet appareil. Il ne peut pas être désinstallé ni désactivé tant que le verrou tient.</string>
+    <string name="settings_relinquish_failed">Impossible de rendre le contrôle. Réessaye.</string>
+    <string name="settings_owner_missing">Sans propriétaire de l\'appareil, Hablock bloque les apps mais peut encore être désinstallé. Configure-le ci-dessus pour un verrou qui tient.</string>
+    <string name="settings_section_about">À propos</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_version_value">Hablock %1$s</string>
+    <string name="settings_offline_title">Totalement hors ligne</string>
+    <string name="settings_offline_body">Aucune permission réseau — rien de ce que lit Hablock ne peut quitter ce téléphone.</string>
+    <string name="settings_relinquish_start_title">Lancer le minuteur de 3 jours ?</string>
+    <string name="settings_relinquish_start_message">Hablock continue d\'appliquer pendant trois jours. Après ça, tu pourras rendre le contrôle et désinstaller. Annule à tout moment avant ça.</string>
+    <string name="settings_relinquish_start_confirm">Lancer le minuteur</string>
+    <string name="settings_relinquish_confirm_title">Abandonner le verrou ?</string>
+    <string name="settings_relinquish_confirm_message">Hablock cessera de posséder cet appareil et pourra être désinstallé. Pour remettre le verrou, il faudra une réinitialisation d\'usine complète.</string>
+    <string name="settings_relinquish_confirm_label">Abandonner</string>
+    <string name="settings_granted">Accordé</string>
+    <string name="settings_relinquish_start_button">Lancer le minuteur de 3 jours</string>
+    <string name="settings_relinquish_countdown_label">avant de pouvoir lâcher prise</string>
+    <string name="settings_relinquish_cancel">Annuler — garder le verrou</string>
+    <string name="settings_relinquish_now">Rendre maintenant</string>
+    <string name="settings_guide_title">Configurer le propriétaire de l\'appareil</string>
+    <string-array name="settings_guide_steps">
+        <item>Retire tous les comptes Google et professionnels de l\'appareil (Réglages → Comptes).</item>
+        <item>Active les options développeur, puis le débogage USB.</item>
+        <item>Connecte le téléphone à un ordinateur avec adb installé.</item>
+        <item>Exécute la commande ci-dessous, exactement telle qu\'écrite.</item>
+        <item>Rouvre Hablock. Propriétaire de l\'appareil affiche Activé.</item>
+    </string-array>
+    <string name="settings_guide_adb_command" translatable="false">adb shell dpm set-device-owner dev.hablock.app/.system.HablockDeviceAdminReceiver</string>
+    <string name="settings_guide_copy_command">Copier la commande</string>
+    <string name="settings_guide_warning">Ça ne fonctionne que sur un appareil fraîchement réinitialisé sans aucun compte. Une fois qu\'Hablock possède l\'appareil, le seul retour est le minuteur de 3 jours ci-dessous.</string>
+</resources>

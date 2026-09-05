@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_title">Blokken</string>
+    <string name="home_subtitle">%1$s · stelt opnieuw in om middernacht</string>
+    <string name="home_hc_banner">Health Connect kan niet worden uitgelezen — stappen-, workout- en meditatiedoelen tellen mee als nul.</string>
+    <string name="home_hc_fix">Oplossen</string>
+    <string name="home_empty_title">Nog niets op slot.</string>
+    <string name="home_empty_body">Kies een app die je avonden steeds steelt, en bepaal waarmee je hem verdient.</string>
+    <string name="home_empty_cta">Maak je eerste blok</string>
+    <string name="home_action_edit">Bewerk</string>
+    <string name="home_action_pause">Pauzeer</string>
+    <string name="home_action_resume">Hervat</string>
+    <string name="home_action_delete">Verwijder</string>
+    <string name="home_delete_title">%1$s verwijderen?</string>
+    <string name="home_delete_message">Deze apps openen weer vrijelijk. Dit kan niet ongedaan worden gemaakt.</string>
+    <string name="home_delete_confirm">Verwijder</string>
+    <string name="home_card_status_paused">Gepauzeerd</string>
+    <string name="home_card_status_open_until">Open tot %1$s</string>
+    <string name="home_card_status_open">Open — ga je gang</string>
+    <string name="home_card_status_locked">Op slot · %1$d van %2$d tot nu</string>
+    <string name="home_card_of">van %1$d</string>
+    <string name="home_card_session_left">over in deze sessie</string>
+    <string name="home_card_relock">Nu vergrendelen</string>
+    <string name="home_card_click_label">Details tonen</string>
+    <string name="home_card_long_click_label">Blokacties</string>
+    <string name="home_card_lock_changes">Wijzigingen vergrendelen</string>
+    <string name="home_card_unlock_changes">Wijzigingen ontgrendelen</string>
+    <string name="home_card_locked_until">Vergrendeld tot %1$s</string>
+</resources>

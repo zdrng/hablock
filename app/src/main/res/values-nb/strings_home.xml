@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_title">Blokker</string>
+    <string name="home_subtitle">%1$s · nullstilles ved midnatt</string>
+    <string name="home_hc_banner">Health Connect kan ikke leses — skritt-, trenings- og meditasjonsmål teller som null.</string>
+    <string name="home_hc_fix">Løs</string>
+    <string name="home_empty_title">Ingenting er låst ennå.</string>
+    <string name="home_empty_body">Velg en app som stjeler kveldene dine, og bestem hva som tjener den tilbake.</string>
+    <string name="home_empty_cta">Lag din første blokk</string>
+    <string name="home_action_edit">Rediger</string>
+    <string name="home_action_pause">Pause</string>
+    <string name="home_action_resume">Fortsett</string>
+    <string name="home_action_delete">Slett</string>
+    <string name="home_delete_title">Fjerne %1$s?</string>
+    <string name="home_delete_message">Disse appene åpnes fritt igjen. Dette kan ikke angres.</string>
+    <string name="home_delete_confirm">Fjern</string>
+    <string name="home_card_status_paused">På pause</string>
+    <string name="home_card_status_open_until">Åpen til %1$s</string>
+    <string name="home_card_status_open">Åpen — bare åpne</string>
+    <string name="home_card_status_locked">Låst · %1$d av %2$d så langt</string>
+    <string name="home_card_of">av %1$d</string>
+    <string name="home_card_session_left">igjen i denne økten</string>
+    <string name="home_card_relock">Lås nå</string>
+    <string name="home_card_click_label">Vis detaljer</string>
+    <string name="home_card_long_click_label">Blokkhandlinger</string>
+    <string name="home_card_lock_changes">Lås endringer</string>
+    <string name="home_card_unlock_changes">Lås opp endringer</string>
+    <string name="home_card_locked_until">Låst til %1$s</string>
+</resources>
