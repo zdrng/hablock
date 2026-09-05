@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_skip">Überspringen</string>
+    <string name="onboarding_welcome_title">Deine Apps, verdient.</string>
+    <string name="onboarding_welcome_body">Hablock hält die verlockenden Apps zu, bis die Tagesgewohnheiten sitzen. Du legst die Regeln fest.</string>
+    <string name="onboarding_welcome_cta">Zeig mir wie</string>
+    <string name="onboarding_explain_title">Wie ein Block funktioniert</string>
+    <string-array name="onboarding_explainer_titles">
+        <item>Apps wählen</item>
+        <item>Wählen, was sie öffnet</item>
+        <item>Öffnet bei 2 von 3</item>
+        <item>%1$d Minuten aufs Mal</item>
+        <item>Es wächst mit dir</item>
+    </string-array>
+    <string-array name="onboarding_explainer_details">
+        <item>Die, die deine Abende auffressen.</item>
+        <item>Schritte, ein Workout, Meditation oder Zeit in einer App, die\'s verdient.</item>
+        <item>Du entscheidest, wie viele sitzen müssen.</item>
+        <item>Dann schließt er wieder. Kein Absturz.</item>
+        <item>Jedes Wiederöffnen treibt die Ziele hoch. Der Tag startet um Mitternacht neu.</item>
+    </string-array>
+    <string name="onboarding_demo_title">2 von 3 erfüllt</string>
+    <string name="onboarding_demo_hint">Noch eins und der Block öffnet.</string>
+    <string name="onboarding_explain_cta">Verstanden</string>
+    <string name="onboarding_grants_title">Ein paar Berechtigungen</string>
+    <string name="onboarding_grants_body">Erlaube jetzt, was du kannst, den Rest später. Nichts verlässt dein Handy — Hablock kann nicht mal ans Internet.</string>
+    <string name="onboarding_grant_accessibility">Bedienungshilfen</string>
+    <string name="onboarding_grant_accessibility_detail">Bemerkt, welche App nach vorne kommt</string>
+    <string name="onboarding_grant_usage">Nutzungszugriff</string>
+    <string name="onboarding_grant_usage_detail">Zählt Minuten in deinen Apps</string>
+    <string name="onboarding_grant_notifications">Benachrichtigungen</string>
+    <string name="onboarding_grant_notifications_detail">Ein Hinweis, wenn eine Session endet</string>
+    <string name="onboarding_grant_health">Health Connect</string>
+    <string name="onboarding_grant_health_detail">Schritte, Workouts und Meditation</string>
+    <string name="onboarding_grant_health_unavailable">Auf diesem Gerät nicht verfügbar</string>
+    <string name="onboarding_granted">Erlaubt</string>
+    <string name="onboarding_grants_cta">Los geht\'s</string>
+</resources>

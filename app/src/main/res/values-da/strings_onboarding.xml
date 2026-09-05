@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_skip">Spring over</string>
+    <string name="onboarding_welcome_title">Dine apps, tjent.</string>
+    <string name="onboarding_welcome_body">Hablock holder det fristende luket, indtil dagens vaner er nået. Du sætter vilkårene.</string>
+    <string name="onboarding_welcome_cta">Vis mig hvordan</string>
+    <string name="onboarding_explain_title">Sådan virker en blokering</string>
+    <string-array name="onboarding_explainer_titles">
+        <item>Vælg apps</item>
+        <item>Vælg hvad åbner dem</item>
+        <item>Åbn ved 2 af 3</item>
+        <item>%1$d minutter ad gangen</item>
+        <item>Den vokser med dig</item>
+    </string-array>
+    <string-array name="onboarding_explainer_details">
+        <item>Dem, der spiser dine aftener.</item>
+        <item>Skridt, en træning, en meditation eller tid i en app, der fortjener det.</item>
+        <item>Du bestemmer, hvor mange der skal nås.</item>
+        <item>Så lukker den igen. Ingen brat afslutning.</item>
+        <item>Hver genåbning skubber målene op. Dagen starter forfra ved midnat.</item>
+    </string-array>
+    <string name="onboarding_demo_title">2 af 3 opfyldt</string>
+    <string name="onboarding_demo_hint">Én til, og blokeringen åbner.</string>
+    <string name="onboarding_explain_cta">Forstået</string>
+    <string name="onboarding_grants_title">Et par tilladelser</string>
+    <string name="onboarding_grants_body">Giv hvad du kan nu, resten når som helst. Intet forlader din telefon — Hablock kan ikke engang nå internettet.</string>
+    <string name="onboarding_grant_accessibility">Tilgængelighed</string>
+    <string name="onboarding_grant_accessibility_detail">Lægger mærke til, hvilken app der kommer i forgrunden</string>
+    <string name="onboarding_grant_usage">Forbrugsadgang</string>
+    <string name="onboarding_grant_usage_detail">Tæller minutter i dine apps</string>
+    <string name="onboarding_grant_notifications">Notifikationer</string>
+    <string name="onboarding_grant_notifications_detail">Et heads-up, når en session slutter</string>
+    <string name="onboarding_grant_health">Health Connect</string>
+    <string name="onboarding_grant_health_detail">Skridt, træning og meditation</string>
+    <string name="onboarding_grant_health_unavailable">Ikke tilgængelig på denne enhed</string>
+    <string name="onboarding_granted">Givet</string>
+    <string name="onboarding_grants_cta">Lad os gå</string>
+</resources>

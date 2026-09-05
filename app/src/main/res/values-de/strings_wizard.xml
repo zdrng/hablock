@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wizard_back">Zurück</string>
+    <string name="wizard_title_review">Schau\'s durch, dann scharfstellen.</string>
+    <string name="wizard_title_apps">Apps wählen</string>
+    <string name="wizard_title_conditions">Bedingungen festlegen</string>
+    <string name="wizard_title_name">Block benennen</string>
+    <string name="wizard_search_apps">Apps suchen</string>
+    <string name="wizard_pick_hint">Wähl mindestens eine App</string>
+    <plurals name="wizard_picked_count">
+        <item quantity="one">%1$d gewählt</item>
+        <item quantity="other">%1$d gewählt</item>
+    </plurals>
+    <string name="wizard_next">Weiter</string>
+    <string name="wizard_conditions_hint">Schalt mindestens eine Bedingung ein</string>
+    <string name="wizard_helper_prompt">Welche App verdient die anderen?</string>
+    <string name="wizard_helper_label">Verdienende App</string>
+    <string name="wizard_threshold_prefix">"Öffnet, wenn "</string>
+    <string name="wizard_n_of_m">%1$d von %2$d</string>
+    <string name="wizard_threshold_suffix">" erfüllt sind."</string>
+    <string name="wizard_ratchet_prefix">"Jedes Wiederöffnen erhöht alle Ziele um "</string>
+    <string name="wizard_ratchet_suffix">.</string>
+    <string name="wizard_name_label">Name</string>
+    <string name="wizard_suggest_name">Namen vorschlagen</string>
+    <string name="wizard_default_name">Block %1$d</string>
+    <string name="wizard_summary_locked_apps">Gesperrte Apps</string>
+    <string name="wizard_summary_conditions">Bedingungen</string>
+    <string name="wizard_summary_opens_on">Öffnet bei</string>
+    <string name="wizard_summary_ratchet">Aufschub</string>
+    <string name="wizard_summary_unlock_duration">Entsperrdauer</string>
+    <string name="wizard_summary_changes_lock">Änderungssperre</string>
+    <string name="wizard_summary_changes_locked">Gesperrt</string>
+    <string name="wizard_unlock_prefix">"Apps entsperren für "</string>
+    <string name="wizard_unlock_suffix">".</string>
+    <plurals name="wizard_unlock_minutes">
+        <item quantity="one">%1$d Minute</item>
+        <item quantity="other">%1$d Minuten</item>
+    </plurals>
+    <string name="wizard_save_changes">Änderungen speichern</string>
+    <string name="wizard_lock_it_in">Festlegen</string>
+    <string-array name="wizard_name_ideas">
+        <item>Doomscroll</item>
+        <item>Kaninchenbau</item>
+        <item>Zeitfresser</item>
+        <item>Süßigkeiten Glas</item>
+        <item>Nachteule</item>
+        <item>Endloser Feed</item>
+        <item>Der Strudel</item>
+        <item>Snack-Regal</item>
+        <item>Schlaf-Falle</item>
+    </string-array>
+    <string name="wizard_condition_app_usage">Zeit in einer guten App</string>
+    <string name="wizard_hint_steps">Erst bewegen, dann scrollen</string>
+    <string name="wizard_hint_workout">Trainingsminuten, über Health Connect</string>
+    <string name="wizard_hint_meditation">Achtsamkeitsminuten, über Health Connect</string>
+    <string name="wizard_hint_app_usage">Minuten in einer App, die sich lohnt</string>
+    <string name="wizard_unit_steps">Schritte</string>
+    <string name="wizard_unit_minutes">Minuten</string>
+</resources>

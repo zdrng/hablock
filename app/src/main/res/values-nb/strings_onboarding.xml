@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_skip">Hopp over</string>
+    <string name="onboarding_welcome_title">Appene dine, tjent.</string>
+    <string name="onboarding_welcome_body">Hablock holder de fristende tingene lukket til dagens vaner lander. Du setter vilkårene.</string>
+    <string name="onboarding_welcome_cta">Vis meg hvordan</string>
+    <string name="onboarding_explain_title">Slik fungerer en blokk</string>
+    <string-array name="onboarding_explainer_titles">
+        <item>Velg appene</item>
+        <item>Velg hva som åpner dem</item>
+        <item>Åpne ved 2 av 3</item>
+        <item>%1$d minutter av gangen</item>
+        <item>Den vokser med deg</item>
+    </string-array>
+    <string-array name="onboarding_explainer_details">
+        <item>De som spiser opp kveldene dine.</item>
+        <item>Skritt, en treningsøkt, en meditasjon, eller tid i en app som fortjener det.</item>
+        <item>Du bestemmer hvor mange som må lande.</item>
+        <item>Så lukker den igjen. Ingen bratt kant.</item>
+        <item>Hver gjenåpning sneiper målene opp. Dagen starter friskt ved midnatt.</item>
+    </string-array>
+    <string name="onboarding_demo_title">2 av 3 oppfylt</string>
+    <string name="onboarding_demo_hint">Én til og blokken åpner.</string>
+    <string name="onboarding_explain_cta">Den er grei</string>
+    <string name="onboarding_grants_title">Noen tillatelser</string>
+    <string name="onboarding_grants_body">Gi det du kan nå, resten når det passer. Ingenting forlater telefonen — Hablock kan ikke engang nå internett.</string>
+    <string name="onboarding_grant_accessibility">Tilgjengelighet</string>
+    <string name="onboarding_grant_accessibility_detail">Merker hvilken app som kommer i forgrunnen</string>
+    <string name="onboarding_grant_usage">Brukstilgang</string>
+    <string name="onboarding_grant_usage_detail">Teller minutter i appene dine</string>
+    <string name="onboarding_grant_notifications">Varsler</string>
+    <string name="onboarding_grant_notifications_detail">Et beskjed når en økt er slutt</string>
+    <string name="onboarding_grant_health">Health Connect</string>
+    <string name="onboarding_grant_health_detail">Skritt, trening og meditasjon</string>
+    <string name="onboarding_grant_health_unavailable">Ikke tilgjengelig på denne enheten</string>
+    <string name="onboarding_granted">Gitt</string>
+    <string name="onboarding_grants_cta">Kjør på</string>
+</resources>

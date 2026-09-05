@@ -30,7 +30,9 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import dev.hablock.app.R
 import dev.hablock.app.domain.GateConstants
 import dev.hablock.app.domain.model.EmergencyPill
 import dev.hablock.app.ui.format.formatCountdownPrecise
@@ -145,11 +147,11 @@ private fun EmergencyPillSurface(
             val remaining = pill.refillAt?.let { (it - tick).coerceAtLeast(0L).milliseconds }
             Text(
                 text = if (pill.available) {
-                    "Emergency"
+                    stringResource(R.string.emergency_pill_available)
                 } else if (refillProgress < 1f && remaining != null) {
                     formatCountdownPrecise(remaining)
                 } else {
-                    "Ready"
+                    stringResource(R.string.emergency_pill_ready)
                 },
                 style = MaterialTheme.typography.labelSmall,
                 textAlign = TextAlign.Center,

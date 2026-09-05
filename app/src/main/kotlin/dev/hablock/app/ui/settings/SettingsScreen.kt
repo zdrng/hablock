@@ -2,6 +2,7 @@ package dev.hablock.app.ui.settings
 
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -27,6 +28,7 @@ import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -44,6 +46,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.LocaleListCompat
 import androidx.health.connect.client.PermissionController
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -71,6 +74,18 @@ import kotlin.time.Duration.Companion.milliseconds
 
 private enum class RelinquishDialog { Start, Confirm }
 
+private data class LanguageOption(val tag: String, val displayName: String)
+
+private val LANGUAGE_OPTIONS = listOf(
+    LanguageOption("", "System default"),
+    LanguageOption("en", "English"),
+    LanguageOption("de", "Deutsch"),
+    LanguageOption("fr", "Français"),
+    LanguageOption("da", "Dansk"),
+    LanguageOption("nb", "Norsk"),
+    LanguageOption("nl", "Nederlands"),
+)
+
 @Composable
 fun SettingsScreen() {
     val viewModel = gateViewModel { container ->
@@ -91,6 +106,7 @@ fun SettingsScreen() {
     val context = LocalContext.current
     var guideOpen by remember { mutableStateOf(false) }
     var dialog by remember { mutableStateOf<RelinquishDialog?>(null) }
+    var languageDialogOpen by remember { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     LifecycleResumeEffect(Unit) {
@@ -235,6 +251,19 @@ fun SettingsScreen() {
                 }
             }
 
+            SectionHeader(stringResource(R.string.settings_section_language))
+            val currentLocaleTag = remember {
+                AppCompatDelegate.getApplicationLocales().toLanguageTags()
+            }
+            val currentLanguageName = LANGUAGE_OPTIONS.firstOrNull { it.tag == currentLocaleTag }?.displayName
+                ?: stringResource(R.string.settings_language_system)
+            GroupedListItem(
+                position = GroupPosition.Single,
+                onClick = { languageDialogOpen = true },
+                title = stringResource(R.string.settings_section_language),
+                trailing = { Text(currentLanguageName, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant) },
+            )
+
             SectionHeader(stringResource(R.string.settings_section_about))
             GroupedListItem(
                 position = GroupPosition.First,
@@ -282,6 +311,59 @@ fun SettingsScreen() {
 
         null -> Unit
     }
+
+    if (languageDialogOpen) {
+        LanguagePickerDialog(
+            currentTag = remember {
+                AppCompatDelegate.getApplicationLocales().toLanguageTags()
+            },
+            onDismiss = { languageDialogOpen = false },
+            onSelect = { tag ->
+                val locales = if (tag.isEmpty()) {
+                    LocaleListCompat.getEmptyLocaleList()
+                } else {
+                    LocaleListCompat.forLanguageTags(tag)
+                }
+                AppCompatDelegate.setApplicationLocales(locales)
+                languageDialogOpen = false
+            },
+        )
+    }
+}
+
+@Composable
+private fun LanguagePickerDialog(
+    currentTag: String,
+    onDismiss: () -> Unit,
+    onSelect: (String) -> Unit,
+) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.settings_language_dialog_title)) },
+        text = {
+            Column {
+                LANGUAGE_OPTIONS.forEach { option ->
+                    Row(
+                        Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        RadioButton(
+                            selected = option.tag == currentTag,
+                            onClick = { onSelect(option.tag) },
+                        )
+                        Text(
+                            if (option.tag.isEmpty()) stringResource(R.string.settings_language_system) else option.displayName,
+                            Modifier.padding(start = 8.dp),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_close)) }
+        },
+    )
 }
 
 @Composable

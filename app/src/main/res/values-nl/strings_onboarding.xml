@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_skip">Overslaan</string>
+    <string name="onboarding_welcome_title">Jouw apps, verdiend.</string>
+    <string name="onboarding_welcome_body">Hablock houdt de verleidelijke dingen op slot tot de gewoonten van de dag behaald zijn. Jij stelt de voorwaarden.</string>
+    <string name="onboarding_welcome_cta">Laat zien hoe</string>
+    <string name="onboarding_explain_title">Hoe een blok werkt</string>
+    <string-array name="onboarding_explainer_titles">
+        <item>Kies de apps</item>
+        <item>Kies wat ze opent</item>
+        <item>Open bij 2 van 3</item>
+        <item>%1$d minuten per keer</item>
+        <item>Het groeit met je mee</item>
+    </string-array>
+    <string-array name="onboarding_explainer_details">
+        <item>Diegene die je avonden opeten.</item>
+        <item>Stappen, een workout, zitten, of tijd in een app die het verdient.</item>
+        <item>Jij bepaalt hoeveel behaald moeten zijn.</item>
+        <item>Dan sluit hij weer. Geen abrupt eindpunt.</item>
+        <item>Elke heropening duwt de doelen omhoog. De dag begint fris om middernacht.</item>
+    </string-array>
+    <string name="onboarding_demo_title">2 van 3 behaald</string>
+    <string name="onboarding_demo_hint">Nog één en het blok opent.</string>
+    <string name="onboarding_explain_cta">Begrepen</string>
+    <string name="onboarding_grants_title">Een paar toestemmingen</string>
+    <string name="onboarding_grants_body">Sta toe wat je nu kunt, de rest wanneer je wilt. Niets verlaat je telefoon — Hablock kan niet eens bij het internet.</string>
+    <string name="onboarding_grant_accessibility">Toegankelijkheid</string>
+    <string name="onboarding_grant_accessibility_detail">Merkt welke app naar voren komt</string>
+    <string name="onboarding_grant_usage">Toegang tot gebruik</string>
+    <string name="onboarding_grant_usage_detail">Telt minuten in je apps</string>
+    <string name="onboarding_grant_notifications">Meldingen</string>
+    <string name="onboarding_grant_notifications_detail">Een seintje wanneer een sessie eindigt</string>
+    <string name="onboarding_grant_health">Health Connect</string>
+    <string name="onboarding_grant_health_detail">Stappen, workouts en meditatie</string>
+    <string name="onboarding_grant_health_unavailable">Niet beschikbaar op dit apparaat</string>
+    <string name="onboarding_granted">Toegekend</string>
+    <string name="onboarding_grants_cta">Aan de slag</string>
+</resources>

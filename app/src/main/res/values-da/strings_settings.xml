@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Indstillinger</string>
+    <string name="settings_section_enforcement">Håndhævelse</string>
+    <string name="settings_accessibility_service">Tilgængelighedstjeneste</string>
+    <string name="settings_usage_access">Forbrugsadgang</string>
+    <string name="settings_exact_alarms">Nøjagtige alarmer</string>
+    <string name="settings_health_connect">Health Connect</string>
+    <string name="settings_health_unavailable">Ikke tilgængelig på denne enhed</string>
+    <string name="settings_exact_alarms_warning">Uden nøjagtige alarmer sker genlåsninger og dagnulstilling for sent.</string>
+    <string name="settings_section_uninstall_lock">Afinstallationslås</string>
+    <string name="settings_section_emergency">Nødlåsninger</string>
+    <string name="settings_section_language">Sprog</string>
+    <string name="settings_language_system">Systemstandard</string>
+    <string name="settings_language_dialog_title">Vælg sprog</string>
+    <string name="settings_language_current">%1$s</string>
+    <string name="settings_emergency_body">Brug disse til at låse en blokerings ændringer op i en nødsituation. De genfyldes efter 30 dage.</string>
+    <string name="settings_device_owner">Enhedsejer</string>
+    <string name="settings_device_owner_optional">Valgfrit — gør låsen afinstalleringssikker</string>
+    <string name="settings_hide">Skjul</string>
+    <string name="settings_set_up">Indstil</string>
+    <string name="settings_owner_active">Hablock ejer denne enhed. Den kan ikke afinstalleres eller slås fra, mens låsen står.</string>
+    <string name="settings_relinquish_failed">Kunne ikke give kontrollen tilbage. Prøv igen.</string>
+    <string name="settings_owner_missing">Uden enhedsejer blokerer Hablock apps, men kan stadig afinstalleres. Indstil det ovenfor for en lås, der holder.</string>
+    <string name="settings_section_about">Om</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_version_value">Hablock %1$s</string>
+    <string name="settings_offline_title">Fuldstændig offline</string>
+    <string name="settings_offline_body">Ingen netværkstilladelse — intet Hablock læser kan forlade denne telefon.</string>
+    <string name="settings_relinquish_start_title">Start 3-dages timeren?</string>
+    <string name="settings_relinquish_start_message">Hablock holder op med at håndhæve i tre dage. Derefter kan du give kontrollen tilbage og afinstallere. Annullér når som helst inden da.</string>
+    <string name="settings_relinquish_start_confirm">Start timer</string>
+    <string name="settings_relinquish_confirm_title">Opgiv låsen?</string>
+    <string name="settings_relinquish_confirm_message">Hablock holder op med at eje denne enhed og kan afinstalleres. At få låsen tilbage kræver en fuld nulstilling af enheden.</string>
+    <string name="settings_relinquish_confirm_label">Giv den op</string>
+    <string name="settings_granted">Givet</string>
+    <string name="settings_relinquish_start_button">Start 3-dages timeren</string>
+    <string name="settings_relinquish_countdown_label">indtil du kan slippe den</string>
+    <string name="settings_relinquish_cancel">Annullér — behold låsen</string>
+    <string name="settings_relinquish_now">Giv op nu</string>
+    <string name="settings_guide_title">Indstil enhedsejer</string>
+    <string-array name="settings_guide_steps">
+        <item>Fjern alle Google- og arbejdskonti fra enheden (Indstillinger → Konti).</item>
+        <item>Slå udviklerindstillinger til, og derefter USB-fejlfinding.</item>
+        <item>Forbind telefonen til en computer med adb installeret.</item>
+        <item>Kør kommandoen herunder, præcis som skrevet.</item>
+        <item>Genåbn Hablock. Enhedsejer viser Til.</item>
+    </string-array>
+    <string name="settings_guide_adb_command" translatable="false">adb shell dpm set-device-owner dev.hablock.app/.system.HablockDeviceAdminReceiver</string>
+    <string name="settings_guide_copy_command">Kopiér kommando</string>
+    <string name="settings_guide_warning">Dette virker kun på en nyligt nulstillet enhed uden konti. Når Hablock ejer enheden, er den eneste vej tilbage 3-dages opgivelses-timeren herunder.</string>
+</resources>

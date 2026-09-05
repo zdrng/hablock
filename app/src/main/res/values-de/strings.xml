@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hablock</string>
+    <string name="accessibility_service_label">Hablock App-Sperre</string>
+    <string name="accessibility_service_description">Hablock nutzt diesen Dienst nur, um zu bemerken, welche App in den Vordergrund kommt, und blockierte Apps zu sperren, bis deine täglichen Bedingungen erfüllt sind. Der Bildschirminhalt wird nie mitgelesen.</string>
+
+    <string name="action_grant">Erlauben</string>
+    <string name="action_cancel">Abbrechen</string>
+    <string name="action_close">Schließen</string>
+    <string name="action_add_block">Neuer Block</string>
+    <string name="status_on">An</string>
+    <string name="status_done">Fertig</string>
+
+    <string name="nav_blocks">Blöcke</string>
+    <string name="nav_time">Zeit</string>
+    <string name="nav_settings">Einstellungen</string>
+
+    <string name="blocked_headline_locked">%1$s ist gesperrt.</string>
+    <string name="blocked_headline_open">%1$s gehört dir.</string>
+    <plurals name="blocked_open_button">
+        <item quantity="one">%1$s öffnen — %2$d Minute</item>
+        <item quantity="other">%1$s öffnen — %2$d Minuten</item>
+    </plurals>
+    <string name="blocked_hc_warning">Health Connect kann gerade nicht gelesen werden, also zählen diese Ziele als null. Behebe es auf dem Blöcke-Bildschirm.</string>
+    <string name="blocked_unlock_button">Für %1$d Min. entsperren</string>
+    <string name="blocked_unlock_title">%1$s entsperren?</string>
+    <string name="blocked_unlock_message">Du bekommst %1$d Minuten. Danach steigen die Ziele an und du musst sie dir wieder verdienen.</string>
+    <string name="blocked_unlock_confirm">Entsperren</string>
+    <string name="blocked_locked_hint">%1$d von %2$d Zielen erfüllen zum Entsperren</string>
+
+    <string name="changes_lock_title">Änderungen an %1$s sperren</string>
+    <string name="changes_lock_message">Solange gesperrt, kannst du diesen Block nicht bearbeiten, pausieren oder löschen.</string>
+    <string name="changes_lock_confirm">Sperren</string>
+    <string name="changes_lock_preset_1d">1 Tag</string>
+    <string name="changes_lock_preset_3d">3 Tage</string>
+    <string name="changes_lock_preset_1w">1 Woche</string>
+    <string name="changes_lock_preset_1m">1 Monat</string>
+    <string name="changes_lock_preset_1y">1 Jahr</string>
+    <string name="changes_lock_preset_password">Passwort</string>
+    <string name="changes_lock_custom_label">Eigenes (Tage)</string>
+    <string name="changes_lock_preset_custom">Eigenes</string>
+    <string name="changes_lock_step_custom">Eigene Tage</string>
+    <string name="changes_lock_custom_message">Wähle, wie viele Tage die Änderungen gesperrt bleiben.</string>
+    <string name="changes_lock_custom_days_unit">Tage</string>
+    <string name="changes_lock_until">Gesperrt bis %1$s</string>
+    <string name="changes_lock_step_method">Sperrmethode</string>
+    <string name="changes_lock_step_password">Passwort festlegen</string>
+    <string name="changes_lock_set_password_title">Passwort festlegen</string>
+    <string name="changes_lock_set_password_message">Gib einen 6-stelligen Code ein. Du brauchst ihn, um die Sperre aufzuheben.</string>
+    <string name="changes_lock_enter_password_title">Passwort eingeben</string>
+    <string name="changes_lock_enter_password_message">Gib deinen 6-stelligen Code ein, um die Sperre aufzuheben.</string>
+    <string name="changes_lock_wrong_password">Falscher Code, versuch\'s nochmal</string>
+    <string name="changes_lock_password_locked">Mit Passwort gesperrt</string>
+    <string name="emergency_unlock_title">Änderungen gesperrt</string>
+    <string name="emergency_unlock_message">%1$s ist bis %2$s gesperrt. Halte einen Pill 10 Sekunden gedrückt, um vorzeitig zu entsperren.</string>
+    <string name="emergency_unlock_available">%1$d von %2$d verfügbar</string>
+    <string name="emergency_unlock_none">Keine Notfall-Entsperrungen verfügbar</string>
+    <string name="emergency_unlock_hold">Gedrückt halten zum Entsperren</string>
+    <string name="emergency_unlocked">Änderungen entsperrt</string>
+    <string name="emergency_pill_available">Notfall</string>
+    <string name="emergency_pill_ready">Bereit</string>
+
+    <string name="notif_channel_name">Hablock</string>
+    <string name="notif_session_ended_title">%1$s ist wieder gesperrt</string>
+    <string name="notif_session_active_title">%1$s ist entsperrt</string>
+    <string name="notif_session_active_text">Die Zeit läuft — tippe zum vorzeitigen Sperren.</string>
+    <string name="notif_session_relock">Jetzt sperren</string>
+    <plurals name="notif_session_ended_text">
+        <item quantity="one">Das war deine Minute. Die Ziele sind ein wenig gestiegen — die nächste Runde liegt bei dir.</item>
+        <item quantity="other">Das waren deine %1$d Minuten. Die Ziele sind ein wenig gestiegen — die nächste Runde liegt bei dir.</item>
+    </plurals>
+    <string name="notif_relinquish_title">Der 3-Tage-Timer ist abgelaufen</string>
+    <string name="notif_relinquish_text">Du kannst jetzt die Kontrolle zurückgeben und Hablock deinstallieren.</string>
+
+    <string name="condition_steps">Schritte</string>
+    <string name="condition_workout">Workout</string>
+    <string name="condition_meditation">Meditation</string>
+    <string name="format_minutes_value">%1$d Min.</string>
+    <string name="format_progress">%1$s / %2$s</string>
+
+    <string name="stepper_increase">Erhöhen</string>
+    <string name="stepper_decrease">Verringern</string>
+
+    <string name="rationale_title">Warum Hablock Gesundheitsdaten liest</string>
+    <string name="rationale_reads">Hablock liest deine Schritte, Trainingseinheiten und Achtsamkeits-Minuten, um zu entscheiden, ob die Tagesbedingungen erfüllt sind.</string>
+    <string name="rationale_private">Das passiert auf dem Gerät, nur für das heutige Fenster, und ohne Netzwerk-Berechtigung. Nichts verlässt das Handy.</string>
+</resources>

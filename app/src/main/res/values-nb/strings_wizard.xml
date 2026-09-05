@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wizard_back">Tilbake</string>
+    <string name="wizard_title_review">Sjekk alt, og aktiver.</string>
+    <string name="wizard_title_apps">Velg appene dine</string>
+    <string name="wizard_title_conditions">Sett betingelsene</string>
+    <string name="wizard_title_name">Navngi blokken</string>
+    <string name="wizard_search_apps">Søk i apper</string>
+    <string name="wizard_pick_hint">Velg minst én app</string>
+    <plurals name="wizard_picked_count">
+        <item quantity="one">%1$d valgt</item>
+        <item quantity="other">%1$d valgt</item>
+    </plurals>
+    <string name="wizard_next">Neste</string>
+    <string name="wizard_conditions_hint">Slå på minst én betingelse</string>
+    <string name="wizard_helper_prompt">Hvilken app tjener de andre?</string>
+    <string name="wizard_helper_label">Tjeneste-app</string>
+    <string name="wizard_threshold_prefix">"Åpne når "</string>
+    <string name="wizard_n_of_m">%1$d av %2$d</string>
+    <string name="wizard_threshold_suffix">" lander."</string>
+    <string name="wizard_ratchet_prefix">"Hver gjenåpning hever hvert mål med "</string>
+    <string name="wizard_ratchet_suffix">.</string>
+    <string name="wizard_name_label">Navn</string>
+    <string name="wizard_suggest_name">Foreslå navn</string>
+    <string name="wizard_default_name">Blokk %1$d</string>
+    <string name="wizard_summary_locked_apps">Låste apper</string>
+    <string name="wizard_summary_conditions">Betingelser</string>
+    <string name="wizard_summary_opens_on">Åpner ved</string>
+    <string name="wizard_summary_ratchet">Opptrapping</string>
+    <string name="wizard_summary_unlock_duration">Opplåsingsvarighet</string>
+    <string name="wizard_summary_changes_lock">Endringslås</string>
+    <string name="wizard_summary_changes_locked">Låst</string>
+    <string name="wizard_unlock_prefix">"Apper låses opp i "</string>
+    <string name="wizard_unlock_suffix">".</string>
+    <plurals name="wizard_unlock_minutes">
+        <item quantity="one">%1$d minutt</item>
+        <item quantity="other">%1$d minutter</item>
+    </plurals>
+    <string name="wizard_save_changes">Lagre endringer</string>
+    <string name="wizard_lock_it_in">Lås fast</string>
+    <string-array name="wizard_name_ideas">
+        <item>Doomscroll</item>
+        <item>Kaninhull</item>
+        <item>Tidstyven</item>
+        <item>Sukkerglasset</item>
+        <item>Natteugle</item>
+        <item>Bunnløs feed</item>
+        <item>Virvelen</item>
+        <item>Godtehylla</item>
+        <item>Sovesaksfella</item>
+    </string-array>
+    <string name="wizard_condition_app_usage">Tid i en god app</string>
+    <string name="wizard_hint_steps">Beveg deg først, scroll senere</string>
+    <string name="wizard_hint_workout">Minutter med trening, via Health Connect</string>
+    <string name="wizard_hint_meditation">Minutter med mindfulness, via Health Connect</string>
+    <string name="wizard_hint_app_usage">Minutter i en app som gjør seg fortjent</string>
+    <string name="wizard_unit_steps">skritt</string>
+    <string name="wizard_unit_minutes">minutter</string>
+</resources>

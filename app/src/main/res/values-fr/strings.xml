@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hablock</string>
+    <string name="accessibility_service_label">Blocage d\'apps Hablock</string>
+    <string name="accessibility_service_description">Hablock utilise ce service uniquement pour repérer quelle app passe au premier plan, afin de verrouiller les apps bloquées jusqu\'à ce que tes conditions du jour soient remplies. Il ne lit jamais le contenu de l\'écran.</string>
+
+    <string name="action_grant">Accorder</string>
+    <string name="action_cancel">Annuler</string>
+    <string name="action_close">Fermer</string>
+    <string name="action_add_block">Nouveau bloc</string>
+    <string name="status_on">Activé</string>
+    <string name="status_done">Terminé</string>
+
+    <string name="nav_blocks">Blocs</string>
+    <string name="nav_time">Temps</string>
+    <string name="nav_settings">Réglages</string>
+
+    <string name="blocked_headline_locked">%1$s est verrouillé.</string>
+    <string name="blocked_headline_open">%1$s est à toi d\'ouvrir.</string>
+    <plurals name="blocked_open_button">
+        <item quantity="one">Ouvrir %1$s — %2$d minute</item>
+        <item quantity="other">Ouvrir %1$s — %2$d minutes</item>
+    </plurals>
+    <string name="blocked_hc_warning">Health Connect ne peut pas être lu pour l\'instant, ces objectifs comptent donc comme zéro. Corrige-le depuis l\'écran des Blocs.</string>
+    <string name="blocked_unlock_button">Déverrouiller pour %1$d min</string>
+    <string name="blocked_unlock_title">Déverrouiller %1$s ?</string>
+    <string name="blocked_unlock_message">Tu auras %1$d minutes. Après ça, les objectifs augmentent et tu devras le mériter à nouveau.</string>
+    <string name="blocked_unlock_confirm">Déverrouiller</string>
+    <string name="blocked_locked_hint">Remplis %1$d sur %2$d objectifs pour déverrouiller</string>
+
+    <string name="changes_lock_title">Verrouiller les modifications de %1$s</string>
+    <string name="changes_lock_message">Tant que c\'est verrouillé, tu ne peux pas modifier, mettre en pause ou supprimer ce bloc.</string>
+    <string name="changes_lock_confirm">Verrouiller</string>
+    <string name="changes_lock_preset_1d">1 jour</string>
+    <string name="changes_lock_preset_3d">3 jours</string>
+    <string name="changes_lock_preset_1w">1 semaine</string>
+    <string name="changes_lock_preset_1m">1 mois</string>
+    <string name="changes_lock_preset_1y">1 an</string>
+    <string name="changes_lock_preset_password">Mot de passe</string>
+    <string name="changes_lock_custom_label">Personnalisé (jours)</string>
+    <string name="changes_lock_preset_custom">Personnalisé</string>
+    <string name="changes_lock_step_custom">Jours personnalisés</string>
+    <string name="changes_lock_custom_message">Choisis combien de jours verrouiller les modifications.</string>
+    <string name="changes_lock_custom_days_unit">jours</string>
+    <string name="changes_lock_until">Verrouillé jusqu\'au %1$s</string>
+    <string name="changes_lock_step_method">Méthode de verrouillage</string>
+    <string name="changes_lock_step_password">Définir un mot de passe</string>
+    <string name="changes_lock_set_password_title">Définir un mot de passe</string>
+    <string name="changes_lock_set_password_message">Saisis un code à 6 chiffres. Tu en auras besoin pour déverrouiller les modifications.</string>
+    <string name="changes_lock_enter_password_title">Saisir le mot de passe</string>
+    <string name="changes_lock_enter_password_message">Saisis ton code à 6 chiffres pour déverrouiller les modifications.</string>
+    <string name="changes_lock_wrong_password">Mauvais code, réessaye</string>
+    <string name="changes_lock_password_locked">Verrouillé par mot de passe</string>
+    <string name="emergency_unlock_title">Modifications verrouillées</string>
+    <string name="emergency_unlock_message">%1$s est verrouillé jusqu\'au %2$s. Maintiens une pastille pendant 10 secondes pour déverrouiller en avance.</string>
+    <string name="emergency_unlock_available">%1$d sur %2$d disponibles</string>
+    <string name="emergency_unlock_none">Aucun déverrouillage d\'urgence disponible</string>
+    <string name="emergency_unlock_hold">Maintenir pour déverrouiller</string>
+    <string name="emergency_unlocked">Modifications déverrouillées</string>
+    <string name="emergency_pill_available">Urgence</string>
+    <string name="emergency_pill_ready">Prêt</string>
+
+    <string name="notif_channel_name">Hablock</string>
+    <string name="notif_session_ended_title">%1$s est de nouveau verrouillé</string>
+    <string name="notif_session_active_title">%1$s est déverrouillé</string>
+    <string name="notif_session_active_text">Le temps file — tape pour verrouiller en avance.</string>
+    <string name="notif_session_relock">Verrouiller maintenant</string>
+    <plurals name="notif_session_ended_text">
+        <item quantity="one">C\'était ta minute. Les objectifs ont légèrement augmenté — la prochaine manche est sur toi.</item>
+        <item quantity="other">C\'étaient tes %1$d minutes. Les objectifs ont légèrement augmenté — la prochaine manche est sur toi.</item>
+    </plurals>
+    <string name="notif_relinquish_title">Le minuteur de 3 jours est terminé</string>
+    <string name="notif_relinquish_text">Tu peux maintenant rendre le contrôle et désinstaller Hablock.</string>
+
+    <string name="condition_steps">Pas</string>
+    <string name="condition_workout">Exercice</string>
+    <string name="condition_meditation">Méditation</string>
+    <string name="format_minutes_value">%1$d min</string>
+    <string name="format_progress">%1$s / %2$s</string>
+
+    <string name="stepper_increase">Augmenter</string>
+    <string name="stepper_decrease">Diminuer</string>
+
+    <string name="rationale_title">Pourquoi Hablock lit tes données de santé</string>
+    <string name="rationale_reads">Hablock lit tes pas, tes séances d\'exercice et tes minutes de pleine conscience pour décider si les conditions du jour sont remplies.</string>
+    <string name="rationale_private">Tout se fait sur l\'appareil, uniquement pour la fenêtre du jour, et sans aucune permission réseau. Rien ne quitte le téléphone.</string>
+</resources>

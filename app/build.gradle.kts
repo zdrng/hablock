@@ -21,6 +21,11 @@ android {
         versionName = "0.1.0"
     }
 
+    androidResources {
+        generateLocaleConfig = true
+        localeFilters += listOf("en", "de", "fr", "da", "nb", "nl")
+    }
+
     val keystoreProps = rootProject.file("keystore.properties")
         .takeIf { it.exists() }
         ?.let { file -> Properties().apply { file.inputStream().use(::load) } }
@@ -75,6 +80,7 @@ kotlin {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)

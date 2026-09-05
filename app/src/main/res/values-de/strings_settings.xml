@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_section_enforcement">Durchsetzung</string>
+    <string name="settings_accessibility_service">Bedienungshilfen-Dienst</string>
+    <string name="settings_usage_access">Nutzungszugriff</string>
+    <string name="settings_exact_alarms">Exakte Wecker</string>
+    <string name="settings_health_connect">Health Connect</string>
+    <string name="settings_health_unavailable">Auf diesem Gerät nicht verfügbar</string>
+    <string name="settings_exact_alarms_warning">Ohne exakte Wecker feuern Neusperren und Tages-Resets zu spät.</string>
+    <string name="settings_section_uninstall_lock">Deinstallations-Sperre</string>
+    <string name="settings_section_emergency">Notfall-Entsperrungen</string>
+    <string name="settings_section_language">Sprache</string>
+    <string name="settings_language_system">Systemstandard</string>
+    <string name="settings_language_dialog_title">Sprache wählen</string>
+    <string name="settings_language_current">%1$s</string>
+    <string name="settings_emergency_body">Nutze diese, um in einem Notfall die Änderungssperre eines Blocks aufzuheben. Sie füllen sich nach 30 Tagen wieder auf.</string>
+    <string name="settings_device_owner">Gerätebesitzer</string>
+    <string name="settings_device_owner_optional">Optional — macht die Sperre deinstallierfest</string>
+    <string name="settings_hide">Ausblenden</string>
+    <string name="settings_set_up">Einrichten</string>
+    <string name="settings_owner_active">Hablock besitzt dieses Gerät. Es kann nicht deinstalliert oder ausgeschaltet werden, solange die Sperre steht.</string>
+    <string name="settings_relinquish_failed">Kontrolle konnte nicht zurückgegeben werden. Versuch\'s nochmal.</string>
+    <string name="settings_owner_missing">Ohne Gerätebesitzer blockt Hablock Apps, lässt sich aber weiterhin deinstallieren. Richt\'s oben ein für eine Sperre, die hält.</string>
+    <string name="settings_section_about">Über</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_version_value">Hablock %1$s</string>
+    <string name="settings_offline_title">Vollständig offline</string>
+    <string name="settings_offline_body">Keine Netzwerk-Berechtigung — nichts, was Hablock liest, kann dieses Handy verlassen.</string>
+    <string name="settings_relinquish_start_title">Den 3-Tage-Timer starten?</string>
+    <string name="settings_relinquish_start_message">Hablock setzt die Durchsetzung drei Tage lang fort. Danach kannst du die Kontrolle zurückgeben und deinstallieren. Bis dahin jederzeit abbrechbar.</string>
+    <string name="settings_relinquish_start_confirm">Timer starten</string>
+    <string name="settings_relinquish_confirm_title">Sperre aufgeben?</string>
+    <string name="settings_relinquish_confirm_message">Hablock gibt den Gerätebesitz ab und kann deinstalliert werden. Die Sperre zurückzubekommen erfordert ein vollständiges Zurücksetzen auf Werkseinstellungen.</string>
+    <string name="settings_relinquish_confirm_label">Aufgeben</string>
+    <string name="settings_granted">Erlaubt</string>
+    <string name="settings_relinquish_start_button">Den 3-Tage-Timer starten</string>
+    <string name="settings_relinquish_countdown_label">bis du loslassen kannst</string>
+    <string name="settings_relinquish_cancel">Abbrechen — Sperre behalten</string>
+    <string name="settings_relinquish_now">Jetzt abgeben</string>
+    <string name="settings_guide_title">Gerätebesitzer einrichten</string>
+    <string-array name="settings_guide_steps">
+        <item>Entferne alle Google- und Arbeitskonten vom Gerät (Einstellungen → Konten).</item>
+        <item>Entwickleroptionen aktivieren, dann USB-Debugging.</item>
+        <item>Verbinde das Handy mit einem Computer, auf dem adb installiert ist.</item>
+        <item>Führe den Befehl unten genau wie geschrieben aus.</item>
+        <item>Hablock neu öffnen. Gerätebesitzer zeigt An.</item>
+    </string-array>
+    <string name="settings_guide_adb_command" translatable="false">adb shell dpm set-device-owner dev.hablock.app/.system.HablockDeviceAdminReceiver</string>
+    <string name="settings_guide_copy_command">Befehl kopieren</string>
+    <string name="settings_guide_warning">Das funktioniert nur auf einem frisch zurückgesetzten Gerät ohne Konten. Sobald Hablock das Gerät besitzt, führt der einzige Weg zurück über den 3-Tage-Timer unten.</string>
+</resources>
