@@ -4,7 +4,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.datastore.preferences.preferencesDataStore
-import dev.hablock.app.BuildConfig
 import dev.hablock.app.data.AndroidInstalledAppsRepository
 import dev.hablock.app.data.AndroidPermissionChecker
 import dev.hablock.app.data.AndroidUsageStatsRepository
@@ -14,7 +13,6 @@ import dev.hablock.app.data.DataStoreSettingsRepository
 import dev.hablock.app.data.DataStoreSuspensionStore
 import dev.hablock.app.data.DevicePolicyController
 import dev.hablock.app.data.HealthConnectRepository
-import dev.hablock.app.domain.GateConstants
 import dev.hablock.app.domain.enforcement.DeviceOwnerController
 import dev.hablock.app.domain.enforcement.EnforcementBackend
 import dev.hablock.app.domain.enforcement.EnforcementCoordinator
@@ -41,7 +39,6 @@ import dev.hablock.app.system.AndroidAlarmScheduler
 import dev.hablock.app.system.GateNotifier
 import dev.hablock.app.ui.MainActivity
 import dev.hablock.app.ui.blocked.AndroidBlockedScreenLauncher
-import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -59,8 +56,6 @@ class AppContainer(context: Context) {
 
     val dayClock = DayClock()
 
-    val sessionDuration = if (BuildConfig.DEBUG) 1.minutes else GateConstants.SESSION_DURATION
-
     val blockRepository: BlockRepository by lazy { DataStoreBlockRepository(dataStore, json) }
     val gateStateRepository: GateStateRepository by lazy { DataStoreGateStateRepository(dataStore, json) }
     val settingsRepository: SettingsRepository by lazy { DataStoreSettingsRepository(dataStore) }
@@ -73,7 +68,7 @@ class AppContainer(context: Context) {
 
     val alarmScheduler: AlarmScheduler by lazy { AndroidAlarmScheduler(appContext) }
     val notifier: Notifier by lazy {
-        GateNotifier(appContext, sessionDuration) {
+        GateNotifier(appContext) {
             PendingIntent.getActivity(
                 appContext,
                 0,
@@ -107,7 +102,6 @@ class AppContainer(context: Context) {
             alarmScheduler = alarmScheduler,
             notifier = notifier,
             enforcement = enforcement,
-            sessionDuration = sessionDuration,
             scope = applicationScope,
         )
     }

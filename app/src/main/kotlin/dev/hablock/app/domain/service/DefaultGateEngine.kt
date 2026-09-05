@@ -9,7 +9,7 @@ import dev.hablock.app.domain.model.MetricSnapshot
 import dev.hablock.app.domain.repository.BlockRepository
 import dev.hablock.app.domain.repository.GateStateRepository
 import java.time.Instant
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,7 +37,6 @@ class DefaultGateEngine(
     private val alarmScheduler: AlarmScheduler,
     private val notifier: Notifier,
     private val enforcement: EnforcementBackend,
-    private val sessionDuration: Duration,
     scope: CoroutineScope,
 ) : GateEngine {
 
@@ -76,11 +75,11 @@ class DefaultGateEngine(
                 val snapshot = snapshotFor(block.conditions, from, to, now, dayKey, refreshMetrics = false)
                 Evaluated(block, dayState, snapshot, evaluator.evaluate(block, dayState, snapshot, now))
             }
-            val locked = evaluated.firstOrNull { it.gateState is GateState.Locked }
-            if (locked != null) {
-                enforcement.showBlocked(packageName, locked.block.id)
-            } else {
-                evaluated.filter { it.gateState is GateState.Open }.forEach { startSession(it, now) }
+            val needsAttention = evaluated.firstOrNull {
+                it.gateState is GateState.Locked || it.gateState is GateState.Open
+            }
+            if (needsAttention != null) {
+                enforcement.showBlocked(packageName, needsAttention.block.id)
             }
             refresh(blocks, refreshMetrics = false)
         }
@@ -90,9 +89,14 @@ class DefaultGateEngine(
         mutex.withLock {
             val blocks = loadBlocks()
             val stored = gateStateRepository.get(blockId)
-            if (stored?.activeSession != null) {
+            val session = stored?.activeSession
+            if (session != null) {
                 gateStateRepository.save(stored.copy(activeSession = null))
-                blocks.firstOrNull { it.id == blockId }?.let { notifier.sessionEnded(it.id, it.name) }
+                val minutes = ((session.endsAtMillis - session.startedAtMillis) / 60_000L).toInt()
+                blocks.firstOrNull { it.id == blockId }?.let {
+                    notifier.sessionEnded(it.id, it.name, minutes)
+                    notifier.cancelSessionNotification(it.id)
+                }
             }
             refresh(blocks, refreshMetrics = true)
         }
@@ -103,7 +107,39 @@ class DefaultGateEngine(
             blockRepository.delete(blockId)
             gateStateRepository.delete(blockId)
             alarmScheduler.cancelSessionEnd(blockId)
+            notifier.cancelSessionNotification(blockId)
             refresh(loadBlocks(), refreshMetrics = false)
+        }
+    }
+
+    override suspend fun unlock(blockId: String) {
+        mutex.withLock {
+            val blocks = loadBlocks()
+            val block = blocks.firstOrNull { it.id == blockId && it.enabled } ?: return@withLock
+            val now = dayClock.now()
+            val dayKey = dayClock.dayKey(now)
+            val (from, to) = dayClock.dayWindow(now)
+            val dayState = expireSession(resolveDayState(block, dayKey), now)
+            val snapshot = snapshotFor(block.conditions, from, to, now, dayKey, refreshMetrics = true)
+            val evaluated = Evaluated(block, dayState, snapshot, evaluator.evaluate(block, dayState, snapshot, now))
+            if (evaluated.gateState is GateState.Open) {
+                startSession(evaluated, now)
+            }
+            refresh(blocks, refreshMetrics = false)
+        }
+    }
+
+    override suspend fun relock(blockId: String) {
+        mutex.withLock {
+            val blocks = loadBlocks()
+            val stored = gateStateRepository.get(blockId)
+            val session = stored?.activeSession
+            if (session != null) {
+                gateStateRepository.save(stored.copy(activeSession = null))
+                alarmScheduler.cancelSessionEnd(blockId)
+                notifier.cancelSessionNotification(blockId)
+            }
+            refresh(blocks, refreshMetrics = true)
         }
     }
 
@@ -164,11 +200,13 @@ class DefaultGateEngine(
             dayState = evaluated.dayState,
             snapshot = evaluated.snapshot,
             now = now,
-            sessionDuration = sessionDuration,
+            sessionDuration = evaluated.block.unlockDurationMinutes.minutes,
         )
         gateStateRepository.save(started)
         started.activeSession?.let {
-            alarmScheduler.scheduleSessionEnd(evaluated.block.id, Instant.ofEpochMilli(it.endsAtMillis))
+            val endsAt = Instant.ofEpochMilli(it.endsAtMillis)
+            alarmScheduler.scheduleSessionEnd(evaluated.block.id, endsAt)
+            notifier.sessionStarted(evaluated.block.id, evaluated.block.name, endsAt)
         }
         return started
     }

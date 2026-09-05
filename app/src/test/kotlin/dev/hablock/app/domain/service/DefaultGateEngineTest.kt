@@ -11,7 +11,6 @@ import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
-import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.runTest
 
@@ -45,7 +44,6 @@ class DefaultGateEngineTest {
         alarmScheduler = alarmScheduler,
         notifier = notifier,
         enforcement = enforcement,
-        sessionDuration = 30.minutes,
         scope = scope,
     )
 
@@ -61,26 +59,78 @@ class DefaultGateEngineTest {
     }
 
     @Test
-    fun `foregrounding a blocked app while open starts a session and schedules its end`() = runTest {
+    fun `foregrounding a blocked app while open shows the blocked screen instead of auto-starting`() = runTest {
         metricProvider.values = mapOf("steps" to 10_300.0)
         val engine = newEngine(backgroundScope)
         engine.onAppForegrounded(SOCIAL)
 
-        assertTrue(enforcement.blocked.isEmpty())
+        assertEquals(listOf(SOCIAL to "b1"), enforcement.blocked)
+        assertNull(gateStateRepository.stored("b1")?.activeSession)
+        assertTrue(alarmScheduler.sessionEnds.isEmpty())
+        assertIs<GateState.Open>(engine.states.value.getValue("b1"))
+    }
+
+    @Test
+    fun `unlock starts a session when the gate is open`() = runTest {
+        metricProvider.values = mapOf("steps" to 10_300.0)
+        val engine = newEngine(backgroundScope)
+        engine.refreshAll()
+
+        engine.unlock("b1")
+
         val stored = assertNotNull(gateStateRepository.stored("b1"))
         val session = assertNotNull(stored.activeSession)
         assertEquals(1, stored.unlockCount)
         assertEquals(11_300.0, stored.requiredNow.getValue("steps"), EPS)
         assertEquals(60.0, stored.requiredNow.getValue("workout"), EPS)
         assertEquals(listOf("b1" to Instant.ofEpochMilli(session.endsAtMillis)), alarmScheduler.sessionEnds)
+        assertEquals(listOf(Triple("b1", "Block b1", Instant.ofEpochMilli(session.endsAtMillis))), notifier.sessionsStarted)
         assertIs<GateState.SessionActive>(engine.states.value.getValue("b1"))
+    }
+
+    @Test
+    fun `unlock does nothing when the gate is locked`() = runTest {
+        val engine = newEngine(backgroundScope)
+        engine.unlock("b1")
+
+        assertNull(gateStateRepository.stored("b1")?.activeSession)
+        assertTrue(alarmScheduler.sessionEnds.isEmpty())
+        assertIs<GateState.Locked>(engine.states.value.getValue("b1"))
+    }
+
+    @Test
+    fun `relock clears the session but keeps the ratcheted requirements`() = runTest {
+        metricProvider.values = mapOf("steps" to 10_300.0)
+        val engine = newEngine(backgroundScope)
+        engine.refreshAll()
+        engine.unlock("b1")
+        assertNotNull(gateStateRepository.stored("b1")?.activeSession)
+
+        engine.relock("b1")
+
+        assertNull(gateStateRepository.stored("b1")?.activeSession)
+        assertEquals(1, gateStateRepository.stored("b1")?.unlockCount)
+        assertEquals(11_300.0, gateStateRepository.stored("b1")?.requiredNow?.getValue("steps") ?: 0.0, EPS)
+        assertEquals(listOf("b1"), alarmScheduler.cancelledSessions)
+        assertEquals(listOf("b1"), notifier.cancelledNotifications)
+        assertIs<GateState.Locked>(engine.states.value.getValue("b1"))
+    }
+
+    @Test
+    fun `relock does nothing without an active session`() = runTest {
+        val engine = newEngine(backgroundScope)
+        engine.relock("b1")
+
+        assertNull(gateStateRepository.stored("b1")?.activeSession)
+        assertTrue(alarmScheduler.cancelledSessions.isEmpty())
     }
 
     @Test
     fun `a second foreground event during a session does not ratchet again`() = runTest {
         metricProvider.values = mapOf("steps" to 10_300.0)
         val engine = newEngine(backgroundScope)
-        engine.onAppForegrounded(SOCIAL)
+        engine.refreshAll()
+        engine.unlock("b1")
         clock.advance(1_000)
         engine.onAppForegrounded(SOCIAL)
 
@@ -120,12 +170,14 @@ class DefaultGateEngineTest {
     fun `session expiry clears the session and notifies`() = runTest {
         metricProvider.values = mapOf("steps" to 10_300.0)
         val engine = newEngine(backgroundScope)
-        engine.onAppForegrounded(SOCIAL)
+        engine.refreshAll()
+        engine.unlock("b1")
         clock.advance(31 * 60 * 1_000L)
 
         engine.onSessionExpired("b1")
 
-        assertEquals(listOf("b1" to "Block b1"), notifier.sessionsEnded)
+        assertEquals(listOf(Triple("b1", "Block b1", 30)), notifier.sessionsEnded)
+        assertEquals(listOf("b1"), notifier.cancelledNotifications)
         assertNull(gateStateRepository.stored("b1")?.activeSession)
         assertIs<GateState.Locked>(engine.states.value.getValue("b1"))
     }
@@ -134,7 +186,8 @@ class DefaultGateEngineTest {
     fun `an expired session is cleared by a plain refresh too`() = runTest {
         metricProvider.values = mapOf("steps" to 10_300.0)
         val engine = newEngine(backgroundScope)
-        engine.onAppForegrounded(SOCIAL)
+        engine.refreshAll()
+        engine.unlock("b1")
         clock.advance(31 * 60 * 1_000L)
 
         engine.refreshAll()
@@ -147,7 +200,8 @@ class DefaultGateEngineTest {
     fun `day reset clears expired state, cancels its alarm and schedules the next reset`() = runTest {
         metricProvider.values = mapOf("steps" to 10_300.0)
         val engine = newEngine(backgroundScope)
-        engine.onAppForegrounded(SOCIAL)
+        engine.refreshAll()
+        engine.unlock("b1")
         clock.advance(31 * 60 * 1_000L)
 
         engine.onDayReset()
@@ -165,7 +219,8 @@ class DefaultGateEngineTest {
     fun `day reset carries an in-flight session into the new day`() = runTest {
         metricProvider.values = mapOf("steps" to 10_300.0)
         val engine = newEngine(backgroundScope)
-        engine.onAppForegrounded(SOCIAL)
+        engine.refreshAll()
+        engine.unlock("b1")
         val session = assertNotNull(gateStateRepository.stored("b1")?.activeSession)
 
         engine.onDayReset()
@@ -254,7 +309,8 @@ class DefaultGateEngineTest {
     fun `deleting a block removes its state, cancels its alarm and unpublishes it`() = runTest {
         metricProvider.values = mapOf("steps" to 10_300.0)
         val engine = newEngine(backgroundScope)
-        engine.onAppForegrounded(SOCIAL)
+        engine.refreshAll()
+        engine.unlock("b1")
         assertNotNull(gateStateRepository.stored("b1")?.activeSession)
 
         engine.deleteBlock("b1")
@@ -262,6 +318,7 @@ class DefaultGateEngineTest {
         assertTrue(blockRepository.current().isEmpty())
         assertNull(gateStateRepository.stored("b1"))
         assertEquals(listOf("b1"), alarmScheduler.cancelledSessions)
+        assertEquals(listOf("b1"), notifier.cancelledNotifications)
         assertTrue(engine.states.value.isEmpty())
 
         engine.refreshAll()

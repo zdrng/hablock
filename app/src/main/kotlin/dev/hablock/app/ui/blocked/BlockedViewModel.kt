@@ -25,6 +25,12 @@ data class BlockedUiState(
 ) {
     val progress: List<ConditionProgress>
         get() = state?.progress ?: block?.conditions?.map { ConditionProgress(it, 0.0, it.goal) }.orEmpty()
+
+    val sessionMinutes: Int
+        get() = block?.unlockDurationMinutes ?: 30
+
+    val threshold: Int
+        get() = block?.thresholdN?.coerceIn(1, (block.conditions.size).coerceAtLeast(1)) ?: 1
 }
 
 class BlockedViewModel(
@@ -32,7 +38,6 @@ class BlockedViewModel(
     private val gateEngine: GateEngine,
     private val healthRepository: HealthRepository,
     private val blockId: String,
-    val sessionMinutes: Int,
 ) : ViewModel() {
 
     private val hcProblem = MutableStateFlow(false)
@@ -50,6 +55,10 @@ class BlockedViewModel(
     fun refresh(): Job = viewModelScope.launch {
         gateEngine.refreshAll()
         updateHcProblem()
+    }
+
+    fun unlock(): Job = viewModelScope.launch {
+        gateEngine.unlock(blockId)
     }
 
     private suspend fun updateHcProblem() {

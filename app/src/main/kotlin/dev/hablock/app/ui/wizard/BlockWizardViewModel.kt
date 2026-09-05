@@ -7,6 +7,7 @@ import dev.hablock.app.domain.model.Block
 import dev.hablock.app.domain.model.Condition
 import dev.hablock.app.domain.model.HcAvailability
 import dev.hablock.app.domain.model.InstalledApp
+import dev.hablock.app.domain.model.LockType
 import dev.hablock.app.domain.repository.BlockRepository
 import dev.hablock.app.domain.repository.HealthRepository
 import dev.hablock.app.domain.repository.InstalledAppsRepository
@@ -56,9 +57,13 @@ data class WizardUiState(
     val drafts: List<ConditionDraft> = emptyList(),
     val thresholdN: Int = 1,
     val incrementPct: Float = 0.20f,
+    val unlockDurationMinutes: Int = GateConstants.DURATION_DEFAULT,
     val name: String = "",
     val defaultBlockNumber: Int = 1,
     val availability: HcAvailability = HcAvailability.UNAVAILABLE,
+    val blockedUntil: Long? = null,
+    val lockType: LockType? = null,
+    val lockPasswordHash: String? = null,
 ) {
     val activeDrafts: List<ConditionDraft> get() = drafts.filter { it.ready }
     val conditionCount: Int get() = activeDrafts.size
@@ -137,7 +142,11 @@ class BlockWizardViewModel(
             drafts = drafts,
             thresholdN = block.thresholdN,
             incrementPct = block.incrementPct,
+            unlockDurationMinutes = block.unlockDurationMinutes,
             name = block.name,
+            blockedUntil = block.blockedUntil,
+            lockType = block.lockType,
+            lockPasswordHash = block.lockPasswordHash,
         )
     }
 
@@ -205,6 +214,11 @@ class BlockWizardViewModel(
         it.copy(incrementPct = next.coerceIn(GateConstants.INCREMENT_MIN, GateConstants.INCREMENT_MAX))
     }
 
+    fun bumpDuration(direction: Int) = _uiState.update {
+        val next = it.unlockDurationMinutes + direction * GateConstants.DURATION_STEP
+        it.copy(unlockDurationMinutes = next.coerceIn(GateConstants.DURATION_MIN, GateConstants.DURATION_MAX))
+    }
+
     fun setName(name: String) = _uiState.update { it.copy(name = name) }
 
     fun save(fallbackName: String) {
@@ -223,7 +237,11 @@ class BlockWizardViewModel(
                     conditions = state.activeDrafts.map { it.toCondition() },
                     thresholdN = state.thresholdN.coerceIn(1, state.conditionCount),
                     incrementPct = state.incrementPct,
+                    unlockDurationMinutes = state.unlockDurationMinutes,
                     enabled = existing?.enabled ?: true,
+                    blockedUntil = existing?.blockedUntil,
+                    lockType = existing?.lockType,
+                    lockPasswordHash = existing?.lockPasswordHash,
                 ),
             )
             gateEngine.refreshAll()

@@ -11,5 +11,16 @@ data class Block(
     val conditions: List<Condition>,
     val thresholdN: Int,
     val incrementPct: Float,
+    val unlockDurationMinutes: Int = 30,
     val enabled: Boolean = true,
+    val blockedUntil: Long? = null,
+    val lockType: LockType? = null,
+    val lockPasswordHash: String? = null,
 )
+
+fun Block.isChangesLocked(now: Long = System.currentTimeMillis()): Boolean =
+    when (lockType) {
+        LockType.PASSWORD -> true
+        LockType.DURATION -> blockedUntil != null && blockedUntil > now
+        null -> blockedUntil != null && blockedUntil > now
+    }

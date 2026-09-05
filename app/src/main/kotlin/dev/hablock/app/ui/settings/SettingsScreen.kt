@@ -28,6 +28,7 @@ import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
@@ -51,6 +52,7 @@ import dev.hablock.app.R
 import dev.hablock.app.domain.GateConstants
 import dev.hablock.app.domain.model.RelinquishState
 import dev.hablock.app.ui.components.BigNumerals
+import dev.hablock.app.ui.components.EmergencyUnlockPills
 import dev.hablock.app.ui.components.GrantBadge
 import dev.hablock.app.ui.components.GroupPosition
 import dev.hablock.app.ui.components.GroupedListItem
@@ -77,6 +79,7 @@ fun SettingsScreen() {
             container.deviceOwnerController,
             container.relinquishTimer,
             container.healthRepository,
+            container.settingsRepository,
         )
     }
     val healthLauncher = rememberLauncherForActivityResult(
@@ -84,6 +87,7 @@ fun SettingsScreen() {
     ) { viewModel.refresh() }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val relinquish by viewModel.relinquish.collectAsStateWithLifecycle()
+    val emergencyUnlocks by viewModel.emergencyUnlocks.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var guideOpen by remember { mutableStateOf(false) }
     var dialog by remember { mutableStateOf<RelinquishDialog?>(null) }
@@ -212,6 +216,22 @@ fun SettingsScreen() {
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
+                }
+            }
+
+            SectionHeader(stringResource(R.string.settings_section_emergency))
+            Surface(
+                Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.large,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+            ) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(
+                        stringResource(R.string.settings_emergency_body),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    EmergencyUnlockPills(pills = emergencyUnlocks.pills)
                 }
             }
 

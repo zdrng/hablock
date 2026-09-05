@@ -44,6 +44,15 @@
     <string name="wizard_summary_conditions">Conditions</string>
     <string name="wizard_summary_opens_on">Opens on</string>
     <string name="wizard_summary_ratchet">Ratchet</string>
+    <string name="wizard_summary_unlock_duration">Unlock duration</string>
+    <string name="wizard_summary_changes_lock">Changes lock</string>
+    <string name="wizard_summary_changes_locked">Locked</string>
+    <string name="wizard_unlock_prefix">"Apps unlock for "</string>
+    <string name="wizard_unlock_suffix">".</string>
+    <plurals name="wizard_unlock_minutes">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1$d minutes</item>
+    </plurals>
     <string name="wizard_save_changes">Save changes</string>
     <string name="wizard_lock_it_in">Lock it in</string>
     <string-array name="wizard_name_ideas">

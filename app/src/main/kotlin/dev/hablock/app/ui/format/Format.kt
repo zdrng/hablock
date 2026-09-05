@@ -46,6 +46,14 @@ fun formatCountdown(remaining: Duration): String = remaining.toComponents { days
     }
 }
 
+fun formatCountdownPrecise(remaining: Duration): String = remaining.toComponents { days, hours, minutes, seconds, _ ->
+    when {
+        days > 0 -> "${days}d ${hours}h"
+        hours > 0 -> "${hours}h ${minutes}m"
+        else -> "${minutes}m ${seconds.toString().padStart(2, '0')}s"
+    }
+}
+
 fun formatDayHeader(instant: Instant, zone: ZoneId = ZoneId.systemDefault()): String {
     val date = instant.atZone(zone)
     val day = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
@@ -58,6 +66,12 @@ fun formatWeekday(instant: Instant, zone: ZoneId = ZoneId.systemDefault()): Stri
 fun formatClock(instant: Instant, zone: ZoneId = ZoneId.systemDefault()): String {
     val time = instant.atZone(zone)
     return "${time.hour.toString().padStart(2, '0')}:${time.minute.toString().padStart(2, '0')}"
+}
+
+fun formatDate(instant: Instant, zone: ZoneId = ZoneId.systemDefault()): String {
+    val date = instant.atZone(zone)
+    val month = date.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+    return "$month ${date.dayOfMonth}"
 }
 
 fun formatPercent(fraction: Float): String = "${(fraction * 100).roundToInt()}%"

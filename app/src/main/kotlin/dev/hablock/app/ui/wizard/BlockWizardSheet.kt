@@ -56,7 +56,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.hablock.app.R
+import dev.hablock.app.domain.GateConstants
 import dev.hablock.app.domain.model.InstalledApp
+import dev.hablock.app.domain.model.LockType
 import dev.hablock.app.ui.components.AppIconCookie
 import dev.hablock.app.ui.components.GroupedListItem
 import dev.hablock.app.ui.components.PlayfulStepper
@@ -227,6 +229,7 @@ private fun StepConditions(uiState: WizardUiState, viewModel: BlockWizardViewMod
             }
             item { ThresholdPanel(uiState, viewModel) }
             item { RatchetPanel(uiState, viewModel) }
+            item { UnlockPanel(uiState, viewModel) }
         }
         WizardFooter(
             hint = if (uiState.conditionCount == 0) stringResource(R.string.wizard_conditions_hint) else "",
@@ -378,6 +381,30 @@ private fun RatchetPanel(uiState: WizardUiState, viewModel: BlockWizardViewModel
 }
 
 @Composable
+private fun UnlockPanel(uiState: WizardUiState, viewModel: BlockWizardViewModel) {
+    Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surfaceContainer) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text(
+                buildAnnotatedString {
+                    append(stringResource(R.string.wizard_unlock_prefix))
+                    withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)) {
+                        append(pluralStringResource(R.plurals.wizard_unlock_minutes, uiState.unlockDurationMinutes, uiState.unlockDurationMinutes))
+                    }
+                    append(stringResource(R.string.wizard_unlock_suffix))
+                },
+                style = MaterialTheme.typography.titleMediumEmphasized,
+            )
+            Slider(
+                value = uiState.unlockDurationMinutes.toFloat(),
+                onValueChange = { viewModel.bumpDuration(it.toInt() - uiState.unlockDurationMinutes) },
+                valueRange = GateConstants.DURATION_MIN.toFloat()..GateConstants.DURATION_MAX.toFloat(),
+                steps = (GateConstants.DURATION_MAX - GateConstants.DURATION_MIN) / GateConstants.DURATION_STEP - 1,
+            )
+        }
+    }
+}
+
+@Composable
 private fun StepName(uiState: WizardUiState, viewModel: BlockWizardViewModel) {
     val defaultName = stringResource(R.string.wizard_default_name, uiState.defaultBlockNumber)
     val nameIdeas = stringArrayResource(R.array.wizard_name_ideas)
@@ -405,6 +432,19 @@ private fun StepName(uiState: WizardUiState, viewModel: BlockWizardViewModel) {
                     stringResource(R.string.wizard_n_of_m, uiState.thresholdN, uiState.conditionCount),
                 )
                 SummaryRow(stringResource(R.string.wizard_summary_ratchet), formatPercent(uiState.incrementPct))
+                SummaryRow(
+                    stringResource(R.string.wizard_summary_unlock_duration),
+                    pluralStringResource(R.plurals.wizard_unlock_minutes, uiState.unlockDurationMinutes, uiState.unlockDurationMinutes),
+                )
+                if (uiState.editing && uiState.lockType != null) {
+                    SummaryRow(
+                        stringResource(R.string.wizard_summary_changes_lock),
+                        when (uiState.lockType) {
+                            LockType.PASSWORD -> stringResource(R.string.changes_lock_preset_password)
+                            LockType.DURATION -> stringResource(R.string.wizard_summary_changes_locked)
+                        },
+                    )
+                }
             }
         }
         Box(contentAlignment = Alignment.Center) {

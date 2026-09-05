@@ -182,4 +182,60 @@ object HablockIcons {
             }
         }.build()
     }
+
+    val LockOpen: ImageVector by lazy {
+        ImageVector.Builder("Hablock.LockOpen", 24.dp, 24.dp, 24f, 24f).apply {
+            path(
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(8f, 11f)
+                lineTo(16f, 11f)
+                arcTo(1.5f, 1.5f, 0f, false, true, 17.5f, 12.5f)
+                lineTo(17.5f, 17.5f)
+                arcTo(1.5f, 1.5f, 0f, false, true, 16f, 19f)
+                lineTo(8f, 19f)
+                arcTo(1.5f, 1.5f, 0f, false, true, 6.5f, 17.5f)
+                lineTo(6.5f, 12.5f)
+                arcTo(1.5f, 1.5f, 0f, false, true, 8f, 11f)
+                close()
+            }
+            path(
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(9.5f, 11f)
+                lineTo(9.5f, 8f)
+                arcTo(2.5f, 2.5f, 0f, false, true, 14.5f, 5.5f)
+            }
+        }.build()
+    }
+
+    val Timer: ImageVector by lazy {
+        ImageVector.Builder("Hablock.Timer", 24.dp, 24.dp, 24f, 24f).apply {
+            path(
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(12f, 8f)
+                lineTo(12f, 12f)
+                lineTo(15f, 14f)
+            }
+            path(
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+            ) {
+                moveTo(12f, 4.5f)
+                arcTo(7.5f, 7.5f, 0f, true, true, 11.99f, 4.5f)
+                close()
+            }
+        }.build()
+    }
 }

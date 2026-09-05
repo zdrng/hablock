@@ -16,6 +16,8 @@ interface GateEngine {
     suspend fun onSessionExpired(blockId: String)
     suspend fun onDayReset()
     suspend fun deleteBlock(blockId: String)
+    suspend fun unlock(blockId: String)
+    suspend fun relock(blockId: String)
 }
 
 interface MetricProvider {
@@ -31,7 +33,9 @@ interface AlarmScheduler {
 }
 
 interface Notifier {
-    fun sessionEnded(blockId: String, blockName: String)
+    fun sessionStarted(blockId: String, blockName: String, endsAt: Instant)
+    fun sessionEnded(blockId: String, blockName: String, sessionMinutes: Int)
+    fun cancelSessionNotification(blockId: String)
     fun relinquishReady()
 }
 

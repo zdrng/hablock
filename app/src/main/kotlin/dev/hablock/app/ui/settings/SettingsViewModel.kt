@@ -3,10 +3,12 @@ package dev.hablock.app.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.hablock.app.domain.enforcement.DeviceOwnerController
+import dev.hablock.app.domain.model.EmergencyUnlockState
 import dev.hablock.app.domain.model.HcAvailability
 import dev.hablock.app.domain.model.RelinquishState
 import dev.hablock.app.domain.repository.HealthRepository
 import dev.hablock.app.domain.repository.PermissionChecker
+import dev.hablock.app.domain.repository.SettingsRepository
 import dev.hablock.app.domain.service.RelinquishTimer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,6 +32,7 @@ class SettingsViewModel(
     private val deviceOwnerController: DeviceOwnerController,
     private val relinquishTimer: RelinquishTimer,
     private val healthRepository: HealthRepository,
+    settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -37,6 +40,9 @@ class SettingsViewModel(
 
     val relinquish: StateFlow<RelinquishState> =
         relinquishTimer.state.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), RelinquishState.Idle)
+
+    val emergencyUnlocks: StateFlow<EmergencyUnlockState> =
+        settingsRepository.emergencyUnlocks.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), EmergencyUnlockState())
 
     val healthPermissions: Set<String> get() = healthRepository.requiredPermissions()
 

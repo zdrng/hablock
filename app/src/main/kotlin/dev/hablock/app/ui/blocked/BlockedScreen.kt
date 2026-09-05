@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -30,7 +31,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,16 +42,13 @@ import dev.hablock.app.domain.model.GateState
 import dev.hablock.app.ui.components.AppIconCookie
 import dev.hablock.app.ui.components.ConditionMeter
 import dev.hablock.app.ui.components.GroupedListItem
+import dev.hablock.app.ui.components.HablockDialog
 import dev.hablock.app.ui.components.ShapeBurst
 import dev.hablock.app.ui.components.ShapeShiftingBadge
 import dev.hablock.app.ui.components.groupPositionOf
 import dev.hablock.app.ui.gateViewModel
 import kotlinx.coroutines.launch
 
-/**
- * The screen that decides whether Hablock feels supportive or smug. Rule: specific and
- * actionable, matter-of-fact about the lock, never scolding.
- */
 @Composable
 fun BlockedScreen(
     blockId: String,
@@ -65,7 +62,6 @@ fun BlockedScreen(
             container.gateEngine,
             container.healthRepository,
             blockId,
-            container.sessionDuration.inWholeMinutes.toInt(),
         )
     }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -74,13 +70,17 @@ fun BlockedScreen(
     val open = uiState.state is GateState.Open
     val scope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
+    var showUnlockDialog by remember { mutableStateOf(false) }
 
     LifecycleResumeEffect(Unit) {
         viewModel.refreshHcStatus()
         onPauseOrDispose {}
     }
     LaunchedEffect(uiState.state) {
-        if (uiState.state is GateState.SessionActive) onClose()
+        if (uiState.state is GateState.SessionActive) {
+            packageName?.let(onOpenApp)
+            onClose()
+        }
     }
 
     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -99,7 +99,7 @@ fun BlockedScreen(
                         isRefreshing = false
                     }
                 },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(0.6f),
             ) {
                 Column(
                     Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
@@ -158,27 +158,47 @@ fun BlockedScreen(
                     Spacer(Modifier.height(20.dp))
                 }
             }
-            if (open) {
-                Column(
-                    Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
+            Column(
+                Modifier.weight(0.4f).fillMaxWidth().padding(top = 12.dp, bottom = 24.dp),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                if (open) {
                     Button(
-                        onClick = { packageName?.let(onOpenApp) },
+                        onClick = { showUnlockDialog = true },
                         modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                        ),
                     ) {
                         Text(
-                            pluralStringResource(
-                                R.plurals.blocked_open_button,
-                                viewModel.sessionMinutes,
-                                appLabel,
-                                viewModel.sessionMinutes,
-                            ),
+                            stringResource(R.string.blocked_unlock_button, uiState.sessionMinutes),
                         )
                     }
+                } else {
+                    val met = uiState.state?.metCount ?: 0
+                    Text(
+                        stringResource(R.string.blocked_locked_hint, uiState.threshold - met, uiState.threshold),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                    )
                 }
             }
         }
+    }
+    if (showUnlockDialog) {
+        HablockDialog(
+            title = stringResource(R.string.blocked_unlock_title, appLabel),
+            message = stringResource(R.string.blocked_unlock_message, uiState.sessionMinutes),
+            confirmLabel = stringResource(R.string.blocked_unlock_confirm),
+            onConfirm = {
+                showUnlockDialog = false
+                viewModel.unlock()
+            },
+            onDismiss = { showUnlockDialog = false },
+        )
     }
     BackHandler { onClose() }
 }

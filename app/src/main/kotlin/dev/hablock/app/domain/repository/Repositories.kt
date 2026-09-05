@@ -3,6 +3,7 @@ package dev.hablock.app.domain.repository
 import dev.hablock.app.domain.model.AppUsageEntry
 import dev.hablock.app.domain.model.Block
 import dev.hablock.app.domain.model.BlockDayState
+import dev.hablock.app.domain.model.EmergencyUnlockState
 import dev.hablock.app.domain.model.HcAvailability
 import dev.hablock.app.domain.model.InstalledApp
 import java.time.Instant
@@ -28,6 +29,8 @@ interface SettingsRepository {
     suspend fun setOnboardingDone()
     val relinquishDeadlineMillis: Flow<Long?>
     suspend fun setRelinquishDeadline(millis: Long?)
+    val emergencyUnlocks: Flow<EmergencyUnlockState>
+    suspend fun setEmergencyUnlocks(state: EmergencyUnlockState)
 }
 
 interface UsageStatsRepository {

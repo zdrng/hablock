@@ -14,6 +14,7 @@ import dev.hablock.app.domain.repository.HealthRepository
 import dev.hablock.app.domain.repository.SettingsRepository
 import dev.hablock.app.domain.repository.UsageStatsRepository
 import dev.hablock.app.domain.model.AppUsageEntry
+import dev.hablock.app.domain.model.EmergencyUnlockState
 import dev.hablock.app.domain.model.HcAvailability
 import java.time.Clock
 import java.time.Instant
@@ -27,6 +28,7 @@ fun testBlock(
     conditions: List<Condition> = emptyList(),
     thresholdN: Int = 1,
     incrementPct: Float = 0.10f,
+    unlockDurationMinutes: Int = 30,
     enabled: Boolean = true,
 ): Block = Block(
     id = id,
@@ -35,6 +37,7 @@ fun testBlock(
     conditions = conditions,
     thresholdN = thresholdN,
     incrementPct = incrementPct,
+    unlockDurationMinutes = unlockDurationMinutes,
     enabled = enabled,
 )
 
@@ -126,12 +129,22 @@ class FakeAlarmScheduler : AlarmScheduler {
 }
 
 class FakeNotifier : Notifier {
-    val sessionsEnded = mutableListOf<Pair<String, String>>()
+    val sessionsStarted = mutableListOf<Triple<String, String, Instant>>()
+    val sessionsEnded = mutableListOf<Triple<String, String, Int>>()
     var relinquishReadyCount = 0
         private set
+    val cancelledNotifications = mutableListOf<String>()
 
-    override fun sessionEnded(blockId: String, blockName: String) {
-        sessionsEnded += blockId to blockName
+    override fun sessionStarted(blockId: String, blockName: String, endsAt: Instant) {
+        sessionsStarted += Triple(blockId, blockName, endsAt)
+    }
+
+    override fun sessionEnded(blockId: String, blockName: String, sessionMinutes: Int) {
+        sessionsEnded += Triple(blockId, blockName, sessionMinutes)
+    }
+
+    override fun cancelSessionNotification(blockId: String) {
+        cancelledNotifications += blockId
     }
 
     override fun relinquishReady() {
@@ -157,6 +170,7 @@ class FakeEnforcement(var foregroundUseReported: Boolean = true) : EnforcementBa
 class FakeSettingsRepository(deadline: Long? = null) : SettingsRepository {
     private val onboarding = MutableStateFlow(false)
     private val deadlineState = MutableStateFlow(deadline)
+    private val emergencyState = MutableStateFlow(EmergencyUnlockState())
 
     override val onboardingDone: Flow<Boolean> = onboarding
     override suspend fun setOnboardingDone() {
@@ -166,6 +180,11 @@ class FakeSettingsRepository(deadline: Long? = null) : SettingsRepository {
     override val relinquishDeadlineMillis: Flow<Long?> = deadlineState
     override suspend fun setRelinquishDeadline(millis: Long?) {
         deadlineState.value = millis
+    }
+
+    override val emergencyUnlocks: Flow<EmergencyUnlockState> = emergencyState
+    override suspend fun setEmergencyUnlocks(state: EmergencyUnlockState) {
+        emergencyState.value = state
     }
 
     fun deadline(): Long? = deadlineState.value
