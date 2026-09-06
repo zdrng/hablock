@@ -388,11 +388,18 @@ private fun UnlockPanel(uiState: WizardUiState, viewModel: BlockWizardViewModel)
                 },
                 style = MaterialTheme.typography.titleMediumEmphasized,
             )
-            Slider(
-                value = uiState.unlockDurationMinutes.toFloat(),
-                onValueChange = { viewModel.bumpDuration(it.toInt() - uiState.unlockDurationMinutes) },
-                valueRange = GateConstants.DURATION_MIN.toFloat()..GateConstants.DURATION_MAX.toFloat(),
-                steps = (GateConstants.DURATION_MAX - GateConstants.DURATION_MIN) / GateConstants.DURATION_STEP - 1,
+            PlayfulStepper(
+                value = "${uiState.unlockDurationMinutes}",
+                onBump = viewModel::bumpDuration,
+                canDecrease = uiState.unlockDurationMinutes > GateConstants.DURATION_MIN,
+                canIncrease = uiState.unlockDurationMinutes < GateConstants.DURATION_MAX,
+            )
+            Text(
+                stringResource(R.string.wizard_unit_minutes),
+                Modifier.fillMaxWidth(),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
             )
         }
     }
