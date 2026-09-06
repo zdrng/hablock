@@ -127,6 +127,7 @@ class GateNotifier(
             .setChronometerCountDown(true)
             .setWhen(endsAtMillis)
             .setOngoing(true)
+            .setOnlyAlertOnce(true)
             .addAction(
                 android.R.drawable.ic_lock_lock,
                 context.getString(R.string.notif_session_relock),
