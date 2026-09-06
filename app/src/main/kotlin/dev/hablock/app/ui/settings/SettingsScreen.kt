@@ -103,6 +103,7 @@ fun SettingsScreen() {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val relinquish by viewModel.relinquish.collectAsStateWithLifecycle()
     val emergencyUnlocks by viewModel.emergencyUnlocks.collectAsStateWithLifecycle()
+    val versionClick = rememberVersionClick(viewModel.settingsRepository)
     val context = LocalContext.current
     var guideOpen by remember { mutableStateOf(false) }
     var dialog by remember { mutableStateOf<RelinquishDialog?>(null) }
@@ -268,6 +269,7 @@ fun SettingsScreen() {
             GroupedListItem(
                 position = GroupPosition.First,
                 title = stringResource(R.string.settings_version),
+                onClick = versionClick,
                 trailing = {
                     Text(
                         stringResource(R.string.settings_version_value, BuildConfig.VERSION_NAME),

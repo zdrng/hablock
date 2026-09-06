@@ -85,4 +85,11 @@
     <string name="rationale_title">Pourquoi Hablock lit tes données de santé</string>
     <string name="rationale_reads">Hablock lit tes pas, tes séances d\'exercice et tes minutes de pleine conscience pour décider si les conditions du jour sont remplies.</string>
     <string name="rationale_private">Tout se fait sur l\'appareil, uniquement pour la fenêtre du jour, et sans aucune permission réseau. Rien ne quitte le téléphone.</string>
+    <string name="emergency_screen_title">Déverrouillage d’urgence</string>
+    <string name="emergency_screen_body">Déverrouiller les modifications de « %1$s ». Cela utilise un déverrouillage d’urgence, renouvelé après 30 jours.</string>
+    <string name="emergency_release">Relâcher pour déverrouiller</string>
+    <string name="emergency_seconds">%1$d s</string>
+    <string name="emergency_hold_hint">Maintenez pendant 10 secondes. La progression apparaît au-dessus de votre doigt.</string>
+    <string name="emergency_release_hint">Relâchez avant la fin pour annuler. À zéro, relâchez pour déverrouiller.</string>
+    <string name="emergency_accessible_hint">À zéro, utilisez à nouveau l’action d’appui long pour confirmer. Annulez pour arrêter.</string>
 </resources>

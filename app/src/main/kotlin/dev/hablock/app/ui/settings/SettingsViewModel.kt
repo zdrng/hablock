@@ -32,7 +32,7 @@ class SettingsViewModel(
     private val deviceOwnerController: DeviceOwnerController,
     private val relinquishTimer: RelinquishTimer,
     private val healthRepository: HealthRepository,
-    settingsRepository: SettingsRepository,
+    val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())

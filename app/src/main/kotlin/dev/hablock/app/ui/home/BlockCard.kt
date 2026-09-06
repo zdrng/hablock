@@ -63,7 +63,6 @@ fun BlockCard(
     block: Block,
     state: GateState?,
     expanded: Boolean,
-    onClick: () -> Unit,
     onToggle: (Boolean) -> Unit,
     onLongPress: () -> Unit,
     onRelock: () -> Unit,
@@ -87,6 +86,16 @@ fun BlockCard(
         label = "container",
     )
 
+    val content by animateColorAsState(
+        targetValue = when {
+            paused -> MaterialTheme.colorScheme.onSurface
+            session != null -> MaterialTheme.colorScheme.onTertiaryContainer
+            open -> MaterialTheme.colorScheme.onPrimaryContainer
+            else -> MaterialTheme.colorScheme.onSurface
+        },
+        label = "content",
+    )
+
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
     val pressScale by animateFloatAsState(
@@ -94,26 +103,30 @@ fun BlockCard(
         animationSpec = spring(stiffness = 900f),
         label = "press",
     )
+    val longPressModifier = if (changesLocked) {
+        Modifier
+    } else {
+        Modifier.combinedClickable(
+            interactionSource = interaction,
+            indication = null,
+            onLongClickLabel = stringResource(R.string.home_card_long_click_label),
+            onClick = {},
+            onLongClick = onLongPress,
+        )
+    }
 
     Surface(
         modifier = modifier
             .scale(pressScale)
             .clip(MaterialTheme.shapes.large)
-            .combinedClickable(
-                interactionSource = interaction,
-                indication = null,
-                onClickLabel = stringResource(R.string.home_card_click_label),
-                onLongClickLabel = stringResource(R.string.home_card_long_click_label),
-                onClick = onClick,
-                onLongClick = if (changesLocked) null else onLongPress,
-            )
+            .then(longPressModifier)
             .alpha(when {
                 paused -> 0.55f
-                changesLocked -> 0.7f
                 else -> 1f
             }),
         shape = MaterialTheme.shapes.large,
         color = container,
+        contentColor = content,
     ) {
         Column(Modifier.padding(20.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(14.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -137,7 +150,7 @@ fun BlockCard(
                     Text(
                         statusLine(paused, session, open, met, threshold, block.blockedUntil, block.lockType, changesLocked),
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = content,
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -165,7 +178,7 @@ fun BlockCard(
                         )
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             state?.progress?.forEach { item ->
-                                ConditionMeter(item.condition, item.current, item.required)
+                                ConditionMeter(item.condition, item.current, item.required, progressColor = content)
                             }
                         }
                     }

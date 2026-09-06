@@ -8,6 +8,10 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+// Select sources at configuration time: ordinary APKs never compile the reset gesture.
+val emergencyResetEnabled = providers.gradleProperty("enableEmergencyReset")
+    .map { it.toBooleanStrict() }.getOrElse(false)
+
 android {
     namespace = "dev.hablock.app"
     compileSdk = 36
@@ -61,7 +65,12 @@ android {
     }
 
     sourceSets.getByName("main").kotlin.srcDir("src/main/kotlin")
+    sourceSets.getByName("main").kotlin.srcDir(
+        if (emergencyResetEnabled) "src/emergencyReset/kotlin" else "src/noEmergencyReset/kotlin",
+    )
     sourceSets.getByName("test").kotlin.srcDir("src/test/kotlin")
+
+    if (emergencyResetEnabled) sourceSets.getByName("test").kotlin.srcDir("src/emergencyResetTest/kotlin")
 
     testOptions.unitTests.isReturnDefaultValues = true
 }

@@ -61,6 +61,20 @@ sessions to 1 minute for easier testing.
 Release builds are signed via a local `keystore.properties` + keystore (not in the repo — see
 `app/build.gradle.kts` for the expected properties; generate your own with `keytool`).
 
+For local testing, explicitly include the emergency-use reset gesture:
+
+```sh
+nix develop -c gradle assembleDebug -PenableEmergencyReset=true
+# Also supported with assembleRelease for a locally signed test build.
+```
+
+Tap the version row in Settings five times, with no more than one second between taps,
+to restore both emergency unlocks. A toast confirms the reset. This restores the allowance;
+it does not unlock any block. The default is disabled for **all** build types. The gesture
+and reset implementation live in a separate source directory excluded from normal builds,
+so exclusion does not depend on R8. Do not set this property in shared Gradle properties
+or distribution CI. Rebuild without the flag to produce a normal APK.
+
 ## Permissions & privacy
 
 Hablock asks for a lot of sensitive access, so here is exactly what each permission does:

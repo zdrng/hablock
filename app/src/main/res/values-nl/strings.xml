@@ -85,4 +85,11 @@
     <string name="rationale_title">Waarom Hablock gezondheidsdata leest</string>
     <string name="rationale_reads">Hablock leest je stappen, trainingssessies en mindful-minuten om te bepalen of de doelen van de dag behaald zijn.</string>
     <string name="rationale_private">Het leest op het apparaat, alleen voor het venster van vandaag, en heeft geen netwerktoestemming. Niets verlaat de telefoon.</string>
+    <string name="emergency_screen_title">Noodontgrendeling</string>
+    <string name="emergency_screen_body">Ontgrendel wijzigingen voor “%1$s”. Dit gebruikt één noodontgrendeling, die na 30 dagen weer beschikbaar is.</string>
+    <string name="emergency_release">Laat los om te ontgrendelen</string>
+    <string name="emergency_seconds">%1$d s</string>
+    <string name="emergency_hold_hint">Houd 10 seconden vast. De voortgang verschijnt boven je vinger.</string>
+    <string name="emergency_release_hint">Laat eerder los om te annuleren. Laat bij nul los om te ontgrendelen.</string>
+    <string name="emergency_accessible_hint">Voer bij nul de actie voor lang indrukken opnieuw uit om te bevestigen. Annuleer om te stoppen.</string>
 </resources>

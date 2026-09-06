@@ -85,4 +85,11 @@
     <string name="rationale_title">Warum Hablock Gesundheitsdaten liest</string>
     <string name="rationale_reads">Hablock liest deine Schritte, Trainingseinheiten und Achtsamkeits-Minuten, um zu entscheiden, ob die Tagesbedingungen erfüllt sind.</string>
     <string name="rationale_private">Das passiert auf dem Gerät, nur für das heutige Fenster, und ohne Netzwerk-Berechtigung. Nichts verlässt das Handy.</string>
+    <string name="emergency_screen_title">Notfallentsperrung</string>
+    <string name="emergency_screen_body">Änderungen für „%1$s“ entsperren. Dies verbraucht eine Notfallentsperrung, die nach 30 Tagen wieder verfügbar ist.</string>
+    <string name="emergency_release">Zum Entsperren loslassen</string>
+    <string name="emergency_seconds">%1$d s</string>
+    <string name="emergency_hold_hint">10 Sekunden gedrückt halten. Der Fortschritt erscheint über deinem Finger.</string>
+    <string name="emergency_release_hint">Zum Abbrechen früh loslassen. Bei null zum Entsperren loslassen.</string>
+    <string name="emergency_accessible_hint">Bei null die Aktion für langes Drücken erneut ausführen, um zu bestätigen. Zum Stoppen abbrechen.</string>
 </resources>

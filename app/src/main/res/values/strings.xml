@@ -85,4 +85,11 @@
     <string name="rationale_title">Why Hablock reads health data</string>
     <string name="rationale_reads">Hablock reads your steps, exercise sessions and mindfulness minutes to decide whether the day\'s conditions are met.</string>
     <string name="rationale_private">It reads on the device, only for today\'s window, and holds no network permission. Nothing leaves the phone.</string>
+    <string name="emergency_screen_title">Emergency unlock</string>
+    <string name="emergency_screen_body">Unlock changes for “%1$s”. This uses one emergency unlock, which refills after 30 days.</string>
+    <string name="emergency_release">Release to unlock</string>
+    <string name="emergency_seconds">%1$d s</string>
+    <string name="emergency_hold_hint">Hold for 10 seconds. Progress appears above your finger.</string>
+    <string name="emergency_release_hint">Release early to cancel. At zero, release to unlock.</string>
+    <string name="emergency_accessible_hint">At zero, use the long-press action again to confirm. Cancel to stop.</string>
 </resources>

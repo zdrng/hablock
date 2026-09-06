@@ -7,6 +7,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,7 +52,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,6 +68,7 @@ import dev.hablock.app.domain.model.Block
 import dev.hablock.app.domain.model.LockType
 import dev.hablock.app.domain.model.isChangesLocked
 import dev.hablock.app.ui.components.BreathingGateBadge
+import dev.hablock.app.ui.components.EmergencyUnlockControl
 import dev.hablock.app.ui.components.EmergencyUnlockPills
 import dev.hablock.app.ui.components.GroupPosition
 import dev.hablock.app.ui.components.GroupedListItem
@@ -98,7 +100,6 @@ fun HomeScreen(addRequest: Int = 0, onAddHandled: () -> Unit = {}) {
     var actionsFor by remember { mutableStateOf<Block?>(null) }
     var pendingDelete by remember { mutableStateOf<Block?>(null) }
     var lockTarget by remember { mutableStateOf<Block?>(null) }
-    var expandedId by rememberSaveable { mutableStateOf<String?>(null) }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val scope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
@@ -159,18 +160,10 @@ fun HomeScreen(addRequest: Int = 0, onAddHandled: () -> Unit = {}) {
                     }
                     val single = uiState.blocks.size == 1
                     items(uiState.blocks, key = { it.block.id }) { item ->
-                        val changesLocked = item.block.isChangesLocked()
                         BlockCard(
                             block = item.block,
                             state = item.state,
-                            expanded = single || item.block.id == expandedId,
-                            onClick = {
-                                if (single && !changesLocked) {
-                                    wizardTarget = WizardTarget.Edit(item.block.id)
-                                } else {
-                                    expandedId = if (expandedId == item.block.id) null else item.block.id
-                                }
-                            },
+                            expanded = single,
                             onToggle = { viewModel.setEnabled(item.block, it) },
                             onLongPress = { actionsFor = item.block },
                             onRelock = { viewModel.relock(item.block.id) },
@@ -653,6 +646,11 @@ private fun PasswordUnlockDialog(
     onEmergencyUnlock: () -> Unit,
     onDismiss: () -> Unit,
 ) {
+    var showEmergency by remember { mutableStateOf(false) }
+    if (showEmergency) {
+        EmergencyUnlockDialog(block, emergencyUnlocks, onEmergencyUnlock) { showEmergency = false }
+        return
+    }
     var passcode by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
 
@@ -695,10 +693,9 @@ private fun PasswordUnlockDialog(
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                EmergencyUnlockPills(
-                    pills = emergencyUnlocks.pills,
-                    onConsume = if (emergencyUnlocks.availableCount > 0) onEmergencyUnlock else null,
-                )
+                TextButton(onClick = { showEmergency = true }) {
+                    Text(stringResource(R.string.emergency_unlock_hold))
+                }
             }
         },
         confirmButton = {
@@ -727,38 +724,32 @@ private fun EmergencyUnlockDialog(
     onUnlock: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        shape = MaterialTheme.shapes.extraLarge,
-        title = { Text(stringResource(R.string.emergency_unlock_title)) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text(
-                    stringResource(
-                        R.string.emergency_unlock_message,
-                        block.name,
-                        formatDate(Instant.ofEpochMilli(block.blockedUntil!!)),
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                Text(
-                    stringResource(
-                        R.string.emergency_unlock_available,
-                        emergencyUnlocks.availableCount,
-                        dev.hablock.app.domain.GateConstants.EMERGENCY_UNLOCKS_MAX,
-                    ),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                EmergencyUnlockPills(
-                    pills = emergencyUnlocks.pills,
-                    onConsume = if (emergencyUnlocks.availableCount > 0) onUnlock else null,
-                )
+    androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
+        Surface(shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface) {
+            Column(
+                Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(stringResource(R.string.emergency_screen_title),
+                    style = MaterialTheme.typography.headlineSmall)
+                Text(stringResource(R.string.emergency_screen_body, block.name),
+                    style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center)
+                EmergencyUnlockPills(pills = emergencyUnlocks.pills)
+                Text(stringResource(R.string.emergency_unlock_available,
+                    emergencyUnlocks.availableCount, dev.hablock.app.domain.GateConstants.EMERGENCY_UNLOCKS_MAX),
+                    style = MaterialTheme.typography.labelLarge)
+                if (emergencyUnlocks.availableCount > 0) {
+                    EmergencyUnlockControl(onUnlock)
+                } else {
+                    Text(stringResource(R.string.emergency_unlock_none), textAlign = TextAlign.Center)
+                }
+                TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.action_cancel))
+                }
             }
-        },
-        confirmButton = {},
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) }
-        },
-    )
+        }
+    }
 }

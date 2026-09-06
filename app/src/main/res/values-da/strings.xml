@@ -85,4 +85,11 @@
     <string name="rationale_title">Hvorfor Hablock læser sundhedsdata</string>
     <string name="rationale_reads">Hablock læser dine skridt, træningspas og mindfulness-minutter for at vurdere, om dagens betingelser er opfyldt.</string>
     <string name="rationale_private">Det læser på enheden, kun for dagens vindue, og har ingen netværkstilladelse. Intet forlader telefonen.</string>
+    <string name="emergency_screen_title">Nødoplåsning</string>
+    <string name="emergency_screen_body">Lås op for ændringer af “%1$s”. Dette bruger én nødoplåsning, som bliver tilgængelig igen efter 30 dage.</string>
+    <string name="emergency_release">Slip for at låse op</string>
+    <string name="emergency_seconds">%1$d s</string>
+    <string name="emergency_hold_hint">Hold i 10 sekunder. Fremskridtet vises over din finger.</string>
+    <string name="emergency_release_hint">Slip tidligt for at annullere. Slip ved nul for at låse op.</string>
+    <string name="emergency_accessible_hint">Ved nul skal du bruge handlingen for langt tryk igen for at bekræfte. Annuller for at stoppe.</string>
 </resources>

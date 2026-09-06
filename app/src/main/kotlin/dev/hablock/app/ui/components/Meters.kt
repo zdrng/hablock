@@ -138,6 +138,7 @@ fun ConditionMeter(
     current: Double,
     required: Double,
     modifier: Modifier = Modifier,
+    progressColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
     val accents = LocalHablockAccents.current
     val met = current >= required
@@ -164,7 +165,7 @@ fun ConditionMeter(
                 Text(
                     condition.formatProgress(current, required),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = progressColor,
                 )
             }
         }
