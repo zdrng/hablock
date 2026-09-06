@@ -168,6 +168,8 @@ private fun StepApps(uiState: WizardUiState, viewModel: BlockWizardViewModel) {
         Spacer(Modifier.height(12.dp))
         LazyColumn(
             Modifier.weight(1f, fill = false).heightIn(max = 420.dp),
+            // Let the sheet consume edge drags without a competing stretch animation.
+            overscrollEffect = null,
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             val apps = uiState.filteredApps
@@ -213,6 +215,7 @@ private fun StepConditions(uiState: WizardUiState, viewModel: BlockWizardViewMod
     Column(Modifier.padding(top = 10.dp)) {
         LazyColumn(
             Modifier.weight(1f, fill = false).heightIn(max = 480.dp),
+            overscrollEffect = null,
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             itemsIndexed(uiState.visibleDrafts, key = { _, draft -> draft.id }) { _, draft ->
