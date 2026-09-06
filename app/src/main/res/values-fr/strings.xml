@@ -67,7 +67,7 @@
     <string name="notif_session_active_text">Le temps file — tape pour verrouiller en avance.</string>
     <string name="notif_session_relock">Verrouiller maintenant</string>
     <plurals name="notif_session_ended_text">
-        <item quantity="one">C\'était ta minute. Les objectifs ont légèrement augmenté — la prochaine manche est sur toi.</item>
+        <item quantity="one">C\'était ta %1$d minute. Les objectifs ont légèrement augmenté — la prochaine manche est sur toi.</item>
         <item quantity="other">C\'étaient tes %1$d minutes. Les objectifs ont légèrement augmenté — la prochaine manche est sur toi.</item>
     </plurals>
     <string name="notif_relinquish_title">Le minuteur de 3 jours est terminé</string>

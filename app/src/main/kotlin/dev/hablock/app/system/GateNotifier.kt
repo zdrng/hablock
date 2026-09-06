@@ -15,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 private const val CHANNEL_ID = "hablock"
@@ -36,6 +37,7 @@ class GateNotifier(
     private val tickers = mutableMapOf<String, Job>()
     private val maxSecondsPerBlock = mutableMapOf<String, Int>()
 
+    @Synchronized
     override fun sessionStarted(blockId: String, blockName: String, endsAt: Instant) {
         ensureChannel()
         tickers[blockId]?.cancel()
@@ -46,13 +48,21 @@ class GateNotifier(
                 delay(TICKER_INTERVAL_MS)
                 val now = System.currentTimeMillis()
                 if (now >= endsAt.toEpochMilli()) break
-                postSessionNotification(blockId, blockName, endsAt)
+                synchronized(this@GateNotifier) {
+                    if (!isActive) return@launch
+                    postSessionNotification(blockId, blockName, endsAt)
+                }
             }
-            tickers.remove(blockId)
-            maxSecondsPerBlock.remove(blockId)
+            synchronized(this@GateNotifier) {
+                if (isActive) {
+                    tickers.remove(blockId)
+                    maxSecondsPerBlock.remove(blockId)
+                }
+            }
         }
     }
 
+    @Synchronized
     override fun sessionEnded(blockId: String, blockName: String, sessionMinutes: Int) {
         notify(
             tag = blockId,
@@ -62,17 +72,20 @@ class GateNotifier(
         )
     }
 
+    @Synchronized
     override fun cancelSessionNotification(blockId: String) {
         tickers.remove(blockId)?.cancel()
         maxSecondsPerBlock.remove(blockId)
         manager.cancel(blockId, SESSION_NOTIFICATION_ID)
     }
 
+    @Synchronized
     override fun restoreSessionNotification(blockId: String, blockName: String, endsAt: Instant) {
         if (tickers[blockId]?.isActive == true) return
         sessionStarted(blockId, blockName, endsAt)
     }
 
+    @Synchronized
     override fun relinquishReady() {
         notify(
             tag = null,

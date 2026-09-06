@@ -45,7 +45,7 @@ class EnforcementCoordinator(
         active().applyState(blocks, states)
 
     override suspend fun showBlocked(packageName: String, blockId: String) =
-        active().showBlocked(packageName, blockId)
+        accessibilityBackend.showBlocked(packageName, blockId)
 
     // The foreground sensor is the accessibility service, which runs regardless of which backend enforces.
     override fun reportsForegroundUse(): Boolean = accessibilityBackend.reportsForegroundUse()

@@ -129,6 +129,7 @@ class FakeAlarmScheduler : AlarmScheduler {
 }
 
 class FakeNotifier : Notifier {
+    val notificationEvents = mutableListOf<String>()
     val sessionsStarted = mutableListOf<Triple<String, String, Instant>>()
     val sessionsEnded = mutableListOf<Triple<String, String, Int>>()
     val restoredNotifications = mutableListOf<Triple<String, String, Instant>>()
@@ -141,10 +142,12 @@ class FakeNotifier : Notifier {
     }
 
     override fun sessionEnded(blockId: String, blockName: String, sessionMinutes: Int) {
+        notificationEvents += "ended:$blockId"
         sessionsEnded += Triple(blockId, blockName, sessionMinutes)
     }
 
     override fun cancelSessionNotification(blockId: String) {
+        notificationEvents += "cancel:$blockId"
         cancelledNotifications += blockId
     }
 

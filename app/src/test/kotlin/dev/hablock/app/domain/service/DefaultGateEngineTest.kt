@@ -1,5 +1,7 @@
 package dev.hablock.app.domain.service
 
+import dev.hablock.app.domain.enforcement.EnforcementBackend
+import dev.hablock.app.domain.enforcement.EnforcementCoordinator
 import dev.hablock.app.domain.model.BlockDayState
 import dev.hablock.app.domain.model.Condition
 import dev.hablock.app.domain.model.GateState
@@ -36,14 +38,14 @@ class DefaultGateEngineTest {
     private val notifier = FakeNotifier()
     private val enforcement = FakeEnforcement()
 
-    private fun newEngine(scope: CoroutineScope) = DefaultGateEngine(
+    private fun newEngine(scope: CoroutineScope, backend: EnforcementBackend = enforcement) = DefaultGateEngine(
         blockRepository = blockRepository,
         gateStateRepository = gateStateRepository,
         metricProvider = metricProvider,
         dayClock = dayClock,
         alarmScheduler = alarmScheduler,
         notifier = notifier,
-        enforcement = enforcement,
+        enforcement = backend,
         scope = scope,
     )
 
@@ -176,6 +178,7 @@ class DefaultGateEngineTest {
 
         engine.onSessionExpired("b1")
 
+        assertEquals(listOf("cancel:b1", "ended:b1"), notifier.notificationEvents)
         assertEquals(listOf(Triple("b1", "Block b1", 30)), notifier.sessionsEnded)
         assertEquals(listOf("b1"), notifier.cancelledNotifications)
         assertNull(gateStateRepository.stored("b1")?.activeSession)
@@ -194,6 +197,8 @@ class DefaultGateEngineTest {
 
         assertNull(gateStateRepository.stored("b1")?.activeSession)
         assertTrue(notifier.sessionsEnded.isEmpty())
+        assertEquals(listOf("b1"), notifier.cancelledNotifications)
+        assertEquals(listOf("b1"), alarmScheduler.cancelledSessions)
     }
 
     @Test
@@ -366,4 +371,114 @@ class DefaultGateEngineTest {
         assertEquals(setOf("b1"), engine.states.value.keys)
         assertEquals(listOf(engine.states.value), enforcement.applied)
     }
+    @Test
+    fun `expiry interrupts the foreground app even when the next goals are met`() = runTest {
+        metricProvider.values = mapOf("steps" to 10_300.0)
+        val engine = newEngine(backgroundScope)
+        engine.unlock("b1")
+        engine.onAppForegrounded(SOCIAL)
+        assertTrue(enforcement.blocked.isEmpty())
+        metricProvider.values = mapOf("steps" to 30_000.0)
+        clock.advance(31 * 60_000L)
+        engine.onSessionExpired("b1")
+        assertEquals(listOf(SOCIAL to "b1"), enforcement.blocked)
+        assertIs<GateState.Open>(engine.states.value.getValue("b1"))
+    }
+
+    @Test
+    fun `expiry does not interrupt an unrelated foreground screen`() = runTest {
+        metricProvider.values = mapOf("steps" to 10_300.0)
+        val engine = newEngine(backgroundScope)
+        engine.unlock("b1")
+        engine.onAppForegrounded(SOCIAL)
+        engine.onAppForegrounded("com.example.home")
+        clock.advance(31 * 60_000L)
+        engine.onSessionExpired("b1")
+        assertTrue(enforcement.blocked.isEmpty())
+    }
+
+    @Test
+    fun `refresh interrupts a foreground session after a missed expiry alarm`() = runTest {
+        metricProvider.values = mapOf("steps" to 10_300.0)
+        val engine = newEngine(backgroundScope)
+        engine.unlock("b1")
+        engine.onAppForegrounded(SOCIAL)
+        clock.advance(31 * 60_000L)
+        engine.refreshAll()
+        assertEquals(listOf(SOCIAL to "b1"), enforcement.blocked)
+    }
+
+    @Test
+    fun `an early expiry callback preserves the current session`() = runTest {
+        metricProvider.values = mapOf("steps" to 10_300.0)
+        val engine = newEngine(backgroundScope)
+        engine.unlock("b1")
+        val session = gateStateRepository.stored("b1")?.activeSession
+        engine.onSessionExpired("b1")
+        assertEquals(session, gateStateRepository.stored("b1")?.activeSession)
+        assertTrue(notifier.notificationEvents.isEmpty())
+        assertIs<GateState.SessionActive>(engine.states.value.getValue("b1"))
+    }
+
+    @Test
+    fun `restart after missed midnight reset preserves and persists a live session`() = runTest {
+        clock.current = Instant.parse("2026-08-22T21:50:00Z")
+        metricProvider.values = mapOf("steps" to 10_300.0)
+        newEngine(backgroundScope).unlock("b1")
+        val session = assertNotNull(gateStateRepository.stored("b1")?.activeSession)
+        clock.advance(15 * 60_000L)
+        metricProvider.values = emptyMap()
+        val restarted = newEngine(backgroundScope)
+        restarted.refreshAll()
+        val stored = assertNotNull(gateStateRepository.stored("b1"))
+        assertEquals(session, stored.activeSession)
+        assertEquals(dayClock.dayKey(), stored.dayKey)
+        assertEquals(0, stored.unlockCount)
+        assertEquals(10_000.0, stored.requiredNow.getValue("steps"), EPS)
+        assertIs<GateState.SessionActive>(restarted.states.value.getValue("b1"))
+        restarted.refreshAll()
+        assertEquals(session, gateStateRepository.stored("b1")?.activeSession)
+        clock.advance(16 * 60_000L)
+        restarted.onSessionExpired("b1")
+        assertNull(gateStateRepository.stored("b1")?.activeSession)
+        assertIs<GateState.Locked>(restarted.states.value.getValue("b1"))
+    }
+
+    @Test
+    fun `device owner with accessibility requires confirmation and schedules a timed session`() = runTest {
+        val ownerBackend = FakeEnforcement(false)
+        val coordinator = EnforcementCoordinator(enforcement, ownerBackend, FakeDeviceOwnerController())
+        val engine = newEngine(backgroundScope, coordinator)
+        metricProvider.values = mapOf("steps" to 10_300.0)
+        engine.refreshAll()
+        engine.onAppForegrounded(SOCIAL)
+        assertEquals(listOf(SOCIAL to "b1"), enforcement.blocked)
+        assertNull(gateStateRepository.stored("b1")?.activeSession)
+        engine.onAppForegrounded("dev.hablock.app")
+        engine.unlock("b1")
+        assertEquals(1, alarmScheduler.sessionEnds.size)
+        assertIs<GateState.SessionActive>(engine.states.value.getValue("b1"))
+        engine.onAppForegrounded(SOCIAL)
+        clock.advance(31 * 60_000L)
+        engine.onSessionExpired("b1")
+        assertEquals(2, enforcement.blocked.size)
+        assertIs<GateState.Locked>(ownerBackend.applied.last().getValue("b1"))
+    }
+
+    @Test
+    fun `missed midnight reset does not revive an expired session`() = runTest {
+        clock.current = Instant.parse("2026-08-22T21:50:00Z")
+        metricProvider.values = mapOf("steps" to 10_300.0)
+        newEngine(backgroundScope).unlock("b1")
+        clock.advance(40 * 60_000L)
+        metricProvider.values = emptyMap()
+        val restarted = newEngine(backgroundScope)
+        restarted.refreshAll()
+        val stored = assertNotNull(gateStateRepository.stored("b1"))
+        assertNull(stored.activeSession)
+        assertEquals(dayClock.dayKey(), stored.dayKey)
+        assertEquals(listOf("b1"), alarmScheduler.cancelledSessions)
+        assertIs<GateState.Locked>(restarted.states.value.getValue("b1"))
+    }
+
 }

@@ -42,6 +42,7 @@ class DefaultGateEngine(
 
     private val evaluator = GateEvaluator()
     private val mutex = Mutex()
+    private var foregroundPackage: String? = null
     private val snapshotCache = mutableMapOf<String, SnapshotCacheEntry>()
     private val _states = MutableStateFlow<Map<String, GateState>>(emptyMap())
 
@@ -61,26 +62,12 @@ class DefaultGateEngine(
     }
 
     override suspend fun onAppForegrounded(packageName: String) {
-        val known = knownBlocks
-        if (known != null && known.none { it.enabled && packageName in it.blockedPackages }) return
         mutex.withLock {
+            foregroundPackage = packageName
+            val known = knownBlocks
+            if (known != null && known.none { it.enabled && packageName in it.blockedPackages }) return@withLock
             val blocks = loadBlocks()
-            val affected = blocks.filter { it.enabled && packageName in it.blockedPackages }
-            if (affected.isEmpty()) return@withLock
-            val now = dayClock.now()
-            val dayKey = dayClock.dayKey(now)
-            val (from, to) = dayClock.dayWindow(now)
-            val evaluated = affected.map { block ->
-                val dayState = expireSession(resolveDayState(block, dayKey), now)
-                val snapshot = snapshotFor(block.conditions, from, to, now, dayKey, refreshMetrics = false)
-                Evaluated(block, dayState, snapshot, evaluator.evaluate(block, dayState, snapshot, now))
-            }
-            val needsAttention = evaluated.firstOrNull {
-                it.gateState is GateState.Locked || it.gateState is GateState.Open
-            }
-            if (needsAttention != null) {
-                enforcement.showBlocked(packageName, needsAttention.block.id)
-            }
+            if (blocks.none { it.enabled && packageName in it.blockedPackages }) return@withLock
             refresh(blocks, refreshMetrics = false)
         }
     }
@@ -90,12 +77,12 @@ class DefaultGateEngine(
             val blocks = loadBlocks()
             val stored = gateStateRepository.get(blockId)
             val session = stored?.activeSession
-            if (session != null) {
+            if (session != null && dayClock.now().toEpochMilli() >= session.endsAtMillis) {
                 gateStateRepository.save(stored.copy(activeSession = null))
                 val minutes = ((session.endsAtMillis - session.startedAtMillis) / 60_000L).toInt()
                 blocks.firstOrNull { it.id == blockId }?.let {
-                    notifier.sessionEnded(it.id, it.name, minutes)
                     notifier.cancelSessionNotification(it.id)
+                    notifier.sessionEnded(it.id, it.name, minutes)
                 }
             }
             refresh(blocks, refreshMetrics = true)
@@ -119,7 +106,7 @@ class DefaultGateEngine(
             val now = dayClock.now()
             val dayKey = dayClock.dayKey(now)
             val (from, to) = dayClock.dayWindow(now)
-            val dayState = expireSession(resolveDayState(block, dayKey), now)
+            val dayState = expireSession(resolveDayState(block, dayKey, now), now)
             val snapshot = snapshotFor(block.conditions, from, to, now, dayKey, refreshMetrics = true)
             val evaluated = Evaluated(block, dayState, snapshot, evaluator.evaluate(block, dayState, snapshot, now))
             if (evaluated.gateState is GateState.Open) {
@@ -162,6 +149,7 @@ class DefaultGateEngine(
         val session = gateStateRepository.get(block.id)?.activeSession ?: return null
         if (now.toEpochMilli() >= session.endsAtMillis) {
             alarmScheduler.cancelSessionEnd(block.id)
+            notifier.cancelSessionNotification(block.id)
             return null
         }
         return freshDayState(block, dayKey).copy(activeSession = session)
@@ -175,7 +163,7 @@ class DefaultGateEngine(
         val autoStart = !enforcement.reportsForegroundUse()
         val next = mutableMapOf<String, GateState>()
         for (block in blocks.filter { it.enabled }) {
-            val dayState = expireSession(resolveDayState(block, dayKey), now)
+            val dayState = expireSession(resolveDayState(block, dayKey, now), now)
             val snapshot = snapshotFor(block.conditions, from, to, now, dayKey, refreshMetrics)
             var state = evaluator.evaluate(block, dayState, snapshot, now)
             if (autoStart && state is GateState.Open && justUnlocked(previous[block.id], dayState)) {
@@ -187,6 +175,12 @@ class DefaultGateEngine(
         }
         _states.value = next
         enforcement.applyState(blocks, next)
+        foregroundPackage?.let { pkg ->
+            blocks.firstOrNull {
+                it.enabled && pkg in it.blockedPackages &&
+                    (next[it.id] is GateState.Locked || next[it.id] is GateState.Open)
+            }?.let { enforcement.showBlocked(pkg, it.id) }
+        }
         restoreSessionNotifications(blocks, next)
     }
 
@@ -221,9 +215,13 @@ class DefaultGateEngine(
         return started
     }
 
-    private suspend fun resolveDayState(block: Block, dayKey: String): BlockDayState {
+    private suspend fun resolveDayState(block: Block, dayKey: String, now: Instant): BlockDayState {
         val stored = gateStateRepository.get(block.id)
-        return if (stored != null && stored.dayKey == dayKey) stored else freshDayState(block, dayKey)
+        if (stored == null) return freshDayState(block, dayKey)
+        if (stored.dayKey == dayKey) return stored
+        val resolved = carryOver(block, dayKey, now) ?: freshDayState(block, dayKey)
+        gateStateRepository.save(resolved)
+        return resolved
     }
 
     private fun freshDayState(block: Block, dayKey: String): BlockDayState = BlockDayState(
@@ -237,6 +235,8 @@ class DefaultGateEngine(
         if (now.toEpochMilli() < session.endsAtMillis) return dayState
         val cleared = dayState.copy(activeSession = null)
         gateStateRepository.save(cleared)
+        alarmScheduler.cancelSessionEnd(dayState.blockId)
+        notifier.cancelSessionNotification(dayState.blockId)
         return cleared
     }
 
