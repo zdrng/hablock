@@ -18,10 +18,10 @@
     <string name="home_card_status_open_until">Open tot %1$s</string>
     <string name="home_card_status_open">Open — ga je gang</string>
     <string name="home_card_status_locked">Op slot · %1$d van %2$d tot nu</string>
+    <string name="home_card_schedule">%1$s · %2$s–%3$s</string>
     <string name="home_card_of">van %1$d</string>
     <string name="home_card_session_left">over in deze sessie</string>
     <string name="home_card_relock">Nu vergrendelen</string>
-    <string name="home_card_click_label">Details tonen</string>
     <string name="home_card_long_click_label">Blokacties</string>
     <string name="home_card_lock_changes">Wijzigingen vergrendelen</string>
     <string name="home_card_unlock_changes">Wijzigingen ontgrendelen</string>

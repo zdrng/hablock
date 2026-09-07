@@ -1,19 +1,31 @@
 package dev.hablock.app.domain.service
 
 import dev.hablock.app.domain.enforcement.EnforcementBackend
+import dev.hablock.app.domain.enforcement.resolveEnforcementPlan
 import dev.hablock.app.domain.model.Block
 import dev.hablock.app.domain.model.BlockDayState
 import dev.hablock.app.domain.model.Condition
+import dev.hablock.app.domain.model.DailyBlockHistory
+import dev.hablock.app.domain.model.DailyConditionHistory
 import dev.hablock.app.domain.model.GateState
+import dev.hablock.app.domain.model.HistoryConditionKind
 import dev.hablock.app.domain.model.MetricSnapshot
+import dev.hablock.app.domain.model.OverlapPolicy
 import dev.hablock.app.domain.repository.BlockRepository
+import dev.hablock.app.domain.repository.DiagnosticsRecorder
 import dev.hablock.app.domain.repository.GateStateRepository
+import dev.hablock.app.domain.repository.HistoryRepository
+import dev.hablock.app.domain.repository.NoOpDiagnosticsRecorder
 import java.time.Instant
+import java.time.LocalDate
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -38,6 +50,11 @@ class DefaultGateEngine(
     private val notifier: Notifier,
     private val enforcement: EnforcementBackend,
     scope: CoroutineScope,
+    overlapPolicies: Flow<OverlapPolicy> = flowOf(OverlapPolicy.ALL_BLOCKS),
+    initialOverlapPolicy: OverlapPolicy = OverlapPolicy.ALL_BLOCKS,
+    private val diagnostics: DiagnosticsRecorder = NoOpDiagnosticsRecorder,
+    private val scheduleEvaluator: BlockScheduleEvaluator = BlockScheduleEvaluator(),
+    private val historyRepository: HistoryRepository? = null,
 ) : GateEngine {
 
     private val evaluator = GateEvaluator()
@@ -49,11 +66,21 @@ class DefaultGateEngine(
     @Volatile
     private var knownBlocks: List<Block>? = null
 
+    @Volatile
+    private var overlapPolicy = initialOverlapPolicy
+
     override val states: StateFlow<Map<String, GateState>> = _states.asStateFlow()
 
     init {
         scope.launch {
             blockRepository.blocks.collect { knownBlocks = it }
+        }
+        scope.launch {
+            overlapPolicies.distinctUntilChanged().collect { policy ->
+                val changed = overlapPolicy != policy
+                overlapPolicy = policy
+                if (changed) mutex.withLock { refresh(loadBlocks(), refreshMetrics = false) }
+            }
         }
     }
 
@@ -89,6 +116,10 @@ class DefaultGateEngine(
         }
     }
 
+    override suspend fun onScheduleTransition() {
+        mutex.withLock { refresh(loadBlocks(), refreshMetrics = false) }
+    }
+
     override suspend fun deleteBlock(blockId: String) {
         mutex.withLock {
             blockRepository.delete(blockId)
@@ -104,6 +135,10 @@ class DefaultGateEngine(
             val blocks = loadBlocks()
             val block = blocks.firstOrNull { it.id == blockId && it.enabled } ?: return@withLock
             val now = dayClock.now()
+            if (!scheduleEvaluator.isActive(block.schedule, now)) {
+                refresh(blocks, refreshMetrics = false)
+                return@withLock
+            }
             val dayKey = dayClock.dayKey(now)
             val (from, to) = dayClock.dayWindow(now)
             val dayState = expireSession(resolveDayState(block, dayKey, now), now)
@@ -135,58 +170,190 @@ class DefaultGateEngine(
             val blocks = loadBlocks()
             val now = dayClock.now()
             val dayKey = dayClock.dayKey(now)
-            val carriedOver = blocks.mapNotNull { block -> carryOver(block, dayKey, now) }
-            gateStateRepository.clearAll()
-            carriedOver.forEach { gateStateRepository.save(it) }
+            blocks.forEach { block ->
+                val stored = gateStateRepository.get(block.id) ?: return@forEach
+                if (stored.dayKey != dayKey) rollover(block, stored, dayKey, now)
+            }
             snapshotCache.clear()
             alarmScheduler.scheduleDayReset(dayClock.nextReset())
             refresh(blocks, refreshMetrics = true)
         }
     }
 
-    /** An in-flight session survives the reset on a base-goal day state; an expired one takes its alarm with it. */
-    private suspend fun carryOver(block: Block, dayKey: String, now: Instant): BlockDayState? {
-        val session = gateStateRepository.get(block.id)?.activeSession ?: return null
-        if (now.toEpochMilli() >= session.endsAtMillis) {
-            alarmScheduler.cancelSessionEnd(block.id)
-            notifier.cancelSessionNotification(block.id)
-            return null
+    override suspend fun onDayBoundaryChanged() {
+        mutex.withLock {
+            val blocks = loadBlocks()
+            val now = dayClock.now()
+            val dayKey = dayClock.dayKey(now)
+            blocks.forEach { block ->
+                val stored = gateStateRepository.get(block.id) ?: return@forEach
+                val activeSession = stored.activeSession?.takeIf { now.toEpochMilli() < it.endsAtMillis }
+                if (stored.activeSession != null && activeSession == null) {
+                    alarmScheduler.cancelSessionEnd(block.id)
+                    notifier.cancelSessionNotification(block.id)
+                }
+                gateStateRepository.save(
+                    freshDayState(block, dayKey).copy(activeSession = activeSession),
+                )
+            }
+            snapshotCache.clear()
+            alarmScheduler.scheduleDayReset(dayClock.nextReset(now))
+            refresh(blocks, refreshMetrics = true)
         }
-        return freshDayState(block, dayKey).copy(activeSession = session)
+    }
+
+    override suspend fun markEmergencyUnlockUsed(blockId: String) {
+        mutex.withLock {
+            val block = loadBlocks().firstOrNull { it.id == blockId } ?: return@withLock
+            val now = dayClock.now()
+            val dayKey = dayClock.dayKey(now)
+            val stored = gateStateRepository.get(blockId)
+            val current = when {
+                stored == null -> freshDayState(block, dayKey)
+                stored.dayKey == dayKey -> stored
+                else -> rollover(block, stored, dayKey, now)
+            }
+            if (!current.emergencyUnlockUsed) {
+                gateStateRepository.save(current.copy(emergencyUnlockUsed = true))
+            }
+        }
+    }
+
+    /** Finalizes the stored day once, then moves any live session onto fresh base requirements. */
+    private suspend fun rollover(
+        block: Block,
+        stored: BlockDayState,
+        dayKey: String,
+        now: Instant,
+    ): BlockDayState {
+        finalizeHistory(block, stored, dayKey, now)
+        val session = stored.activeSession
+        val carriedSession = if (session != null && now.toEpochMilli() < session.endsAtMillis) {
+            session
+        } else {
+            if (session != null) {
+                alarmScheduler.cancelSessionEnd(block.id)
+                notifier.cancelSessionNotification(block.id)
+            }
+            null
+        }
+        return freshDayState(block, dayKey).copy(activeSession = carriedSession).also {
+            gateStateRepository.save(it)
+        }
+    }
+
+    private suspend fun finalizeHistory(
+        block: Block,
+        stored: BlockDayState,
+        currentDayKey: String,
+        now: Instant,
+    ) {
+        val history = historyRepository ?: return
+        val (from, to) = dayClock.dayWindow(stored.dayKey)
+        val snapshot = metricProvider.snapshot(block.conditions, from, to)
+        val conditions = block.conditions.map { condition ->
+            val required = stored.requiredNow[condition.id] ?: condition.goal
+            val progress = snapshot.valueOf(condition.id)
+            DailyConditionHistory(
+                conditionId = condition.id,
+                kind = condition.historyKind(),
+                label = condition.historyLabel(),
+                goal = condition.goal,
+                required = required,
+                progress = progress,
+                met = progress >= required,
+            )
+        }
+        history.importNew(
+            listOf(
+                DailyBlockHistory(
+                    blockId = block.id,
+                    dayKey = stored.dayKey,
+                    blockName = block.name,
+                    conditions = conditions,
+                    thresholdN = block.thresholdN,
+                    unlockCount = stored.unlockCount,
+                    emergencyUnlockUsed = stored.emergencyUnlockUsed,
+                    scheduledActive = scheduleEvaluator.wasActiveDuring(block.schedule, from, to),
+                    finalizedAtMillis = now.toEpochMilli(),
+                ),
+            ),
+        )
+        history.pruneBefore(LocalDate.parse(currentDayKey).minusDays(365).toString())
+    }
+
+    private fun Condition.historyKind(): HistoryConditionKind = when (this) {
+        is Condition.AppUsage -> HistoryConditionKind.APP_USAGE
+        is Condition.Steps -> HistoryConditionKind.STEPS
+        is Condition.Exercise -> HistoryConditionKind.EXERCISE
+        is Condition.Meditation -> HistoryConditionKind.MEDITATION
+    }
+
+    private fun Condition.historyLabel(): String = when (this) {
+        is Condition.AppUsage -> appLabel
+        is Condition.Steps -> "Steps"
+        is Condition.Exercise -> "Exercise"
+        is Condition.Meditation -> "Meditation"
     }
 
     private suspend fun refresh(blocks: List<Block>, refreshMetrics: Boolean) {
         val now = dayClock.now()
         val dayKey = dayClock.dayKey(now)
         val (from, to) = dayClock.dayWindow(now)
+        scheduleNextTransition(blocks, now)
+        blocks.forEach { block ->
+            val stored = gateStateRepository.get(block.id) ?: return@forEach
+            if (stored.dayKey != dayKey) rollover(block, stored, dayKey, now)
+        }
         val previous = _states.value
         val autoStart = !enforcement.reportsForegroundUse()
         val next = mutableMapOf<String, GateState>()
-        for (block in blocks.filter { it.enabled }) {
-            val dayState = expireSession(resolveDayState(block, dayKey, now), now)
-            val snapshot = snapshotFor(block.conditions, from, to, now, dayKey, refreshMetrics)
-            var state = evaluator.evaluate(block, dayState, snapshot, now)
-            if (autoStart && state is GateState.Open && justUnlocked(previous[block.id], dayState)) {
-                startSession(Evaluated(block, dayState, snapshot, state), now)?.let {
-                    state = evaluator.evaluate(block, it, snapshot, now)
+        try {
+            for (block in blocks.filter { it.enabled }) {
+                val dayState = expireSession(resolveDayState(block, dayKey, now), now)
+                val snapshot = snapshotFor(block.conditions, from, to, now, dayKey, refreshMetrics)
+                var state = evaluator.evaluate(block, dayState, snapshot, now)
+                val scheduleActive = scheduleEvaluator.isActive(block.schedule, now)
+                if (state !is GateState.SessionActive && !scheduleActive) {
+                    state = GateState.Inactive(state.progress)
                 }
+                if (scheduleActive && autoStart && state is GateState.Open && justUnlocked(previous[block.id], dayState)) {
+                    startSession(Evaluated(block, dayState, snapshot, state), now)?.let {
+                        state = evaluator.evaluate(block, it, snapshot, now)
+                    }
+                }
+                next[block.id] = state
             }
-            next[block.id] = state
+        } catch (cause: Throwable) {
+            diagnostics.recordEvaluation(false, next.size, next.values.count(GateState::isBlocking))
+            throw cause
         }
+        diagnostics.recordEvaluation(true, next.size, next.values.count(GateState::isBlocking))
         _states.value = next
-        enforcement.applyState(blocks, next)
+        val enforcementPlan = resolveEnforcementPlan(blocks, next, overlapPolicy)
+        enforcement.applyState(enforcementPlan)
         foregroundPackage?.let { pkg ->
-            blocks.firstOrNull {
-                it.enabled && pkg in it.blockedPackages &&
-                    (next[it.id] is GateState.Locked || next[it.id] is GateState.Open)
-            }?.let { enforcement.showBlocked(pkg, it.id) }
+            enforcementPlan.blockingBlockId(pkg)?.let { enforcement.showBlocked(pkg, it) }
         }
         restoreSessionNotifications(blocks, next)
     }
 
     /** On a fresh process every previous state is null; only a block with no unlock today gets its auto-session. */
     private fun justUnlocked(previous: GateState?, dayState: BlockDayState): Boolean =
-        if (previous != null) previous is GateState.Locked else dayState.unlockCount == 0
+        if (previous != null) {
+            previous is GateState.Locked || previous is GateState.Inactive
+        } else {
+            dayState.unlockCount == 0
+        }
+
+    private fun scheduleNextTransition(blocks: List<Block>, now: Instant) {
+        val next = blocks.asSequence()
+            .filter { it.enabled }
+            .mapNotNull { scheduleEvaluator.nextTransition(it.schedule, now) }
+            .minOrNull()
+        if (next == null) alarmScheduler.cancelScheduleTransition()
+        else alarmScheduler.scheduleScheduleTransition(next)
+    }
 
     private fun restoreSessionNotifications(blocks: List<Block>, states: Map<String, GateState>) {
         val blockById = blocks.associateBy { it.id }
@@ -219,9 +386,7 @@ class DefaultGateEngine(
         val stored = gateStateRepository.get(block.id)
         if (stored == null) return freshDayState(block, dayKey)
         if (stored.dayKey == dayKey) return stored
-        val resolved = carryOver(block, dayKey, now) ?: freshDayState(block, dayKey)
-        gateStateRepository.save(resolved)
-        return resolved
+        return rollover(block, stored, dayKey, now)
     }
 
     private fun freshDayState(block: Block, dayKey: String): BlockDayState = BlockDayState(
@@ -265,3 +430,5 @@ class DefaultGateEngine(
 
     private suspend fun loadBlocks(): List<Block> = blockRepository.current().also { knownBlocks = it }
 }
+
+private fun GateState.isBlocking(): Boolean = this is GateState.Locked || this is GateState.Open

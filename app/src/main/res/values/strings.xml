@@ -17,16 +17,18 @@
 
     <string name="blocked_headline_locked">%1$s is locked.</string>
     <string name="blocked_headline_open">%1$s is yours to open.</string>
-    <plurals name="blocked_open_button">
-        <item quantity="one">Open %1$s — %2$d minute</item>
-        <item quantity="other">Open %1$s — %2$d minutes</item>
-    </plurals>
     <string name="blocked_hc_warning">Health Connect can\'t be read right now, so those goals count as zero. Fix it from the Blocks screen.</string>
     <string name="blocked_unlock_button">Unlock for %1$d min</string>
     <string name="blocked_unlock_title">Unlock %1$s?</string>
-    <string name="blocked_unlock_message">You\'ll get %1$d minutes. After that, the goals nudge up and you\'ll need to earn it again.</string>
+    <plurals name="blocked_unlock_message">
+        <item quantity="one">You\'ll get %1$d minute. After that, the goals nudge up and you\'ll need to earn it again.</item>
+        <item quantity="other">You\'ll get %1$d minutes. After that, the goals nudge up and you\'ll need to earn it again.</item>
+    </plurals>
     <string name="blocked_unlock_confirm">Unlock</string>
-    <string name="blocked_locked_hint">Meet %1$d of %2$d goals to unlock</string>
+    <plurals name="blocked_locked_hint">
+        <item quantity="one">Meet %1$d of %2$d goal to unlock</item>
+        <item quantity="other">Meet %1$d of %2$d goals to unlock</item>
+    </plurals>
 
     <string name="changes_lock_title">Lock changes to %1$s</string>
     <string name="changes_lock_message">While locked, you can\'t edit, pause, or delete this block.</string>
@@ -37,15 +39,12 @@
     <string name="changes_lock_preset_1m">1 month</string>
     <string name="changes_lock_preset_1y">1 year</string>
     <string name="changes_lock_preset_password">Password</string>
-    <string name="changes_lock_custom_label">Custom (days)</string>
     <string name="changes_lock_preset_custom">Custom</string>
     <string name="changes_lock_step_custom">Custom days</string>
     <string name="changes_lock_custom_message">Pick how many days to lock changes.</string>
     <string name="changes_lock_custom_days_unit">days</string>
-    <string name="changes_lock_until">Locked until %1$s</string>
     <string name="changes_lock_step_method">Lock method</string>
     <string name="changes_lock_step_password">Set password</string>
-    <string name="changes_lock_set_password_title">Set a password</string>
     <string name="changes_lock_set_password_message">Enter a 6-digit code. You\'ll need it to unlock changes.</string>
     <string name="changes_lock_enter_password_title">Enter password</string>
     <string name="changes_lock_enter_password_message">Enter your 6-digit code to unlock changes.</string>
@@ -63,8 +62,7 @@
     <string name="notif_channel_name">Hablock</string>
     <string name="notif_session_ended_title">%1$s is locked again</string>
     <string name="notif_session_active_title">%1$s is unlocked</string>
-    <string name="notif_session_remaining">%1$d:%2$02d remaining</string>
-    <string name="notif_session_active_text">Time\'s ticking — tap to lock early.</string>
+    <string name="notif_session_remaining">Remaining: %1$d:%2$02d</string>
     <string name="notif_session_relock">Lock now</string>
     <plurals name="notif_session_ended_text">
         <item quantity="one">That was your minute. The goals nudged up a little — next round\'s on you.</item>

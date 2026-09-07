@@ -1,7 +1,6 @@
 package dev.hablock.app.ui.components
 
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -27,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.createBitmap
 import androidx.graphics.shapes.RoundedPolygon
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -35,7 +35,7 @@ private const val ICON_PX = 96
 
 private fun Drawable.toImageBitmap(): ImageBitmap {
     (this as? BitmapDrawable)?.bitmap?.let { return it.asImageBitmap() }
-    val bitmap = Bitmap.createBitmap(ICON_PX, ICON_PX, Bitmap.Config.ARGB_8888)
+    val bitmap = createBitmap(ICON_PX, ICON_PX)
     val canvas = Canvas(bitmap)
     setBounds(0, 0, canvas.width, canvas.height)
     draw(canvas)

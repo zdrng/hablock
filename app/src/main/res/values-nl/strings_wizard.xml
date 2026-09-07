@@ -4,6 +4,7 @@
     <string name="wizard_title_review">Controleer alles, en zet het vast.</string>
     <string name="wizard_title_apps">Kies je apps</string>
     <string name="wizard_title_conditions">Stel de voorwaarden in</string>
+    <string name="wizard_title_schedule">Kies wanneer het geldt</string>
     <string name="wizard_title_name">Benoem je blok</string>
     <string name="wizard_search_apps">Apps zoeken</string>
     <string name="wizard_pick_hint">Kies minstens één app</string>
@@ -13,6 +14,28 @@
     </plurals>
     <string name="wizard_next">Volgende</string>
     <string name="wizard_conditions_hint">Zet minstens één voorwaarde aan</string>
+    <string name="wizard_schedule_toggle">Een schema gebruiken</string>
+    <string name="wizard_schedule_toggle_hint">Pas dit blok alleen toe tijdens één wekelijks tijdvenster.</string>
+    <string name="wizard_schedule_days">Startdagen</string>
+    <string name="wizard_schedule_days_hint">Hetzelfde tijdvenster geldt tot op de minuut op elke geselecteerde dag.</string>
+    <string name="wizard_schedule_days_required">Selecteer minstens één startdag</string>
+    <string name="wizard_schedule_start">Begint</string>
+    <string name="wizard_schedule_end">Eindigt</string>
+    <string name="wizard_schedule_start_day_hint">Het tijdvenster begint en eindigt op elke geselecteerde dag.</string>
+    <string name="wizard_schedule_overnight">Dit tijdvenster eindigt de volgende dag. De geselecteerde dagen zijn de startdagen.</string>
+    <string name="wizard_schedule_full_day">Gelijke tijden maken een venster van 24 uur. De geselecteerde dagen zijn de startdagen.</string>
+    <string name="wizard_schedule_pick_start">Kies de begintijd</string>
+    <string name="wizard_schedule_pick_end">Kies de eindtijd</string>
+    <string name="wizard_schedule_time_confirm">Tijd instellen</string>
+    <string name="wizard_schedule_always">Altijd</string>
+    <string name="wizard_schedule_summary">%1$s · %2$s–%3$s</string>
+    <string name="weekday_short_monday">ma</string>
+    <string name="weekday_short_tuesday">di</string>
+    <string name="weekday_short_wednesday">wo</string>
+    <string name="weekday_short_thursday">do</string>
+    <string name="weekday_short_friday">vr</string>
+    <string name="weekday_short_saturday">za</string>
+    <string name="weekday_short_sunday">zo</string>
     <string name="wizard_helper_prompt">Welke app verdient de rest?</string>
     <string name="wizard_helper_label">Verdienende app</string>
     <string name="wizard_threshold_prefix">"Open wanneer "</string>
@@ -28,6 +51,7 @@
     <string name="wizard_summary_opens_on">Opent bij</string>
     <string name="wizard_summary_ratchet">Verhoging</string>
     <string name="wizard_summary_unlock_duration">Ontgrendelduur</string>
+    <string name="wizard_summary_schedule">Schema</string>
     <string name="wizard_summary_changes_lock">Wijzigingsvergrendeling</string>
     <string name="wizard_summary_changes_locked">Vergrendeld</string>
     <string name="wizard_unlock_prefix">"Apps ontgrendelen voor "</string>

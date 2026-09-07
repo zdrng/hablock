@@ -18,10 +18,10 @@
     <string name="home_card_status_open_until">Ouvert jusqu\'à %1$s</string>
     <string name="home_card_status_open">Ouvert — vas-y</string>
     <string name="home_card_status_locked">Verrouillé · %1$d sur %2$d jusqu\'ici</string>
+    <string name="home_card_schedule">%1$s · %2$s–%3$s</string>
     <string name="home_card_of">sur %1$d</string>
     <string name="home_card_session_left">restantes dans cette session</string>
     <string name="home_card_relock">Verrouiller maintenant</string>
-    <string name="home_card_click_label">Afficher les détails</string>
     <string name="home_card_long_click_label">Actions du bloc</string>
     <string name="home_card_lock_changes">Verrouiller les modifications</string>
     <string name="home_card_unlock_changes">Déverrouiller les modifications</string>

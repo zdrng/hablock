@@ -9,6 +9,9 @@
 #   nix develop -c scripts/emulator.sh key CODE      # send keyevent (e.g. 4 = back)
 #   nix develop -c scripts/emulator.sh text "..."    # type text into focused field
 #   nix develop -c scripts/emulator.sh logcat [pat]  # dump recent logcat, optionally grep pattern
+#   nix develop -c scripts/emulator.sh install       # build + reinstall the debug APK
+#   nix develop -c scripts/emulator.sh test          # run connected Android tests on this emulator
+#   nix develop -c scripts/emulator.sh smoke         # reinstall + verify the launcher starts
 #   nix develop -c scripts/emulator.sh mirror        # mirror screen as a window (scrcpy)
 #   nix develop -c scripts/emulator.sh stop          # clean stop (saves quickboot snapshot)
 #
@@ -21,6 +24,9 @@ IMG="system-images;android-35;google_apis;x86_64"
 DEVICE="pixel_6"
 SERIAL="emulator-5554"
 LOG="/tmp/hablock-emulator.log"
+PACKAGE="dev.hablock.app"
+COMPONENT="${PACKAGE}/.ui.MainActivity"
+APK="app/build/outputs/apk/debug/app-debug.apk"
 
 die() { echo "✗ $*" >&2; exit 1; }
 
@@ -28,6 +34,12 @@ need_env() {
   [ -n "${ANDROID_HOME:-}" ] || die "ANDROID_HOME not set — run inside 'nix develop'."
   command -v avdmanager >/dev/null || die "avdmanager not on PATH — re-enter 'nix develop'."
   command -v emulator   >/dev/null || die "emulator not on PATH — re-enter 'nix develop'."
+}
+
+need_device() {
+  command -v adb >/dev/null || die "adb not on PATH — re-enter 'nix develop'."
+  adb devices | grep -q "^${SERIAL}[[:space:]]*device$" ||
+    die "Emulator not ready — run '$0 start' first."
 }
 
 cmd_create() {
@@ -56,7 +68,7 @@ cmd_start() {
     >"$LOG" 2>&1 &
 
   echo "→ Waiting for adb device …"
-  adb wait-for-device
+  adb -s "$SERIAL" wait-for-device
   echo "→ Waiting for boot (sys.boot_completed) …"
   for _ in $(seq 1 180); do
     if [ "$(adb -s "$SERIAL" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ]; then
@@ -90,11 +102,37 @@ cmd_key()  { adb -s "$SERIAL" shell input keyevent "$1"; }
 cmd_text() { adb -s "$SERIAL" shell input text "$(printf '%s' "$1" | sed 's/ /%s/g')"; }
 
 cmd_logcat() {
+  need_device
   if [ -n "${1:-}" ]; then
     adb -s "$SERIAL" logcat -d | grep -E "$1" | tail -100
   else
     adb -s "$SERIAL" logcat -d | tail -100
   fi
+}
+
+cmd_install() {
+  need_env
+  need_device
+  command -v gradle >/dev/null || die "gradle not on PATH — re-enter 'nix develop'."
+  gradle :app:assembleDebug
+  [ -f "$APK" ] || die "Debug APK not found at $APK."
+  adb -s "$SERIAL" install -r "$APK"
+  echo "✓ Installed $PACKAGE on $SERIAL."
+}
+
+cmd_test() {
+  need_env
+  need_device
+  command -v gradle >/dev/null || die "gradle not on PATH — re-enter 'nix develop'."
+  ANDROID_SERIAL="$SERIAL" gradle :app:connectedDebugAndroidTest
+}
+
+cmd_smoke() {
+  cmd_install
+  adb -s "$SERIAL" shell am force-stop "$PACKAGE"
+  adb -s "$SERIAL" shell am start -W -n "$COMPONENT"
+  adb -s "$SERIAL" shell pidof "$PACKAGE" >/dev/null || die "$PACKAGE did not remain running."
+  echo "✓ Launcher smoke check passed on $SERIAL."
 }
 
 cmd_mirror() {
@@ -113,6 +151,9 @@ case "${1:-}" in
   key)    shift; cmd_key "$1" ;;
   text)   shift; cmd_text "$1" ;;
   logcat) shift; cmd_logcat "${1:-}" ;;
+  install) cmd_install ;;
+  test)    cmd_test ;;
+  smoke)   cmd_smoke ;;
   mirror) cmd_mirror ;;
-  *) echo "Usage: $0 {create|start|stop|status|shot [file]|tap X Y|key CODE|text STR|logcat [pat]|mirror}" >&2; exit 1 ;;
+  *) echo "Usage: $0 {create|start|stop|status|shot [file]|tap X Y|key CODE|text STR|logcat [pat]|install|test|smoke|mirror}" >&2; exit 1 ;;
 esac

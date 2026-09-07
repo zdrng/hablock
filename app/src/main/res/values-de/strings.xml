@@ -17,16 +17,18 @@
 
     <string name="blocked_headline_locked">%1$s ist gesperrt.</string>
     <string name="blocked_headline_open">%1$s gehört dir.</string>
-    <plurals name="blocked_open_button">
-        <item quantity="one">%1$s öffnen — %2$d Minute</item>
-        <item quantity="other">%1$s öffnen — %2$d Minuten</item>
-    </plurals>
     <string name="blocked_hc_warning">Health Connect kann gerade nicht gelesen werden, also zählen diese Ziele als null. Behebe es auf dem Blöcke-Bildschirm.</string>
     <string name="blocked_unlock_button">Für %1$d Min. entsperren</string>
     <string name="blocked_unlock_title">%1$s entsperren?</string>
-    <string name="blocked_unlock_message">Du bekommst %1$d Minuten. Danach steigen die Ziele an und du musst sie dir wieder verdienen.</string>
+    <plurals name="blocked_unlock_message">
+        <item quantity="one">Du bekommst %1$d Minute. Danach steigen die Ziele an und du musst sie dir wieder verdienen.</item>
+        <item quantity="other">Du bekommst %1$d Minuten. Danach steigen die Ziele an und du musst sie dir wieder verdienen.</item>
+    </plurals>
     <string name="blocked_unlock_confirm">Entsperren</string>
-    <string name="blocked_locked_hint">%1$d von %2$d Zielen erfüllen zum Entsperren</string>
+    <plurals name="blocked_locked_hint">
+        <item quantity="one">%1$d von %2$d Ziel erfüllen zum Entsperren</item>
+        <item quantity="other">%1$d von %2$d Zielen erfüllen zum Entsperren</item>
+    </plurals>
 
     <string name="changes_lock_title">Änderungen an %1$s sperren</string>
     <string name="changes_lock_message">Solange gesperrt, kannst du diesen Block nicht bearbeiten, pausieren oder löschen.</string>
@@ -37,15 +39,12 @@
     <string name="changes_lock_preset_1m">1 Monat</string>
     <string name="changes_lock_preset_1y">1 Jahr</string>
     <string name="changes_lock_preset_password">Passwort</string>
-    <string name="changes_lock_custom_label">Eigenes (Tage)</string>
     <string name="changes_lock_preset_custom">Eigenes</string>
     <string name="changes_lock_step_custom">Eigene Tage</string>
     <string name="changes_lock_custom_message">Wähle, wie viele Tage die Änderungen gesperrt bleiben.</string>
     <string name="changes_lock_custom_days_unit">Tage</string>
-    <string name="changes_lock_until">Gesperrt bis %1$s</string>
     <string name="changes_lock_step_method">Sperrmethode</string>
     <string name="changes_lock_step_password">Passwort festlegen</string>
-    <string name="changes_lock_set_password_title">Passwort festlegen</string>
     <string name="changes_lock_set_password_message">Gib einen 6-stelligen Code ein. Du brauchst ihn, um die Sperre aufzuheben.</string>
     <string name="changes_lock_enter_password_title">Passwort eingeben</string>
     <string name="changes_lock_enter_password_message">Gib deinen 6-stelligen Code ein, um die Sperre aufzuheben.</string>
@@ -64,7 +63,6 @@
     <string name="notif_session_ended_title">%1$s ist wieder gesperrt</string>
     <string name="notif_session_active_title">%1$s ist entsperrt</string>
     <string name="notif_session_remaining">Noch %1$d:%2$02d</string>
-    <string name="notif_session_active_text">Die Zeit läuft — tippe zum vorzeitigen Sperren.</string>
     <string name="notif_session_relock">Jetzt sperren</string>
     <plurals name="notif_session_ended_text">
         <item quantity="one">Das war deine Minute. Die Ziele sind ein wenig gestiegen — die nächste Runde liegt bei dir.</item>

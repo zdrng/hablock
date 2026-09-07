@@ -1,6 +1,7 @@
 package dev.hablock.app.enforcement
 
 import dev.hablock.app.domain.enforcement.EnforcementCoordinator
+import dev.hablock.app.domain.enforcement.EnforcementPlan
 import dev.hablock.app.domain.service.FakeDeviceOwnerController
 import dev.hablock.app.domain.service.FakeEnforcement
 import kotlin.test.Test
@@ -14,7 +15,7 @@ class EnforcementCoordinatorTest {
         val accessibility = FakeEnforcement()
         val owner = FakeEnforcement(false)
         val coordinator = EnforcementCoordinator(accessibility, owner, FakeDeviceOwnerController())
-        coordinator.applyState(emptyList(), emptyMap())
+        coordinator.applyState(EnforcementPlan(emptyMap()))
         coordinator.showBlocked("com.example.social", "b1")
         assertEquals(1, owner.applied.size)
         assertTrue(accessibility.applied.isEmpty())

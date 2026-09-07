@@ -23,7 +23,7 @@
     <string name="onboarding_demo_hint">Én til og blokken åpner.</string>
     <string name="onboarding_explain_cta">Den er grei</string>
     <string name="onboarding_grants_title">Noen tillatelser</string>
-    <string name="onboarding_grants_body">Gi det du kan nå, resten når det passer. Ingenting forlater telefonen — Hablock kan ikke engang nå internett.</string>
+    <string name="onboarding_grants_body">Gi det du kan nå, resten når det passer. Ingenting forlater telefonen — Hablock kan ikke engang nå Internett.</string>
     <string name="onboarding_grant_accessibility">Tilgjengelighet</string>
     <string name="onboarding_grant_accessibility_detail">Merker hvilken app som kommer i forgrunnen</string>
     <string name="onboarding_grant_usage">Brukstilgang</string>

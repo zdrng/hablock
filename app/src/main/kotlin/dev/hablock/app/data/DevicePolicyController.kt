@@ -3,6 +3,7 @@ package dev.hablock.app.data
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
+import android.os.Build
 import android.os.UserManager
 import dev.hablock.app.domain.enforcement.DeviceOwnerController
 import dev.hablock.app.system.HablockDeviceAdminReceiver
@@ -27,14 +28,18 @@ class DevicePolicyController(context: Context) : DeviceOwnerController {
     override fun applyRestrictions() {
         val dpm = devicePolicyManager ?: return
         if (!isDeviceOwner()) return
-        runCatching { dpm.addUserRestriction(admin, UserManager.DISALLOW_CONFIG_DATE_TIME) }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            runCatching { dpm.addUserRestriction(admin, UserManager.DISALLOW_CONFIG_DATE_TIME) }
+        }
     }
 
     @Suppress("DEPRECATION")
     override fun relinquishOwnership(): Boolean {
         val dpm = devicePolicyManager ?: return false
         if (!isDeviceOwner()) return true
-        runCatching { dpm.clearUserRestriction(admin, UserManager.DISALLOW_CONFIG_DATE_TIME) }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            runCatching { dpm.clearUserRestriction(admin, UserManager.DISALLOW_CONFIG_DATE_TIME) }
+        }
         runCatching { dpm.clearDeviceOwnerApp(appContext.packageName) }
         return !isDeviceOwner()
     }

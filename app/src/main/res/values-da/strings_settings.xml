@@ -13,7 +13,63 @@
     <string name="settings_section_language">Sprog</string>
     <string name="settings_language_system">Systemstandard</string>
     <string name="settings_language_dialog_title">Vælg sprog</string>
-    <string name="settings_language_current">%1$s</string>
+    <string name="settings_section_behavior">Adfærd</string>
+    <string name="settings_overlap_title">Overlappende blokeringer</string>
+    <string name="settings_overlap_body">Når en app tilhører flere aktive blokeringer, vælg hvor mange der skal åbnes, før appen frigives.</string>
+    <string name="settings_overlap_all">Alle blokeringer</string>
+    <string name="settings_overlap_any">En vilkårlig blokering</string>
+    <string name="settings_day_boundary_title">Hablock-dagen starter</string>
+    <string name="settings_day_boundary_body">Fremskridt og daglige mål nulstilles på dette tidspunkt.</string>
+    <string name="settings_behavior_locked">Disse indstillinger er deaktiveret, mens ændringerne i en blokering er låst.</string>
+    <string name="settings_time_picker_title">Vælg dagens start</string>
+    <string name="settings_time_picker_confirm">Gem</string>
+    <string name="settings_section_diagnostics">Diagnostik</string>
+    <string name="settings_diagnostics_backend">Aktiv backend</string>
+    <string name="settings_diagnostics_backend_accessibility">Tilgængelighed</string>
+    <string name="settings_diagnostics_backend_device_owner">Enhedsejer</string>
+    <string name="settings_diagnostics_unknown">Ukendt</string>
+    <string name="settings_diagnostics_accessibility">Tilgængelighedstjeneste</string>
+    <string name="settings_diagnostics_accessibility_value">%1$s · Seneste hændelse: %2$s</string>
+    <string name="settings_diagnostics_connected">Forbundet</string>
+    <string name="settings_diagnostics_disconnected">Afbrudt</string>
+    <string name="settings_diagnostics_evaluation">Seneste evaluering</string>
+    <string name="settings_diagnostics_evaluation_value">%1$s · Evalueret: %2$d · Blokeret: %3$d</string>
+    <string name="settings_diagnostics_enforcement">Seneste håndhævelse</string>
+    <string name="settings_diagnostics_suspension_failures">Mislykkede suspenderinger</string>
+    <string name="settings_diagnostics_none">Ingen</string>
+    <string name="settings_diagnostics_permissions">Adgang</string>
+    <string name="settings_diagnostics_permissions_value">Tilgængelighed %1$s · Brug %2$s · Sundhed %3$s · Nøjagtige alarmer %4$s</string>
+    <string name="settings_diagnostics_schedule">Planlagte kontroller</string>
+    <string name="settings_diagnostics_schedule_value">Nulstilling %1$s · Overgang %2$s</string>
+    <string name="settings_diagnostics_never">Aldrig</string>
+    <string name="settings_diagnostics_run_ok">OK · %1$s</string>
+    <string name="settings_diagnostics_run_failed">Mislykket · %1$s</string>
+    <string name="settings_diagnostics_off">Fra</string>
+    <string name="settings_diagnostics_health_unavailable">Ikke tilgængelig</string>
+    <string name="settings_diagnostics_health_limited">Givet (begrænset)</string>
+    <string name="settings_diagnostics_health_granted">Givet</string>
+    <string name="settings_diagnostics_health_permission_missing">Tilladelse mangler</string>
+    <string name="settings_diagnostics_not_scheduled">Ikke planlagt</string>
+    <string name="settings_section_archive">Sikkerhedskopi og gendannelse</string>
+    <string name="settings_archive_export_title">Eksportér arkiv</string>
+    <string name="settings_archive_export_body">Gem blokeringer, op til ét års historik og globale adfærdsindstillinger. Ændringslåse og nødlåsninger bliver kun på denne enhed.</string>
+    <string name="settings_archive_export_button">Eksportér</string>
+    <string name="settings_archive_import_title">Importér arkiv</string>
+    <string name="settings_archive_import_body">Gennemse et Hablock JSON-arkiv, før det tilføjes. Eksisterende blokeringer og historik overskrives aldrig.</string>
+    <string name="settings_archive_import_button">Importér</string>
+    <string name="settings_archive_working">Arbejder…</string>
+    <string name="settings_archive_preview_title">Importér dette arkiv?</string>
+    <string name="settings_archive_preview_counts">Blokeringer: %1$d nye, %2$d findes allerede\nHistorik: %3$d nye, %4$d findes allerede</string>
+    <string name="settings_archive_preview_settings_restore">Da der ikke er nogen eksisterende blokeringer, gendannes arkivets globale adfærdsindstillinger også.</string>
+    <string name="settings_archive_preview_settings_keep">De nuværende globale adfærdsindstillinger bevares.</string>
+    <string name="settings_archive_confirm_import">Føj til Hablock</string>
+    <string name="settings_archive_export_success_title">Arkiv eksporteret</string>
+    <string name="settings_archive_export_success_message">Gemte %1$d blokeringer og %2$d historikposter.</string>
+    <string name="settings_archive_import_success_title">Arkiv importeret</string>
+    <string name="settings_archive_import_success_message">Tilføjede %1$d blokeringer og sprang %2$d eksisterende over. Tilføjede %3$d historikposter og sprang %4$d eksisterende over.</string>
+    <string name="settings_archive_error_title">Arkiv mislykkedes</string>
+    <string name="settings_archive_export_error">Arkivet kunne ikke oprettes eller skrives. Vælg en anden placering, og prøv igen.</string>
+    <string name="settings_archive_import_error">Filen kunne ikke læses som et gyldigt, understøttet Hablock-arkiv.</string>
     <string name="settings_emergency_body">Brug disse til at låse en blokerings ændringer op i en nødsituation. De genfyldes efter 30 dage.</string>
     <string name="settings_device_owner">Enhedsejer</string>
     <string name="settings_device_owner_optional">Valgfrit — gør låsen afinstalleringssikker</string>
@@ -46,7 +102,6 @@
         <item>Kør kommandoen herunder, præcis som skrevet.</item>
         <item>Genåbn Hablock. Enhedsejer viser Til.</item>
     </string-array>
-    <string name="settings_guide_adb_command" translatable="false">adb shell dpm set-device-owner dev.hablock.app/.system.HablockDeviceAdminReceiver</string>
     <string name="settings_guide_copy_command">Kopiér kommando</string>
     <string name="settings_guide_warning">Dette virker kun på en nyligt nulstillet enhed uden konti. Når Hablock ejer enheden, er den eneste vej tilbage 3-dages opgivelses-timeren herunder.</string>
 </resources>

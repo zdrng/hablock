@@ -17,4 +17,5 @@ data class BlockDayState(
     val requiredNow: Map<String, Double>,
     val activeSession: Session? = null,
     val unlockCount: Int = 0,
+    val emergencyUnlockUsed: Boolean = false,
 )

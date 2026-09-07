@@ -18,10 +18,10 @@
     <string name="home_card_status_open_until">Offen bis %1$s</string>
     <string name="home_card_status_open">Offen — nur zu</string>
     <string name="home_card_status_locked">Gesperrt · %1$d von %2$d bisher</string>
+    <string name="home_card_schedule">%1$s · %2$s–%3$s</string>
     <string name="home_card_of">von %1$d</string>
     <string name="home_card_session_left">in dieser Session übrig</string>
     <string name="home_card_relock">Jetzt sperren</string>
-    <string name="home_card_click_label">Details anzeigen</string>
     <string name="home_card_long_click_label">Block-Aktionen</string>
     <string name="home_card_lock_changes">Änderungen sperren</string>
     <string name="home_card_unlock_changes">Änderungen entsperren</string>

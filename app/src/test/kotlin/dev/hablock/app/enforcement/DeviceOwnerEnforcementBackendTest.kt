@@ -1,17 +1,13 @@
 package dev.hablock.app.enforcement
 
-import dev.hablock.app.domain.model.GateState
+import dev.hablock.app.domain.enforcement.EnforcementPlan
 import dev.hablock.app.domain.service.FakeDeviceOwnerController
 import dev.hablock.app.domain.service.FakeSuspensionStore
-import dev.hablock.app.domain.service.testBlock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
-
-private val LOCKED = GateState.Locked(emptyList(), 1)
-private val OPEN = GateState.Open(emptyList(), 1)
 
 class DeviceOwnerEnforcementBackendTest {
 
@@ -19,11 +15,11 @@ class DeviceOwnerEnforcementBackendTest {
     private val store = FakeSuspensionStore()
     private val backend = DeviceOwnerEnforcementBackend(deviceOwner, store)
 
-    private val block = testBlock(id = "b1", packages = setOf("com.example.social", "com.example.video"))
+    private fun plan(vararg packages: String) = EnforcementPlan(packages.associateWith { "b1" })
 
     @Test
     fun `locked blocks get suspended and recorded`() = runTest {
-        backend.applyState(listOf(block), mapOf("b1" to LOCKED))
+        backend.applyState(plan("com.example.social", "com.example.video"))
 
         assertEquals(listOf(setOf("com.example.social", "com.example.video") to true), deviceOwner.suspensions)
         assertEquals(setOf("com.example.social", "com.example.video"), store.stored)
@@ -31,20 +27,20 @@ class DeviceOwnerEnforcementBackendTest {
 
     @Test
     fun `an unchanged state produces no IPC and no writes`() = runTest {
-        backend.applyState(listOf(block), mapOf("b1" to LOCKED))
+        backend.applyState(plan("com.example.social", "com.example.video"))
         deviceOwner.suspensions.clear()
 
-        backend.applyState(listOf(block), mapOf("b1" to LOCKED))
+        backend.applyState(plan("com.example.social", "com.example.video"))
 
         assertTrue(deviceOwner.suspensions.isEmpty())
     }
 
     @Test
     fun `opening a block releases only its packages`() = runTest {
-        backend.applyState(listOf(block), mapOf("b1" to LOCKED))
+        backend.applyState(plan("com.example.social", "com.example.video"))
         deviceOwner.suspensions.clear()
 
-        backend.applyState(listOf(block), mapOf("b1" to OPEN))
+        backend.applyState(plan())
 
         assertEquals(listOf(setOf("com.example.social", "com.example.video") to false), deviceOwner.suspensions)
         assertTrue(store.stored.isEmpty())
@@ -54,7 +50,7 @@ class DeviceOwnerEnforcementBackendTest {
     fun `orphans from a previous process life are released even without a matching block`() = runTest {
         store.setSuspended(setOf("com.example.orphan"))
 
-        backend.applyState(listOf(block), mapOf("b1" to OPEN))
+        backend.applyState(plan())
 
         assertEquals(listOf(setOf("com.example.orphan") to false), deviceOwner.suspensions)
         assertTrue(store.stored.isEmpty())
@@ -63,11 +59,11 @@ class DeviceOwnerEnforcementBackendTest {
     @Test
     fun `failed suspends are not recorded and failed releases stay in the ledger`() = runTest {
         deviceOwner.failSuspension = setOf("com.example.video")
-        backend.applyState(listOf(block), mapOf("b1" to LOCKED))
+        backend.applyState(plan("com.example.social", "com.example.video"))
         assertEquals(setOf("com.example.social"), store.stored)
 
         deviceOwner.failSuspension = setOf("com.example.social")
-        backend.applyState(listOf(block), mapOf("b1" to OPEN))
+        backend.applyState(plan())
         assertEquals(setOf("com.example.social"), store.stored)
     }
 

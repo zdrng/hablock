@@ -24,6 +24,11 @@ sealed interface GateState {
         val thresholdN: Int,
     ) : GateState
 
+    /** The block is enabled but outside its configured schedule window. */
+    data class Inactive(
+        override val progress: List<ConditionProgress>,
+    ) : GateState
+
     data class SessionActive(
         override val progress: List<ConditionProgress>,
         val endsAt: Instant,

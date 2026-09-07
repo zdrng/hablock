@@ -18,10 +18,10 @@
     <string name="home_card_status_open_until">Open until %1$s</string>
     <string name="home_card_status_open">Open — go ahead</string>
     <string name="home_card_status_locked">Locked · %1$d of %2$d so far</string>
+    <string name="home_card_schedule">%1$s · %2$s–%3$s</string>
     <string name="home_card_of">of %1$d</string>
     <string name="home_card_session_left">left in this session</string>
     <string name="home_card_relock">Lock now</string>
-    <string name="home_card_click_label">Show details</string>
     <string name="home_card_long_click_label">Block actions</string>
     <string name="home_card_lock_changes">Lock changes</string>
     <string name="home_card_unlock_changes">Unlock changes</string>

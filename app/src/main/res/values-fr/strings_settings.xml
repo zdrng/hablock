@@ -13,7 +13,63 @@
     <string name="settings_section_language">Langue</string>
     <string name="settings_language_system">Valeur système</string>
     <string name="settings_language_dialog_title">Choisir la langue</string>
-    <string name="settings_language_current">%1$s</string>
+    <string name="settings_section_behavior">Comportement</string>
+    <string name="settings_overlap_title">Blocs qui se chevauchent</string>
+    <string name="settings_overlap_body">Lorsqu’une app appartient à plusieurs blocs actifs, choisis combien doivent être ouverts avant de libérer l’app.</string>
+    <string name="settings_overlap_all">Tous les blocs</string>
+    <string name="settings_overlap_any">N’importe quel bloc</string>
+    <string name="settings_day_boundary_title">La journée Hablock commence</string>
+    <string name="settings_day_boundary_body">La progression et les objectifs quotidiens sont réinitialisés à cette heure.</string>
+    <string name="settings_behavior_locked">Ces réglages sont désactivés tant que les modifications d’un bloc sont verrouillées.</string>
+    <string name="settings_time_picker_title">Choisir le début de la journée</string>
+    <string name="settings_time_picker_confirm">Enregistrer</string>
+    <string name="settings_section_diagnostics">Diagnostic</string>
+    <string name="settings_diagnostics_backend">Moteur actif</string>
+    <string name="settings_diagnostics_backend_accessibility">Accessibilité</string>
+    <string name="settings_diagnostics_backend_device_owner">Propriétaire de l’appareil</string>
+    <string name="settings_diagnostics_unknown">Inconnu</string>
+    <string name="settings_diagnostics_accessibility">Service d’accessibilité</string>
+    <string name="settings_diagnostics_accessibility_value">%1$s · Dernier événement : %2$s</string>
+    <string name="settings_diagnostics_connected">Connecté</string>
+    <string name="settings_diagnostics_disconnected">Déconnecté</string>
+    <string name="settings_diagnostics_evaluation">Dernière évaluation</string>
+    <string name="settings_diagnostics_evaluation_value">%1$s · Évalués : %2$d · Bloqués : %3$d</string>
+    <string name="settings_diagnostics_enforcement">Dernière application</string>
+    <string name="settings_diagnostics_suspension_failures">Échecs de suspension</string>
+    <string name="settings_diagnostics_none">Aucun</string>
+    <string name="settings_diagnostics_permissions">Accès</string>
+    <string name="settings_diagnostics_permissions_value">Accessibilité %1$s · Utilisation %2$s · Santé %3$s · Alarmes exactes %4$s</string>
+    <string name="settings_diagnostics_schedule">Vérifications planifiées</string>
+    <string name="settings_diagnostics_schedule_value">Réinitialisation %1$s · Transition %2$s</string>
+    <string name="settings_diagnostics_never">Jamais</string>
+    <string name="settings_diagnostics_run_ok">OK · %1$s</string>
+    <string name="settings_diagnostics_run_failed">Échec · %1$s</string>
+    <string name="settings_diagnostics_off">Désactivé</string>
+    <string name="settings_diagnostics_health_unavailable">Indisponible</string>
+    <string name="settings_diagnostics_health_limited">Accordé (limité)</string>
+    <string name="settings_diagnostics_health_granted">Accordé</string>
+    <string name="settings_diagnostics_health_permission_missing">Permission manquante</string>
+    <string name="settings_diagnostics_not_scheduled">Non planifié</string>
+    <string name="settings_section_archive">Sauvegarde et restauration</string>
+    <string name="settings_archive_export_title">Exporter une archive</string>
+    <string name="settings_archive_export_body">Enregistre les blocs, jusqu’à un an d’historique et les réglages généraux de comportement. Les verrouillages de modification et déverrouillages d’urgence restent uniquement sur cet appareil.</string>
+    <string name="settings_archive_export_button">Exporter</string>
+    <string name="settings_archive_import_title">Importer une archive</string>
+    <string name="settings_archive_import_body">Prévisualise une archive JSON Hablock avant de l’ajouter. Les blocs et l’historique existants ne sont jamais écrasés.</string>
+    <string name="settings_archive_import_button">Importer</string>
+    <string name="settings_archive_working">Traitement…</string>
+    <string name="settings_archive_preview_title">Importer cette archive ?</string>
+    <string name="settings_archive_preview_counts">Blocs : %1$d nouveaux, %2$d déjà présents\nHistorique : %3$d nouveaux, %4$d déjà présents</string>
+    <string name="settings_archive_preview_settings_restore">Comme il n’existe aucun bloc, les réglages généraux de comportement de l’archive seront aussi restaurés.</string>
+    <string name="settings_archive_preview_settings_keep">Les réglages généraux de comportement actuels seront conservés.</string>
+    <string name="settings_archive_confirm_import">Ajouter à Hablock</string>
+    <string name="settings_archive_export_success_title">Archive exportée</string>
+    <string name="settings_archive_export_success_message">%1$d blocs et %2$d entrées d’historique enregistrés.</string>
+    <string name="settings_archive_import_success_title">Archive importée</string>
+    <string name="settings_archive_import_success_message">%1$d blocs ajoutés et %2$d blocs existants ignorés. %3$d entrées d’historique ajoutées et %4$d entrées existantes ignorées.</string>
+    <string name="settings_archive_error_title">Échec de l’archive</string>
+    <string name="settings_archive_export_error">Impossible de créer ou d’écrire l’archive. Choisis une autre destination et réessaie.</string>
+    <string name="settings_archive_import_error">Ce fichier n’a pas pu être lu comme une archive Hablock valide et prise en charge.</string>
     <string name="settings_emergency_body">Sers-t\'en pour déverrouiller les modifications d\'un bloc en cas d\'urgence. Ils se rechargent après 30 jours.</string>
     <string name="settings_device_owner">Propriétaire de l\'appareil</string>
     <string name="settings_device_owner_optional">Optionnel — rend le verrouillage résistant à la désinstallation</string>
@@ -46,7 +102,6 @@
         <item>Exécute la commande ci-dessous, exactement telle qu\'écrite.</item>
         <item>Rouvre Hablock. Propriétaire de l\'appareil affiche Activé.</item>
     </string-array>
-    <string name="settings_guide_adb_command" translatable="false">adb shell dpm set-device-owner dev.hablock.app/.system.HablockDeviceAdminReceiver</string>
     <string name="settings_guide_copy_command">Copier la commande</string>
     <string name="settings_guide_warning">Ça ne fonctionne que sur un appareil fraîchement réinitialisé sans aucun compte. Une fois qu\'Hablock possède l\'appareil, le seul retour est le minuteur de 3 jours ci-dessous.</string>
 </resources>

@@ -1,5 +1,6 @@
 package dev.hablock.app.ui.wizard
 
+import android.text.format.DateFormat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -27,23 +28,32 @@ import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -59,6 +69,7 @@ import dev.hablock.app.R
 import dev.hablock.app.domain.GateConstants
 import dev.hablock.app.domain.model.InstalledApp
 import dev.hablock.app.domain.model.LockType
+import dev.hablock.app.domain.model.Weekday
 import dev.hablock.app.ui.components.AppIconCookie
 import dev.hablock.app.ui.components.GroupedListItem
 import dev.hablock.app.ui.components.PlayfulStepper
@@ -67,6 +78,8 @@ import dev.hablock.app.ui.components.groupPositionOf
 import dev.hablock.app.ui.format.formatPercent
 import dev.hablock.app.ui.format.groupedInt
 import dev.hablock.app.ui.gateViewModel
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun BlockWizardSheet(blockId: String?, onDismiss: () -> Unit) {
@@ -117,6 +130,7 @@ fun BlockWizardSheet(blockId: String?, onDismiss: () -> Unit) {
                 when (step) {
                     0 -> StepApps(uiState, viewModel)
                     1 -> StepConditions(uiState, viewModel)
+                    2 -> StepSchedule(uiState, viewModel)
                     else -> StepName(uiState, viewModel)
                 }
             }
@@ -139,6 +153,7 @@ private fun WizardHeader(
                 when {
                     step == 0 -> stringResource(R.string.wizard_title_apps)
                     step == 1 -> stringResource(R.string.wizard_title_conditions)
+                    step == 2 -> stringResource(R.string.wizard_title_schedule)
                     editing -> stringResource(R.string.wizard_title_review)
                     else -> stringResource(R.string.wizard_title_name)
                 },
@@ -147,7 +162,7 @@ private fun WizardHeader(
         }
         StepShapeDots(
             step = step,
-            count = 3,
+            count = 4,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
         )
     }
@@ -232,6 +247,208 @@ private fun StepConditions(uiState: WizardUiState, viewModel: BlockWizardViewMod
             onClick = { viewModel.setStep(2) },
         )
     }
+}
+
+@Composable
+private fun StepSchedule(uiState: WizardUiState, viewModel: BlockWizardViewModel) {
+    var pickingStart by remember { mutableStateOf<Boolean?>(null) }
+    Column(Modifier.padding(top = 10.dp)) {
+        LazyColumn(
+            Modifier.weight(1f, fill = false).heightIn(max = 480.dp),
+            overscrollEffect = null,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            item {
+                Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surfaceContainer) {
+                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                Text(
+                                    stringResource(R.string.wizard_schedule_toggle),
+                                    style = MaterialTheme.typography.titleMediumEmphasized,
+                                )
+                                Text(
+                                    stringResource(R.string.wizard_schedule_toggle_hint),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                            Switch(
+                                checked = uiState.scheduleEnabled,
+                                onCheckedChange = viewModel::setScheduleEnabled,
+                            )
+                        }
+                    }
+                }
+            }
+            if (uiState.scheduleEnabled) {
+                item {
+                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text(
+                            stringResource(R.string.wizard_schedule_days),
+                            style = MaterialTheme.typography.titleSmallEmphasized,
+                        )
+                        Text(
+                            stringResource(R.string.wizard_schedule_days_hint),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+                item {
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        itemsIndexed(Weekday.entries, key = { _, weekday -> weekday.name }) { _, weekday ->
+                            FilterChip(
+                                selected = weekday in uiState.scheduleWeekdays,
+                                onClick = { viewModel.toggleScheduleWeekday(weekday) },
+                                label = { Text(weekday.shortLabel()) },
+                            )
+                        }
+                    }
+                }
+                if (uiState.scheduleWeekdays.isEmpty()) {
+                    item {
+                        Text(
+                            stringResource(R.string.wizard_schedule_days_required),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error,
+                        )
+                    }
+                }
+                item {
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        ScheduleTimeButton(
+                            label = stringResource(R.string.wizard_schedule_start),
+                            time = scheduleTimeLabel(uiState.scheduleStartMinute),
+                            modifier = Modifier.weight(1f),
+                            onClick = { pickingStart = true },
+                        )
+                        ScheduleTimeButton(
+                            label = stringResource(R.string.wizard_schedule_end),
+                            time = scheduleTimeLabel(uiState.scheduleEndMinute),
+                            modifier = Modifier.weight(1f),
+                            onClick = { pickingStart = false },
+                        )
+                    }
+                }
+                item {
+                    Surface(
+                        shape = MaterialTheme.shapes.medium,
+                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                    ) {
+                        Text(
+                            when {
+                                uiState.scheduleEndMinute == uiState.scheduleStartMinute ->
+                                    stringResource(R.string.wizard_schedule_full_day)
+                                uiState.scheduleEndMinute < uiState.scheduleStartMinute ->
+                                    stringResource(R.string.wizard_schedule_overnight)
+                                else -> stringResource(R.string.wizard_schedule_start_day_hint)
+                            },
+                            Modifier.padding(14.dp),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                    }
+                }
+            }
+        }
+        WizardFooter(
+            hint = if (uiState.scheduleEnabled && uiState.scheduleWeekdays.isEmpty()) {
+                stringResource(R.string.wizard_schedule_days_required)
+            } else {
+                ""
+            },
+            label = stringResource(R.string.wizard_next),
+            enabled = uiState.canAdvance,
+            onClick = { viewModel.setStep(3) },
+        )
+    }
+
+    pickingStart?.let { isStart ->
+        ScheduleTimePickerDialog(
+            initialMinutes = if (isStart) uiState.scheduleStartMinute else uiState.scheduleEndMinute,
+            title = stringResource(
+                if (isStart) R.string.wizard_schedule_pick_start else R.string.wizard_schedule_pick_end,
+            ),
+            onDismiss = { pickingStart = null },
+            onConfirm = { minute ->
+                if (isStart) viewModel.setScheduleStartMinute(minute) else viewModel.setScheduleEndMinute(minute)
+                pickingStart = null
+            },
+        )
+    }
+}
+
+@Composable
+private fun ScheduleTimeButton(label: String, time: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    OutlinedButton(onClick = onClick, modifier = modifier) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(label, style = MaterialTheme.typography.labelSmall)
+            Text(time, style = MaterialTheme.typography.titleMediumEmphasized)
+        }
+    }
+}
+
+@Composable
+private fun ScheduleTimePickerDialog(
+    initialMinutes: Int,
+    title: String,
+    onDismiss: () -> Unit,
+    onConfirm: (Int) -> Unit,
+) {
+    val context = LocalContext.current
+    val state = rememberTimePickerState(
+        initialHour = initialMinutes / 60,
+        initialMinute = initialMinutes % 60,
+        is24Hour = DateFormat.is24HourFormat(context),
+    )
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = { TimePicker(state) },
+        confirmButton = {
+            TextButton(onClick = { onConfirm(state.hour * 60 + state.minute) }) {
+                Text(stringResource(R.string.wizard_schedule_time_confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) }
+        },
+    )
+}
+
+@Composable
+private fun scheduleTimeLabel(minutes: Int): String {
+    val context = LocalContext.current
+    val locale = LocalConfiguration.current.locales[0]
+    val is24Hour = DateFormat.is24HourFormat(context)
+    return remember(minutes, locale, is24Hour) {
+        val skeleton = if (is24Hour) "Hm" else "hm"
+        val pattern = DateFormat.getBestDateTimePattern(locale, skeleton)
+        LocalTime.of(minutes / 60, minutes % 60).format(DateTimeFormatter.ofPattern(pattern, locale))
+    }
+}
+
+@Composable
+private fun Weekday.shortLabel(): String = stringResource(
+    when (this) {
+        Weekday.MONDAY -> R.string.weekday_short_monday
+        Weekday.TUESDAY -> R.string.weekday_short_tuesday
+        Weekday.WEDNESDAY -> R.string.weekday_short_wednesday
+        Weekday.THURSDAY -> R.string.weekday_short_thursday
+        Weekday.FRIDAY -> R.string.weekday_short_friday
+        Weekday.SATURDAY -> R.string.weekday_short_saturday
+        Weekday.SUNDAY -> R.string.weekday_short_sunday
+    },
+)
+
+@Composable
+private fun scheduleWeekdaysLabel(weekdays: Set<Weekday>): String {
+    val labels = mutableListOf<String>()
+    for (weekday in Weekday.entries) {
+        if (weekday in weekdays) labels += weekday.shortLabel()
+    }
+    return labels.joinToString(separator = ", ")
 }
 
 @Composable
@@ -437,6 +654,19 @@ private fun StepName(uiState: WizardUiState, viewModel: BlockWizardViewModel) {
                     stringResource(R.string.wizard_summary_unlock_duration),
                     pluralStringResource(R.plurals.wizard_unlock_minutes, uiState.unlockDurationMinutes, uiState.unlockDurationMinutes),
                 )
+                SummaryRow(
+                    stringResource(R.string.wizard_summary_schedule),
+                    if (!uiState.scheduleEnabled) {
+                        stringResource(R.string.wizard_schedule_always)
+                    } else {
+                        stringResource(
+                            R.string.wizard_schedule_summary,
+                            scheduleWeekdaysLabel(uiState.scheduleWeekdays),
+                            scheduleTimeLabel(uiState.scheduleStartMinute),
+                            scheduleTimeLabel(uiState.scheduleEndMinute),
+                        )
+                    },
+                )
                 if (uiState.editing && uiState.lockType != null) {
                     SummaryRow(
                         stringResource(R.string.wizard_summary_changes_lock),
@@ -452,6 +682,7 @@ private fun StepName(uiState: WizardUiState, viewModel: BlockWizardViewModel) {
             Button(
                 onClick = { viewModel.save(defaultName) },
                 modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.scheduleEnabled || uiState.scheduleWeekdays.isNotEmpty(),
             ) { Text(stringResource(if (uiState.editing) R.string.wizard_save_changes else R.string.wizard_lock_it_in)) }
         }
         Spacer(Modifier.height(12.dp))

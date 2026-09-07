@@ -1,5 +1,6 @@
 package dev.hablock.app.ui.settings
 
+import android.content.ClipData
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,17 +16,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import dev.hablock.app.R
 import dev.hablock.app.ui.components.HablockIcons
+import kotlinx.coroutines.launch
 
 @Composable
 fun DeviceOwnerGuide(modifier: Modifier = Modifier) {
@@ -56,7 +59,8 @@ fun DeviceOwnerGuide(modifier: Modifier = Modifier) {
                     )
                 }
             }
-            val clipboard = LocalClipboardManager.current
+            val clipboard = LocalClipboard.current
+            val scope = rememberCoroutineScope()
             Row(
                 Modifier
                     .fillMaxWidth()
@@ -72,7 +76,13 @@ fun DeviceOwnerGuide(modifier: Modifier = Modifier) {
                         color = MaterialTheme.colorScheme.primary,
                     )
                 }
-                IconButton(onClick = { clipboard.setText(AnnotatedString(adbCommand)) }) {
+                IconButton(
+                    onClick = {
+                        scope.launch {
+                            clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(null, adbCommand)))
+                        }
+                    },
+                ) {
                     Icon(HablockIcons.Copy, contentDescription = stringResource(R.string.settings_guide_copy_command), Modifier.size(18.dp))
                 }
             }

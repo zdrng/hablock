@@ -17,16 +17,20 @@
 
     <string name="blocked_headline_locked">%1$s est verrouillé.</string>
     <string name="blocked_headline_open">%1$s est à toi d\'ouvrir.</string>
-    <plurals name="blocked_open_button">
-        <item quantity="one">Ouvrir %1$s — %2$d minute</item>
-        <item quantity="other">Ouvrir %1$s — %2$d minutes</item>
-    </plurals>
     <string name="blocked_hc_warning">Health Connect ne peut pas être lu pour l\'instant, ces objectifs comptent donc comme zéro. Corrige-le depuis l\'écran des Blocs.</string>
     <string name="blocked_unlock_button">Déverrouiller pour %1$d min</string>
     <string name="blocked_unlock_title">Déverrouiller %1$s ?</string>
-    <string name="blocked_unlock_message">Tu auras %1$d minutes. Après ça, les objectifs augmentent et tu devras le mériter à nouveau.</string>
+    <plurals name="blocked_unlock_message">
+        <item quantity="one">Tu auras %1$d minute. Après ça, les objectifs augmentent et tu devras le mériter à nouveau.</item>
+        <item quantity="many">Tu auras %1$d minutes. Après ça, les objectifs augmentent et tu devras le mériter à nouveau.</item>
+        <item quantity="other">Tu auras %1$d minutes. Après ça, les objectifs augmentent et tu devras le mériter à nouveau.</item>
+    </plurals>
     <string name="blocked_unlock_confirm">Déverrouiller</string>
-    <string name="blocked_locked_hint">Remplis %1$d sur %2$d objectifs pour déverrouiller</string>
+    <plurals name="blocked_locked_hint">
+        <item quantity="one">Remplis %1$d sur %2$d objectif pour déverrouiller</item>
+        <item quantity="many">Remplis %1$d sur %2$d objectifs pour déverrouiller</item>
+        <item quantity="other">Remplis %1$d sur %2$d objectifs pour déverrouiller</item>
+    </plurals>
 
     <string name="changes_lock_title">Verrouiller les modifications de %1$s</string>
     <string name="changes_lock_message">Tant que c\'est verrouillé, tu ne peux pas modifier, mettre en pause ou supprimer ce bloc.</string>
@@ -37,15 +41,12 @@
     <string name="changes_lock_preset_1m">1 mois</string>
     <string name="changes_lock_preset_1y">1 an</string>
     <string name="changes_lock_preset_password">Mot de passe</string>
-    <string name="changes_lock_custom_label">Personnalisé (jours)</string>
     <string name="changes_lock_preset_custom">Personnalisé</string>
     <string name="changes_lock_step_custom">Jours personnalisés</string>
     <string name="changes_lock_custom_message">Choisis combien de jours verrouiller les modifications.</string>
     <string name="changes_lock_custom_days_unit">jours</string>
-    <string name="changes_lock_until">Verrouillé jusqu\'au %1$s</string>
     <string name="changes_lock_step_method">Méthode de verrouillage</string>
     <string name="changes_lock_step_password">Définir un mot de passe</string>
-    <string name="changes_lock_set_password_title">Définir un mot de passe</string>
     <string name="changes_lock_set_password_message">Saisis un code à 6 chiffres. Tu en auras besoin pour déverrouiller les modifications.</string>
     <string name="changes_lock_enter_password_title">Saisir le mot de passe</string>
     <string name="changes_lock_enter_password_message">Saisis ton code à 6 chiffres pour déverrouiller les modifications.</string>
@@ -64,10 +65,10 @@
     <string name="notif_session_ended_title">%1$s est de nouveau verrouillé</string>
     <string name="notif_session_active_title">%1$s est déverrouillé</string>
     <string name="notif_session_remaining">Encore %1$d:%2$02d</string>
-    <string name="notif_session_active_text">Le temps file — tape pour verrouiller en avance.</string>
     <string name="notif_session_relock">Verrouiller maintenant</string>
     <plurals name="notif_session_ended_text">
         <item quantity="one">C\'était ta %1$d minute. Les objectifs ont légèrement augmenté — la prochaine manche est sur toi.</item>
+        <item quantity="many">C\'étaient tes %1$d minutes. Les objectifs ont légèrement augmenté — la prochaine manche est sur toi.</item>
         <item quantity="other">C\'étaient tes %1$d minutes. Les objectifs ont légèrement augmenté — la prochaine manche est sur toi.</item>
     </plurals>
     <string name="notif_relinquish_title">Le minuteur de 3 jours est terminé</string>

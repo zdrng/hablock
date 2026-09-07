@@ -13,7 +13,63 @@
     <string name="settings_section_language">Taal</string>
     <string name="settings_language_system">Systeemstandaard</string>
     <string name="settings_language_dialog_title">Taal kiezen</string>
-    <string name="settings_language_current">%1$s</string>
+    <string name="settings_section_behavior">Gedrag</string>
+    <string name="settings_overlap_title">Overlappende blokken</string>
+    <string name="settings_overlap_body">Als een app bij meerdere actieve blokken hoort, kies je hoeveel er open moeten zijn voordat de app wordt vrijgegeven.</string>
+    <string name="settings_overlap_all">Alle blokken</string>
+    <string name="settings_overlap_any">Een willekeurig blok</string>
+    <string name="settings_day_boundary_title">De Hablock-dag begint</string>
+    <string name="settings_day_boundary_body">Voortgang en dagelijkse doelen worden op dit tijdstip gereset.</string>
+    <string name="settings_behavior_locked">Deze instellingen zijn uitgeschakeld zolang de wijzigingen van een blok zijn vergrendeld.</string>
+    <string name="settings_time_picker_title">Kies het begin van de dag</string>
+    <string name="settings_time_picker_confirm">Opslaan</string>
+    <string name="settings_section_diagnostics">Diagnostiek</string>
+    <string name="settings_diagnostics_backend">Actieve backend</string>
+    <string name="settings_diagnostics_backend_accessibility">Toegankelijkheid</string>
+    <string name="settings_diagnostics_backend_device_owner">Apparaateigenaar</string>
+    <string name="settings_diagnostics_unknown">Onbekend</string>
+    <string name="settings_diagnostics_accessibility">Toegankelijkheidsservice</string>
+    <string name="settings_diagnostics_accessibility_value">%1$s · Laatste gebeurtenis: %2$s</string>
+    <string name="settings_diagnostics_connected">Verbonden</string>
+    <string name="settings_diagnostics_disconnected">Niet verbonden</string>
+    <string name="settings_diagnostics_evaluation">Laatste evaluatie</string>
+    <string name="settings_diagnostics_evaluation_value">%1$s · Geëvalueerd: %2$d · Geblokkeerd: %3$d</string>
+    <string name="settings_diagnostics_enforcement">Laatste handhaving</string>
+    <string name="settings_diagnostics_suspension_failures">Mislukte opschortingen</string>
+    <string name="settings_diagnostics_none">Geen</string>
+    <string name="settings_diagnostics_permissions">Toegang</string>
+    <string name="settings_diagnostics_permissions_value">Toegankelijkheid %1$s · Gebruik %2$s · Gezondheid %3$s · Exacte alarmen %4$s</string>
+    <string name="settings_diagnostics_schedule">Geplande controles</string>
+    <string name="settings_diagnostics_schedule_value">Reset %1$s · Overgang %2$s</string>
+    <string name="settings_diagnostics_never">Nooit</string>
+    <string name="settings_diagnostics_run_ok">OK · %1$s</string>
+    <string name="settings_diagnostics_run_failed">Mislukt · %1$s</string>
+    <string name="settings_diagnostics_off">Uit</string>
+    <string name="settings_diagnostics_health_unavailable">Niet beschikbaar</string>
+    <string name="settings_diagnostics_health_limited">Toegekend (beperkt)</string>
+    <string name="settings_diagnostics_health_granted">Toegekend</string>
+    <string name="settings_diagnostics_health_permission_missing">Toestemming ontbreekt</string>
+    <string name="settings_diagnostics_not_scheduled">Niet gepland</string>
+    <string name="settings_section_archive">Back-up en herstel</string>
+    <string name="settings_archive_export_title">Archief exporteren</string>
+    <string name="settings_archive_export_body">Sla blokken, maximaal één jaar geschiedenis en algemene gedragsinstellingen op. Wijzigingssloten en noodontgrendelingen blijven alleen op dit apparaat.</string>
+    <string name="settings_archive_export_button">Exporteren</string>
+    <string name="settings_archive_import_title">Archief importeren</string>
+    <string name="settings_archive_import_body">Bekijk een Hablock JSON-archief voordat je het toevoegt. Bestaande blokken en geschiedenis worden nooit overschreven.</string>
+    <string name="settings_archive_import_button">Importeren</string>
+    <string name="settings_archive_working">Bezig…</string>
+    <string name="settings_archive_preview_title">Dit archief importeren?</string>
+    <string name="settings_archive_preview_counts">Blokken: %1$d nieuw, %2$d al aanwezig\nGeschiedenis: %3$d nieuw, %4$d al aanwezig</string>
+    <string name="settings_archive_preview_settings_restore">Omdat er geen bestaande blokken zijn, worden ook de algemene gedragsinstellingen uit het archief hersteld.</string>
+    <string name="settings_archive_preview_settings_keep">De huidige algemene gedragsinstellingen blijven behouden.</string>
+    <string name="settings_archive_confirm_import">Toevoegen aan Hablock</string>
+    <string name="settings_archive_export_success_title">Archief geëxporteerd</string>
+    <string name="settings_archive_export_success_message">%1$d blokken en %2$d geschiedenisitems opgeslagen.</string>
+    <string name="settings_archive_import_success_title">Archief geïmporteerd</string>
+    <string name="settings_archive_import_success_message">%1$d blokken toegevoegd en %2$d bestaande overgeslagen. %3$d geschiedenisitems toegevoegd en %4$d bestaande overgeslagen.</string>
+    <string name="settings_archive_error_title">Archief mislukt</string>
+    <string name="settings_archive_export_error">Het archief kon niet worden gemaakt of geschreven. Kies een andere locatie en probeer opnieuw.</string>
+    <string name="settings_archive_import_error">Dit bestand kon niet als een geldig, ondersteund Hablock-archief worden gelezen.</string>
     <string name="settings_emergency_body">Gebruik deze om in noodgevallen de wijzigingen van een blok te ontgrendelen. Ze vullen zich na 30 dagen bij.</string>
     <string name="settings_device_owner">Apparaateigenaar</string>
     <string name="settings_device_owner_optional">Optioneel — maakt het slot verwijderingsbestendig</string>
@@ -46,7 +102,6 @@
         <item>Voer het onderstaande commando uit, exact zoals geschreven.</item>
         <item>Heropen Hablock. Apparaateigenaar staat op Aan.</item>
     </string-array>
-    <string name="settings_guide_adb_command" translatable="false">adb shell dpm set-device-owner dev.hablock.app/.system.HablockDeviceAdminReceiver</string>
     <string name="settings_guide_copy_command">Commando kopiëren</string>
     <string name="settings_guide_warning">Dit werkt alleen op een apparaat dat net is gereset zonder accounts. Zodra Hablock eigenaar is, is de enige weg terug de timer van 3 dagen hieronder.</string>
 </resources>

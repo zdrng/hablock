@@ -49,6 +49,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -403,7 +404,7 @@ private fun LockChangesSheet(
     onDismiss: () -> Unit,
 ) {
     var step by remember { mutableStateOf(LockStep.Method) }
-    var selectedPreset by remember { mutableStateOf(0) }
+    var selectedPreset by remember { mutableIntStateOf(0) }
     var customDays by remember { mutableStateOf("") }
     var passcode by remember { mutableStateOf("") }
 

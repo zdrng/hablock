@@ -4,6 +4,7 @@
     <string name="wizard_title_review">Check it over, then arm it.</string>
     <string name="wizard_title_apps">Pick your apps</string>
     <string name="wizard_title_conditions">Set the conditions</string>
+    <string name="wizard_title_schedule">Choose when it applies</string>
     <string name="wizard_title_name">Name your block</string>
     <string name="wizard_search_apps">Search apps</string>
     <string name="wizard_pick_hint">Pick at least one app</string>
@@ -13,6 +14,28 @@
     </plurals>
     <string name="wizard_next">Next</string>
     <string name="wizard_conditions_hint">Switch on at least one condition</string>
+    <string name="wizard_schedule_toggle">Use a schedule</string>
+    <string name="wizard_schedule_toggle_hint">Apply this block only during one weekly time window.</string>
+    <string name="wizard_schedule_days">Start days</string>
+    <string name="wizard_schedule_days_hint">The same minute-precise window runs on every selected day.</string>
+    <string name="wizard_schedule_days_required">Select at least one start day</string>
+    <string name="wizard_schedule_start">Starts</string>
+    <string name="wizard_schedule_end">Ends</string>
+    <string name="wizard_schedule_start_day_hint">The window starts and ends on each selected day.</string>
+    <string name="wizard_schedule_overnight">This window ends the next day. Selected days are the days it starts.</string>
+    <string name="wizard_schedule_full_day">Matching times make a 24-hour window. Selected days are the days it starts.</string>
+    <string name="wizard_schedule_pick_start">Choose start time</string>
+    <string name="wizard_schedule_pick_end">Choose end time</string>
+    <string name="wizard_schedule_time_confirm">Set time</string>
+    <string name="wizard_schedule_always">Always</string>
+    <string name="wizard_schedule_summary">%1$s · %2$s–%3$s</string>
+    <string name="weekday_short_monday">Mon</string>
+    <string name="weekday_short_tuesday">Tue</string>
+    <string name="weekday_short_wednesday">Wed</string>
+    <string name="weekday_short_thursday">Thu</string>
+    <string name="weekday_short_friday">Fri</string>
+    <string name="weekday_short_saturday">Sat</string>
+    <string name="weekday_short_sunday">Sun</string>
     <string name="wizard_helper_prompt">Which app earns the others?</string>
     <string name="wizard_helper_label">Earning app</string>
     <string name="wizard_threshold_prefix">"Open when "</string>
@@ -28,6 +51,7 @@
     <string name="wizard_summary_opens_on">Opens on</string>
     <string name="wizard_summary_ratchet">Ratchet</string>
     <string name="wizard_summary_unlock_duration">Unlock duration</string>
+    <string name="wizard_summary_schedule">Schedule</string>
     <string name="wizard_summary_changes_lock">Changes lock</string>
     <string name="wizard_summary_changes_locked">Locked</string>
     <string name="wizard_unlock_prefix">"Apps unlock for "</string>

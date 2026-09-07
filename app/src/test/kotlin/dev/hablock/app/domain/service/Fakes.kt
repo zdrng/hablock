@@ -2,15 +2,19 @@ package dev.hablock.app.domain.service
 
 import dev.hablock.app.domain.enforcement.DeviceOwnerController
 import dev.hablock.app.domain.enforcement.EnforcementBackend
+import dev.hablock.app.domain.enforcement.EnforcementPlan
 import dev.hablock.app.domain.enforcement.SuspensionStore
 import dev.hablock.app.domain.model.Block
 import dev.hablock.app.domain.model.BlockDayState
 import dev.hablock.app.domain.model.Condition
+import dev.hablock.app.domain.model.DailyBlockHistory
 import dev.hablock.app.domain.model.GateState
 import dev.hablock.app.domain.model.MetricSnapshot
+import dev.hablock.app.domain.model.OverlapPolicy
 import dev.hablock.app.domain.repository.BlockRepository
 import dev.hablock.app.domain.repository.GateStateRepository
 import dev.hablock.app.domain.repository.HealthRepository
+import dev.hablock.app.domain.repository.HistoryRepository
 import dev.hablock.app.domain.repository.SettingsRepository
 import dev.hablock.app.domain.repository.UsageStatsRepository
 import dev.hablock.app.domain.model.AppUsageEntry
@@ -21,6 +25,7 @@ import java.time.Instant
 import java.time.ZoneId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 
 fun testBlock(
     id: String = "b1",
@@ -92,9 +97,11 @@ class FakeGateStateRepository(initial: Map<String, BlockDayState> = emptyMap()) 
 class FakeMetricProvider(var values: Map<String, Double> = emptyMap()) : MetricProvider {
     var calls = 0
         private set
+    val windows = mutableListOf<Pair<Instant, Instant>>()
 
     override suspend fun snapshot(conditions: List<Condition>, from: Instant, to: Instant): MetricSnapshot {
         calls++
+        windows += from to to
         return MetricSnapshot(conditions.associate { it.id to (values[it.id] ?: 0.0) })
     }
 }
@@ -103,6 +110,9 @@ class FakeAlarmScheduler : AlarmScheduler {
     val sessionEnds = mutableListOf<Pair<String, Instant>>()
     val cancelledSessions = mutableListOf<String>()
     val dayResets = mutableListOf<Instant>()
+    val scheduleTransitions = mutableListOf<Instant>()
+    var cancelScheduleTransitionCount = 0
+        private set
     val relinquishReady = mutableListOf<Instant>()
     var cancelRelinquishReadyCount = 0
         private set
@@ -117,6 +127,14 @@ class FakeAlarmScheduler : AlarmScheduler {
 
     override fun scheduleDayReset(at: Instant) {
         dayResets += at
+    }
+
+    override fun scheduleScheduleTransition(at: Instant) {
+        scheduleTransitions += at
+    }
+
+    override fun cancelScheduleTransition() {
+        cancelScheduleTransitionCount++
     }
 
     override fun scheduleRelinquishReady(at: Instant) {
@@ -161,11 +179,11 @@ class FakeNotifier : Notifier {
 }
 
 class FakeEnforcement(var foregroundUseReported: Boolean = true) : EnforcementBackend {
-    val applied = mutableListOf<Map<String, GateState>>()
+    val applied = mutableListOf<EnforcementPlan>()
     val blocked = mutableListOf<Pair<String, String>>()
 
-    override suspend fun applyState(blocks: List<Block>, states: Map<String, GateState>) {
-        applied += states
+    override suspend fun applyState(plan: EnforcementPlan) {
+        applied += plan
     }
 
     override suspend fun showBlocked(packageName: String, blockId: String) {
@@ -179,6 +197,8 @@ class FakeSettingsRepository(deadline: Long? = null) : SettingsRepository {
     private val onboarding = MutableStateFlow(false)
     private val deadlineState = MutableStateFlow(deadline)
     private val emergencyState = MutableStateFlow(EmergencyUnlockState())
+    private val overlapState = MutableStateFlow(OverlapPolicy.ALL_BLOCKS)
+    private val boundaryState = MutableStateFlow(0)
 
     override val onboardingDone: Flow<Boolean> = onboarding
     override suspend fun setOnboardingDone() {
@@ -193,6 +213,16 @@ class FakeSettingsRepository(deadline: Long? = null) : SettingsRepository {
     override val emergencyUnlocks: Flow<EmergencyUnlockState> = emergencyState
     override suspend fun setEmergencyUnlocks(state: EmergencyUnlockState) {
         emergencyState.value = state
+    }
+
+    override val overlapPolicy: Flow<OverlapPolicy> = overlapState
+    override suspend fun setOverlapPolicy(policy: OverlapPolicy) {
+        overlapState.value = policy
+    }
+
+    override val dayBoundaryMinutes: Flow<Int> = boundaryState
+    override suspend fun setDayBoundaryMinutes(minutes: Int) {
+        boundaryState.value = minutes
     }
 
     fun deadline(): Long? = deadlineState.value
@@ -235,6 +265,39 @@ class FakeSuspensionStore(initial: Set<String> = emptySet()) : SuspensionStore {
     override suspend fun suspended(): Set<String> = stored
     override suspend fun setSuspended(packages: Set<String>) {
         stored = packages
+    }
+}
+
+class FakeHistoryRepository : HistoryRepository {
+    private val stored = linkedMapOf<Pair<String, String>, DailyBlockHistory>()
+    val importAttempts = mutableListOf<List<DailyBlockHistory>>()
+    val pruneKeys = mutableListOf<String>()
+
+    override fun observe(blockId: String, limit: Int): Flow<List<DailyBlockHistory>> = flow {
+        emit(latest(blockId, limit))
+    }
+
+    override suspend fun latest(blockId: String, limit: Int): List<DailyBlockHistory> = stored.values
+        .filter { it.blockId == blockId }
+        .sortedByDescending { it.dayKey }
+        .take(limit)
+
+    override suspend fun save(summary: DailyBlockHistory) {
+        stored[summary.blockId to summary.dayKey] = summary
+    }
+
+    override suspend fun importNew(summaries: List<DailyBlockHistory>): Int {
+        importAttempts += summaries
+        var inserted = 0
+        summaries.forEach { summary ->
+            if (stored.putIfAbsent(summary.blockId to summary.dayKey, summary) == null) inserted++
+        }
+        return inserted
+    }
+
+    override suspend fun pruneBefore(oldestDayKey: String) {
+        pruneKeys += oldestDayKey
+        stored.keys.removeAll { it.second < oldestDayKey }
     }
 }
 

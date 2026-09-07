@@ -118,6 +118,7 @@ class HomeViewModel(
             val consumed = current.consume(now, GateConstants.EMERGENCY_REFILL.inWholeMilliseconds)
             if (consumed != null) {
                 settingsRepository.setEmergencyUnlocks(consumed)
+                gateEngine.markEmergencyUnlockUsed(block.id)
                 blockRepository.upsert(block.copy(
                     lockType = null,
                     blockedUntil = null,

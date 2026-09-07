@@ -34,6 +34,7 @@ import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -69,7 +70,7 @@ private val Destination.icon: ImageVector
 @Composable
 fun AppNav() {
     var destination by rememberSaveable { mutableStateOf(Destination.Blocks) }
-    var addRequested by rememberSaveable { mutableStateOf(0) }
+    var addRequested by rememberSaveable { mutableIntStateOf(0) }
 
     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Box(Modifier.fillMaxSize()) {
@@ -134,7 +135,7 @@ private val fabRevealShapes = listOf(
 @Composable
 private fun MorphingFabReveal(visible: Boolean, onClick: () -> Unit) {
     val progress = remember { Animatable(if (visible) 1f else 0f) }
-    var seed by remember { mutableStateOf(0) }
+    var seed by remember { mutableIntStateOf(0) }
     LaunchedEffect(visible) {
         if (visible) {
             if (progress.value < 0.05f) seed = fabRevealShapes.indices.random()

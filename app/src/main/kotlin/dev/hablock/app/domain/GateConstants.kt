@@ -24,6 +24,7 @@ object GateConstants {
 
     const val ACTION_SESSION_EXPIRED = "dev.hablock.app.action.SESSION_EXPIRED"
     const val ACTION_DAY_RESET = "dev.hablock.app.action.DAY_RESET"
+    const val ACTION_SCHEDULE_TRANSITION = "dev.hablock.app.action.SCHEDULE_TRANSITION"
     const val ACTION_RELINQUISH_READY = "dev.hablock.app.action.RELINQUISH_READY"
     const val ACTION_RELOCK = "dev.hablock.app.action.RELOCK"
     const val EXTRA_BLOCK_ID = "block_id"

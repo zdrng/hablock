@@ -1,5 +1,6 @@
 package dev.hablock.app.ui.home
 
+import android.text.format.DateFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.expandVertically
@@ -38,14 +39,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.hablock.app.R
 import dev.hablock.app.domain.model.Block
+import dev.hablock.app.domain.model.BlockSchedule
 import dev.hablock.app.domain.model.GateState
 import dev.hablock.app.domain.model.LockType
+import dev.hablock.app.domain.model.Weekday
 import dev.hablock.app.domain.model.isChangesLocked
 import dev.hablock.app.ui.components.AppShapeCluster
 import dev.hablock.app.ui.components.BigNumerals
@@ -57,6 +62,8 @@ import dev.hablock.app.ui.format.formatClock
 import dev.hablock.app.ui.format.formatDate
 import dev.hablock.app.ui.theme.numeralStyle
 import java.time.Instant
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun BlockCard(
@@ -153,6 +160,14 @@ fun BlockCard(
                         color = content,
                         textAlign = TextAlign.Center,
                     )
+                    block.schedule?.let { schedule ->
+                        Text(
+                            scheduleSummary(schedule),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = content.copy(alpha = 0.78f),
+                            textAlign = TextAlign.Center,
+                        )
+                    }
                 }
                 Switch(checked = block.enabled, onCheckedChange = if (changesLocked) null else onToggle, enabled = !changesLocked)
             }
@@ -185,6 +200,48 @@ fun BlockCard(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun scheduleSummary(schedule: BlockSchedule): String = stringResource(
+    R.string.home_card_schedule,
+    scheduleWeekdaysLabel(schedule.weekdays),
+    scheduleTimeLabel(schedule.startMinute),
+    scheduleTimeLabel(schedule.endMinute),
+)
+
+@Composable
+private fun scheduleWeekdaysLabel(weekdays: Set<Weekday>): String {
+    val labels = mutableListOf<String>()
+    for (weekday in Weekday.entries) {
+        if (weekday in weekdays) labels += weekday.shortLabel()
+    }
+    return labels.joinToString(separator = ", ")
+}
+
+@Composable
+private fun Weekday.shortLabel(): String = stringResource(
+    when (this) {
+        Weekday.MONDAY -> R.string.weekday_short_monday
+        Weekday.TUESDAY -> R.string.weekday_short_tuesday
+        Weekday.WEDNESDAY -> R.string.weekday_short_wednesday
+        Weekday.THURSDAY -> R.string.weekday_short_thursday
+        Weekday.FRIDAY -> R.string.weekday_short_friday
+        Weekday.SATURDAY -> R.string.weekday_short_saturday
+        Weekday.SUNDAY -> R.string.weekday_short_sunday
+    },
+)
+
+@Composable
+private fun scheduleTimeLabel(minutes: Int): String {
+    val context = LocalContext.current
+    val locale = LocalConfiguration.current.locales[0]
+    val is24Hour = DateFormat.is24HourFormat(context)
+    return remember(minutes, locale, is24Hour) {
+        val skeleton = if (is24Hour) "Hm" else "hm"
+        val pattern = DateFormat.getBestDateTimePattern(locale, skeleton)
+        LocalTime.of(minutes / 60, minutes % 60).format(DateTimeFormatter.ofPattern(pattern, locale))
     }
 }
 

@@ -6,11 +6,26 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    id("org.jetbrains.kotlin.kapt")
 }
 
 // Select sources at configuration time: ordinary APKs never compile the reset gesture.
 val emergencyResetEnabled = providers.gradleProperty("enableEmergencyReset")
     .map { it.toBooleanStrict() }.getOrElse(false)
+
+// Release automation overrides these values; local builds keep stable defaults.
+val appVersionName = providers.gradleProperty("versionName")
+    .map { value ->
+        value.takeIf { it.isNotBlank() }
+            ?: throw GradleException("versionName must not be blank")
+    }
+    .getOrElse("0.1.0")
+val appVersionCode = providers.gradleProperty("versionCode")
+    .map { value ->
+        value.toIntOrNull()?.takeIf { it in 1..2_100_000_000 }
+            ?: throw GradleException("versionCode must be an integer from 1 to 2100000000")
+    }
+    .getOrElse(1)
 
 android {
     namespace = "dev.hablock.app"
@@ -21,8 +36,9 @@ android {
         applicationId = "dev.hablock.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     androidResources {
@@ -87,6 +103,13 @@ kotlin {
     }
 }
 
+kapt {
+    arguments {
+        arg("room.schemaLocation", "$projectDir/schemas")
+        arg("room.incremental", "true")
+    }
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -98,12 +121,20 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons.core)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.graphics.shapes)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.health.connect.client)
+    kapt(libs.androidx.room.compiler)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.tooling.preview)
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.room.testing)
+    androidTestImplementation(libs.androidx.test.core.ktx)
+    androidTestImplementation(libs.androidx.test.ext.junit.ktx)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.room.testing)
 }

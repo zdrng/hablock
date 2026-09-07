@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.hablock.app.domain.GateConstants
 import dev.hablock.app.domain.model.Block
+import dev.hablock.app.domain.model.BlockSchedule
 import dev.hablock.app.domain.model.Condition
 import dev.hablock.app.domain.model.HcAvailability
 import dev.hablock.app.domain.model.InstalledApp
 import dev.hablock.app.domain.model.LockType
+import dev.hablock.app.domain.model.Weekday
 import dev.hablock.app.domain.repository.BlockRepository
 import dev.hablock.app.domain.repository.HealthRepository
 import dev.hablock.app.domain.repository.InstalledAppsRepository
@@ -64,6 +66,10 @@ data class WizardUiState(
     val blockedUntil: Long? = null,
     val lockType: LockType? = null,
     val lockPasswordHash: String? = null,
+    val scheduleEnabled: Boolean = false,
+    val scheduleWeekdays: Set<Weekday> = Weekday.entries.toSet(),
+    val scheduleStartMinute: Int = DEFAULT_SCHEDULE_START_MINUTE,
+    val scheduleEndMinute: Int = DEFAULT_SCHEDULE_END_MINUTE,
 ) {
     val activeDrafts: List<ConditionDraft> get() = drafts.filter { it.ready }
     val conditionCount: Int get() = activeDrafts.size
@@ -78,6 +84,7 @@ data class WizardUiState(
         get() = when (step) {
             0 -> selectedPackages.isNotEmpty()
             1 -> conditionCount > 0
+            2 -> !scheduleEnabled || scheduleWeekdays.isNotEmpty()
             else -> true
         }
 
@@ -147,10 +154,14 @@ class BlockWizardViewModel(
             blockedUntil = block.blockedUntil,
             lockType = block.lockType,
             lockPasswordHash = block.lockPasswordHash,
+            scheduleEnabled = block.schedule != null,
+            scheduleWeekdays = block.schedule?.weekdays ?: Weekday.entries.toSet(),
+            scheduleStartMinute = block.schedule?.startMinute ?: DEFAULT_SCHEDULE_START_MINUTE,
+            scheduleEndMinute = block.schedule?.endMinute ?: DEFAULT_SCHEDULE_END_MINUTE,
         )
     }
 
-    fun setStep(step: Int) = _uiState.update { it.copy(step = step.coerceIn(0, 2)) }
+    fun setStep(step: Int) = _uiState.update { it.copy(step = step.coerceIn(0, 3)) }
 
     fun setQuery(query: String) = _uiState.update { it.copy(query = query) }
 
@@ -221,9 +232,29 @@ class BlockWizardViewModel(
 
     fun setName(name: String) = _uiState.update { it.copy(name = name) }
 
+    fun setScheduleEnabled(enabled: Boolean) = _uiState.update { it.copy(scheduleEnabled = enabled) }
+
+    fun toggleScheduleWeekday(weekday: Weekday) = _uiState.update { state ->
+        state.copy(
+            scheduleWeekdays = if (weekday in state.scheduleWeekdays) {
+                state.scheduleWeekdays - weekday
+            } else {
+                state.scheduleWeekdays + weekday
+            },
+        )
+    }
+
+    fun setScheduleStartMinute(minute: Int) = _uiState.update {
+        it.copy(scheduleStartMinute = minute.coerceIn(0, MINUTES_PER_DAY - 1))
+    }
+
+    fun setScheduleEndMinute(minute: Int) = _uiState.update {
+        it.copy(scheduleEndMinute = minute.coerceIn(0, MINUTES_PER_DAY - 1))
+    }
+
     fun save(fallbackName: String) {
         val state = _uiState.value
-        if (state.selectedPackages.isEmpty() || state.conditionCount == 0) return
+        if (state.selectedPackages.isEmpty() || state.conditionCount == 0 || !state.canSaveSchedule()) return
         viewModelScope.launch {
             val labels = state.apps.associate { it.packageName to it.label }
             blockRepository.upsert(
@@ -242,6 +273,15 @@ class BlockWizardViewModel(
                     blockedUntil = existing?.blockedUntil,
                     lockType = existing?.lockType,
                     lockPasswordHash = existing?.lockPasswordHash,
+                    schedule = if (state.scheduleEnabled) {
+                        BlockSchedule(
+                            weekdays = state.scheduleWeekdays,
+                            startMinute = state.scheduleStartMinute,
+                            endMinute = state.scheduleEndMinute,
+                        )
+                    } else {
+                        null
+                    },
                 ),
             )
             gateEngine.refreshAll()
@@ -249,6 +289,12 @@ class BlockWizardViewModel(
         }
     }
 }
+
+private const val MINUTES_PER_DAY = 24 * 60
+private const val DEFAULT_SCHEDULE_START_MINUTE = 9 * 60
+private const val DEFAULT_SCHEDULE_END_MINUTE = 17 * 60
+
+private fun WizardUiState.canSaveSchedule(): Boolean = !scheduleEnabled || scheduleWeekdays.isNotEmpty()
 
 private fun defaultDrafts(): List<ConditionDraft> = ConditionKind.entries.map { ConditionDraft(kind = it) }
 

@@ -16,6 +16,7 @@ data class Block(
     val blockedUntil: Long? = null,
     val lockType: LockType? = null,
     val lockPasswordHash: String? = null,
+    val schedule: BlockSchedule? = null,
 )
 
 fun Block.isChangesLocked(now: Long = System.currentTimeMillis()): Boolean =

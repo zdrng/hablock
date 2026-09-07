@@ -4,6 +4,7 @@
     <string name="wizard_title_review">Schau\'s durch, dann scharfstellen.</string>
     <string name="wizard_title_apps">Apps wählen</string>
     <string name="wizard_title_conditions">Bedingungen festlegen</string>
+    <string name="wizard_title_schedule">Zeitraum auswählen</string>
     <string name="wizard_title_name">Block benennen</string>
     <string name="wizard_search_apps">Apps suchen</string>
     <string name="wizard_pick_hint">Wähl mindestens eine App</string>
@@ -13,6 +14,28 @@
     </plurals>
     <string name="wizard_next">Weiter</string>
     <string name="wizard_conditions_hint">Schalt mindestens eine Bedingung ein</string>
+    <string name="wizard_schedule_toggle">Zeitplan verwenden</string>
+    <string name="wizard_schedule_toggle_hint">Diesen Block nur in einem wöchentlichen Zeitfenster anwenden.</string>
+    <string name="wizard_schedule_days">Starttage</string>
+    <string name="wizard_schedule_days_hint">Dasselbe minutengenaue Zeitfenster gilt an jedem ausgewählten Tag.</string>
+    <string name="wizard_schedule_days_required">Wähle mindestens einen Starttag</string>
+    <string name="wizard_schedule_start">Beginn</string>
+    <string name="wizard_schedule_end">Ende</string>
+    <string name="wizard_schedule_start_day_hint">Das Zeitfenster beginnt und endet an jedem ausgewählten Tag.</string>
+    <string name="wizard_schedule_overnight">Dieses Zeitfenster endet am nächsten Tag. Ausgewählt wird jeweils der Starttag.</string>
+    <string name="wizard_schedule_full_day">Gleiche Zeiten ergeben ein 24-Stunden-Fenster. Ausgewählt wird jeweils der Starttag.</string>
+    <string name="wizard_schedule_pick_start">Startzeit wählen</string>
+    <string name="wizard_schedule_pick_end">Endzeit wählen</string>
+    <string name="wizard_schedule_time_confirm">Zeit festlegen</string>
+    <string name="wizard_schedule_always">Immer</string>
+    <string name="wizard_schedule_summary">%1$s · %2$s–%3$s</string>
+    <string name="weekday_short_monday">Mo.</string>
+    <string name="weekday_short_tuesday">Di.</string>
+    <string name="weekday_short_wednesday">Mi.</string>
+    <string name="weekday_short_thursday">Do.</string>
+    <string name="weekday_short_friday">Fr.</string>
+    <string name="weekday_short_saturday">Sa.</string>
+    <string name="weekday_short_sunday">So.</string>
     <string name="wizard_helper_prompt">Welche App verdient die anderen?</string>
     <string name="wizard_helper_label">Verdienende App</string>
     <string name="wizard_threshold_prefix">"Öffnet, wenn "</string>
@@ -28,6 +51,7 @@
     <string name="wizard_summary_opens_on">Öffnet bei</string>
     <string name="wizard_summary_ratchet">Aufschub</string>
     <string name="wizard_summary_unlock_duration">Entsperrdauer</string>
+    <string name="wizard_summary_schedule">Zeitplan</string>
     <string name="wizard_summary_changes_lock">Änderungssperre</string>
     <string name="wizard_summary_changes_locked">Gesperrt</string>
     <string name="wizard_unlock_prefix">"Apps entsperren für "</string>

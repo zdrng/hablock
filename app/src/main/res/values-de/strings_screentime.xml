@@ -4,7 +4,7 @@
     <string name="screentime_since">seit %1$s</string>
     <string name="screentime_on_screen_today">heute auf dem Bildschirm</string>
     <string name="screentime_loading">Lese heutige App-Zeit…</string>
-    <string name="screentime_empty">Keine App-Zeit seit dem Tages-Reset aufgezeichnet.</string>
+    <string name="screentime_empty">Nach dem Tages-Reset wurde keine App-Zeit aufgezeichnet.</string>
     <string name="screentime_no_access_title">Noch kein Nutzungszugriff.</string>
     <string name="screentime_no_access_body">Hablock liest App-Zeit aus Androids Nutzungsstatistiken. Erlaube den Zugriff, um die Tages-Zusammenfassung zu sehen.</string>
     <string name="screentime_grant_usage">Nutzungszugriff erlauben</string>

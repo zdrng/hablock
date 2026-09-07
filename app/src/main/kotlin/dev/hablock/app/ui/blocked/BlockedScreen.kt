@@ -31,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -179,7 +180,12 @@ fun BlockedScreen(
                 } else {
                     val met = uiState.state?.metCount ?: 0
                     Text(
-                        stringResource(R.string.blocked_locked_hint, uiState.threshold - met, uiState.threshold),
+                        pluralStringResource(
+                            R.plurals.blocked_locked_hint,
+                            uiState.threshold,
+                            uiState.threshold - met,
+                            uiState.threshold,
+                        ),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -191,7 +197,11 @@ fun BlockedScreen(
     if (showUnlockDialog) {
         HablockDialog(
             title = stringResource(R.string.blocked_unlock_title, appLabel),
-            message = stringResource(R.string.blocked_unlock_message, uiState.sessionMinutes),
+            message = pluralStringResource(
+                R.plurals.blocked_unlock_message,
+                uiState.sessionMinutes,
+                uiState.sessionMinutes,
+            ),
             confirmLabel = stringResource(R.string.blocked_unlock_confirm),
             onConfirm = {
                 showUnlockDialog = false

@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Icon
 import android.os.Build
 import dev.hablock.app.R
 import dev.hablock.app.domain.GateConstants
@@ -129,9 +130,11 @@ class GateNotifier(
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .addAction(
-                android.R.drawable.ic_lock_lock,
-                context.getString(R.string.notif_session_relock),
-                relockPendingIntent,
+                Notification.Action.Builder(
+                    Icon.createWithResource(context, android.R.drawable.ic_lock_lock),
+                    context.getString(R.string.notif_session_relock),
+                    relockPendingIntent,
+                ).build(),
             )
 
         if (Build.VERSION.SDK_INT >= 36) {
@@ -142,7 +145,7 @@ class GateNotifier(
                     Notification.ProgressStyle.Segment(maxSeconds).setColor(BRAND_VIOLET)
                 )
                 .setProgressTrackerIcon(
-                    android.graphics.drawable.Icon.createWithResource(
+                    Icon.createWithResource(
                         context,
                         android.R.drawable.ic_lock_idle_lock,
                     )

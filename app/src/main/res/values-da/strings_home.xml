@@ -18,10 +18,10 @@
     <string name="home_card_status_open_until">Åben indtil %1$s</string>
     <string name="home_card_status_open">Åben — bare kom i gang</string>
     <string name="home_card_status_locked">Låst · %1$d af %2$d indtil videre</string>
+    <string name="home_card_schedule">%1$s · %2$s–%3$s</string>
     <string name="home_card_of">af %1$d</string>
     <string name="home_card_session_left">tilbage i denne session</string>
     <string name="home_card_relock">Lås nu</string>
-    <string name="home_card_click_label">Vis detaljer</string>
     <string name="home_card_long_click_label">Blokering-handlinger</string>
     <string name="home_card_lock_changes">Lås ændringer</string>
     <string name="home_card_unlock_changes">Lås ændringer op</string>

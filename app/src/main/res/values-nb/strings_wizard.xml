@@ -4,6 +4,7 @@
     <string name="wizard_title_review">Sjekk alt, og aktiver.</string>
     <string name="wizard_title_apps">Velg appene dine</string>
     <string name="wizard_title_conditions">Sett betingelsene</string>
+    <string name="wizard_title_schedule">Velg når den gjelder</string>
     <string name="wizard_title_name">Navngi blokken</string>
     <string name="wizard_search_apps">Søk i apper</string>
     <string name="wizard_pick_hint">Velg minst én app</string>
@@ -13,6 +14,28 @@
     </plurals>
     <string name="wizard_next">Neste</string>
     <string name="wizard_conditions_hint">Slå på minst én betingelse</string>
+    <string name="wizard_schedule_toggle">Bruk en tidsplan</string>
+    <string name="wizard_schedule_toggle_hint">Bruk denne blokken bare i ett ukentlig tidsvindu.</string>
+    <string name="wizard_schedule_days">Startdager</string>
+    <string name="wizard_schedule_days_hint">Det samme minuttpresise tidsvinduet gjelder på hver valgte dag.</string>
+    <string name="wizard_schedule_days_required">Velg minst én startdag</string>
+    <string name="wizard_schedule_start">Starter</string>
+    <string name="wizard_schedule_end">Slutter</string>
+    <string name="wizard_schedule_start_day_hint">Tidsvinduet starter og slutter på hver valgte dag.</string>
+    <string name="wizard_schedule_overnight">Tidsvinduet slutter neste dag. De valgte dagene er dagene det starter.</string>
+    <string name="wizard_schedule_full_day">Like tider gir et tidsvindu på 24 timer. De valgte dagene er dagene det starter.</string>
+    <string name="wizard_schedule_pick_start">Velg starttid</string>
+    <string name="wizard_schedule_pick_end">Velg sluttid</string>
+    <string name="wizard_schedule_time_confirm">Angi tid</string>
+    <string name="wizard_schedule_always">Alltid</string>
+    <string name="wizard_schedule_summary">%1$s · %2$s–%3$s</string>
+    <string name="weekday_short_monday">man.</string>
+    <string name="weekday_short_tuesday">tir.</string>
+    <string name="weekday_short_wednesday">ons.</string>
+    <string name="weekday_short_thursday">tor.</string>
+    <string name="weekday_short_friday">fre.</string>
+    <string name="weekday_short_saturday">lør.</string>
+    <string name="weekday_short_sunday">søn.</string>
     <string name="wizard_helper_prompt">Hvilken app tjener de andre?</string>
     <string name="wizard_helper_label">Tjeneste-app</string>
     <string name="wizard_threshold_prefix">"Åpne når "</string>
@@ -28,6 +51,7 @@
     <string name="wizard_summary_opens_on">Åpner ved</string>
     <string name="wizard_summary_ratchet">Opptrapping</string>
     <string name="wizard_summary_unlock_duration">Opplåsingsvarighet</string>
+    <string name="wizard_summary_schedule">Tidsplan</string>
     <string name="wizard_summary_changes_lock">Endringslås</string>
     <string name="wizard_summary_changes_locked">Låst</string>
     <string name="wizard_unlock_prefix">"Apper låses opp i "</string>

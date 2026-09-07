@@ -17,16 +17,18 @@
 
     <string name="blocked_headline_locked">%1$s er låst.</string>
     <string name="blocked_headline_open">%1$s er klar for deg.</string>
-    <plurals name="blocked_open_button">
-        <item quantity="one">Åpne %1$s — %2$d minutt</item>
-        <item quantity="other">Åpne %1$s — %2$d minutter</item>
-    </plurals>
     <string name="blocked_hc_warning">Health Connect kan ikke leses akkurat nå, så disse målene teller som null. Løs det fra Blokker-skjermen.</string>
     <string name="blocked_unlock_button">Lås opp i %1$d min</string>
     <string name="blocked_unlock_title">Låse opp %1$s?</string>
-    <string name="blocked_unlock_message">Du får %1$d minutter. Etter det sneiper målene seg opp, og du må tjene det på nytt.</string>
+    <plurals name="blocked_unlock_message">
+        <item quantity="one">Du får %1$d minutt. Etter det sneiper målene seg opp, og du må tjene det på nytt.</item>
+        <item quantity="other">Du får %1$d minutter. Etter det sneiper målene seg opp, og du må tjene det på nytt.</item>
+    </plurals>
     <string name="blocked_unlock_confirm">Lås opp</string>
-    <string name="blocked_locked_hint">Oppfyll %1$d av %2$d mål for å låse opp</string>
+    <plurals name="blocked_locked_hint">
+        <item quantity="one">Oppfyll %1$d av %2$d mål for å låse opp</item>
+        <item quantity="other">Oppfyll %1$d av %2$d mål for å låse opp</item>
+    </plurals>
 
     <string name="changes_lock_title">Lås endringer i %1$s</string>
     <string name="changes_lock_message">Mens den er låst, kan du ikke redigere, sette på pause eller slette denne blokken.</string>
@@ -37,15 +39,12 @@
     <string name="changes_lock_preset_1m">1 måned</string>
     <string name="changes_lock_preset_1y">1 år</string>
     <string name="changes_lock_preset_password">Passord</string>
-    <string name="changes_lock_custom_label">Egendefinert (dager)</string>
     <string name="changes_lock_preset_custom">Egendefinert</string>
     <string name="changes_lock_step_custom">Egendefinerte dager</string>
     <string name="changes_lock_custom_message">Velg hvor mange dager endringene skal låses.</string>
     <string name="changes_lock_custom_days_unit">dager</string>
-    <string name="changes_lock_until">Låst til %1$s</string>
     <string name="changes_lock_step_method">Låsemetode</string>
     <string name="changes_lock_step_password">Sett passord</string>
-    <string name="changes_lock_set_password_title">Sett et passord</string>
     <string name="changes_lock_set_password_message">Tast inn en 6-sifret kode. Du trenger den for å låse opp endringer.</string>
     <string name="changes_lock_enter_password_title">Tast inn passord</string>
     <string name="changes_lock_enter_password_message">Tast inn din 6-sifrede kode for å låse opp endringer.</string>
@@ -64,7 +63,6 @@
     <string name="notif_session_ended_title">%1$s er låst igjen</string>
     <string name="notif_session_active_title">%1$s er låst opp</string>
     <string name="notif_session_remaining"> %1$d:%2$02d igjen</string>
-    <string name="notif_session_active_text">Tiden tikker — trykk for å låse tidlig.</string>
     <string name="notif_session_relock">Lås nå</string>
     <plurals name="notif_session_ended_text">
         <item quantity="one">Det var minuttet ditt. Målene sneip seg opp litt — neste runde får du tjene.</item>

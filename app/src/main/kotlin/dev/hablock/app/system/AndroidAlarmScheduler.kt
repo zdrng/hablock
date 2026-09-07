@@ -6,16 +6,23 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import androidx.core.net.toUri
 import dev.hablock.app.domain.GateConstants
+import dev.hablock.app.domain.repository.DiagnosticsRecorder
+import dev.hablock.app.domain.repository.NoOpDiagnosticsRecorder
 import dev.hablock.app.domain.service.AlarmScheduler
 import java.time.Instant
 
 private const val DAY_RESET_REQUEST_CODE = 0
 private const val RELINQUISH_READY_REQUEST_CODE = 1
 private const val SESSION_REQUEST_CODE = 2
+private const val SCHEDULE_TRANSITION_REQUEST_CODE = 3
 private const val INEXACT_WINDOW_MILLIS = 2 * 60 * 1000L
 
-class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
+class AndroidAlarmScheduler(
+    private val context: Context,
+    private val diagnostics: DiagnosticsRecorder = NoOpDiagnosticsRecorder,
+) : AlarmScheduler {
 
     private val alarmManager: AlarmManager =
         context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -40,6 +47,20 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
         schedule(pendingIntent, at)
+        diagnostics.recordNextReset(at.toEpochMilli())
+    }
+
+    override fun scheduleScheduleTransition(at: Instant) {
+        schedule(scheduleTransitionPendingIntent(PendingIntent.FLAG_UPDATE_CURRENT), at)
+        diagnostics.recordNextTransition(at.toEpochMilli())
+    }
+
+    override fun cancelScheduleTransition() {
+        scheduleTransitionPendingIntent(PendingIntent.FLAG_NO_CREATE)?.let {
+            alarmManager.cancel(it)
+            it.cancel()
+        }
+        diagnostics.recordNextTransition(null)
     }
 
     override fun scheduleRelinquishReady(at: Instant) {
@@ -64,11 +85,22 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
         )
     }
 
+    private fun scheduleTransitionPendingIntent(extraFlags: Int): PendingIntent? {
+        val intent = Intent(context, AlarmReceiver::class.java)
+            .setAction(GateConstants.ACTION_SCHEDULE_TRANSITION)
+        return PendingIntent.getBroadcast(
+            context,
+            SCHEDULE_TRANSITION_REQUEST_CODE,
+            intent,
+            extraFlags or PendingIntent.FLAG_IMMUTABLE,
+        )
+    }
+
     private fun sessionPendingIntent(blockId: String, extraFlags: Int): PendingIntent? {
         // The data URI distinguishes PendingIntents per block; a hashCode request code can collide.
         val intent = Intent(context, AlarmReceiver::class.java)
             .setAction(GateConstants.ACTION_SESSION_EXPIRED)
-            .setData(Uri.parse("hablock://session/${Uri.encode(blockId)}"))
+            .setData("hablock://session/${Uri.encode(blockId)}".toUri())
             .putExtra(GateConstants.EXTRA_BLOCK_ID, blockId)
         return PendingIntent.getBroadcast(
             context,

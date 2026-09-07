@@ -2,9 +2,13 @@ package dev.hablock.app.domain.service
 
 import dev.hablock.app.domain.enforcement.EnforcementBackend
 import dev.hablock.app.domain.enforcement.EnforcementCoordinator
+import dev.hablock.app.domain.repository.HistoryRepository
 import dev.hablock.app.domain.model.BlockDayState
+import dev.hablock.app.domain.model.BlockSchedule
 import dev.hablock.app.domain.model.Condition
 import dev.hablock.app.domain.model.GateState
+import dev.hablock.app.domain.model.OverlapPolicy
+import dev.hablock.app.domain.model.Weekday
 import java.time.Instant
 import java.time.ZoneId
 import kotlin.test.Test
@@ -14,7 +18,9 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.yield
 
 private const val SOCIAL = "com.example.social"
 private const val EPS = 1e-3
@@ -23,7 +29,8 @@ class DefaultGateEngineTest {
 
     private val zone: ZoneId = ZoneId.of("Europe/Berlin")
     private val clock = MutableClock(Instant.parse("2026-08-23T09:00:00Z"), zone)
-    private val dayClock = DayClock(clock, zone)
+    private var boundaryMinutes = 0
+    private val dayClock = DayClock(clock, zone) { boundaryMinutes }
 
     private val conditions = listOf(
         Condition.Steps("steps", 10_000.0),
@@ -37,8 +44,13 @@ class DefaultGateEngineTest {
     private val alarmScheduler = FakeAlarmScheduler()
     private val notifier = FakeNotifier()
     private val enforcement = FakeEnforcement()
+    private val overlapPolicies = MutableStateFlow(OverlapPolicy.ALL_BLOCKS)
 
-    private fun newEngine(scope: CoroutineScope, backend: EnforcementBackend = enforcement) = DefaultGateEngine(
+    private fun newEngine(
+        scope: CoroutineScope,
+        backend: EnforcementBackend = enforcement,
+        historyRepository: HistoryRepository? = null,
+    ) = DefaultGateEngine(
         blockRepository = blockRepository,
         gateStateRepository = gateStateRepository,
         metricProvider = metricProvider,
@@ -47,6 +59,9 @@ class DefaultGateEngineTest {
         notifier = notifier,
         enforcement = backend,
         scope = scope,
+        overlapPolicies = overlapPolicies,
+        scheduleEvaluator = BlockScheduleEvaluator(zone),
+        historyRepository = historyRepository,
     )
 
     @Test
@@ -207,12 +222,13 @@ class DefaultGateEngineTest {
         val engine = newEngine(backgroundScope)
         engine.refreshAll()
         engine.unlock("b1")
-        clock.advance(31 * 60 * 1_000L)
+        clock.current = Instant.parse("2026-08-23T22:00:00Z")
 
         engine.onDayReset()
 
-        assertEquals(1, gateStateRepository.clearAllCount)
-        assertTrue(gateStateRepository.all().isEmpty())
+        assertEquals(0, gateStateRepository.clearAllCount)
+        assertEquals(dayClock.dayKey(), gateStateRepository.stored("b1")?.dayKey)
+        assertNull(gateStateRepository.stored("b1")?.activeSession)
         assertEquals(listOf("b1"), alarmScheduler.cancelledSessions)
         assertEquals(listOf(dayClock.nextReset()), alarmScheduler.dayResets)
         val state = engine.states.value.getValue("b1")
@@ -222,11 +238,13 @@ class DefaultGateEngineTest {
 
     @Test
     fun `day reset carries an in-flight session into the new day`() = runTest {
+        clock.current = Instant.parse("2026-08-22T21:50:00Z")
         metricProvider.values = mapOf("steps" to 10_300.0)
         val engine = newEngine(backgroundScope)
         engine.refreshAll()
         engine.unlock("b1")
         val session = assertNotNull(gateStateRepository.stored("b1")?.activeSession)
+        clock.advance(15 * 60_000L)
 
         engine.onDayReset()
 
@@ -260,7 +278,7 @@ class DefaultGateEngineTest {
         assertEquals(1, stored.unlockCount)
         assertEquals(11_300.0, stored.requiredNow.getValue("steps"), EPS)
         assertEquals(1, alarmScheduler.sessionEnds.size)
-        assertEquals(listOf(engine.states.value), enforcement.applied)
+        assertEquals(1, enforcement.applied.size)
     }
 
     @Test
@@ -363,14 +381,227 @@ class DefaultGateEngineTest {
     }
 
     @Test
+    fun `recovery finalizes stale state once with its full historical day metrics`() = runTest {
+        val history = FakeHistoryRepository()
+        gateStateRepository.save(
+            BlockDayState(
+                blockId = "b1",
+                dayKey = "2026-08-20",
+                requiredNow = mapOf("steps" to 25_000.0, "workout" to 200.0),
+                unlockCount = 7,
+                emergencyUnlockUsed = true,
+            ),
+        )
+        metricProvider.values = mapOf("steps" to 26_000.0, "workout" to 100.0)
+        val engine = newEngine(backgroundScope, historyRepository = history)
+
+        engine.refreshAll()
+        engine.refreshAll()
+
+        val summary = history.latest("b1").single()
+        assertEquals("2026-08-20", summary.dayKey)
+        assertEquals("Block b1", summary.blockName)
+        assertEquals(2, summary.conditionCount)
+        assertEquals(1, summary.metCount)
+        assertEquals(1, summary.thresholdN)
+        assertEquals(7, summary.unlockCount)
+        assertTrue(summary.emergencyUnlockUsed)
+        assertTrue(summary.scheduledActive)
+        assertEquals(25_000.0, summary.conditions.first { it.conditionId == "steps" }.required, EPS)
+        assertEquals(26_000.0, summary.conditions.first { it.conditionId == "steps" }.progress, EPS)
+        assertEquals(1, history.importAttempts.size)
+        assertEquals(listOf("2025-08-23"), history.pruneKeys)
+        assertEquals(
+            Instant.parse("2026-08-19T22:00:00Z") to Instant.parse("2026-08-20T22:00:00Z"),
+            metricProvider.windows.first(),
+        )
+    }
+
+    @Test
+    fun `scheduled reset finalization is idempotent and carries a live session`() = runTest {
+        val history = FakeHistoryRepository()
+        clock.current = Instant.parse("2026-08-22T21:50:00Z")
+        metricProvider.values = mapOf("steps" to 10_300.0)
+        val engine = newEngine(backgroundScope, historyRepository = history)
+        engine.unlock("b1")
+        val session = assertNotNull(gateStateRepository.stored("b1")?.activeSession)
+        clock.advance(15 * 60_000L)
+
+        engine.onDayReset()
+        engine.onDayReset()
+
+        assertEquals(1, history.importAttempts.size)
+        assertEquals("2026-08-22", history.latest("b1").single().dayKey)
+        val current = assertNotNull(gateStateRepository.stored("b1"))
+        assertEquals("2026-08-23", current.dayKey)
+        assertEquals(session, current.activeSession)
+        assertEquals(0, current.unlockCount)
+        assertTrue(!current.emergencyUnlockUsed)
+    }
+
+    @Test
+    fun `boundary change discards incompatible day state without creating history and carries a live session`() = runTest {
+        val history = FakeHistoryRepository()
+        clock.current = Instant.parse("2026-08-23T01:00:00Z")
+        metricProvider.values = mapOf("steps" to 10_300.0)
+        val engine = newEngine(backgroundScope, historyRepository = history)
+        engine.unlock("b1")
+        val session = assertNotNull(gateStateRepository.stored("b1")?.activeSession)
+
+        boundaryMinutes = 4 * 60
+        engine.onDayBoundaryChanged()
+
+        val current = assertNotNull(gateStateRepository.stored("b1"))
+        assertEquals("2026-08-22", current.dayKey)
+        assertEquals(session, current.activeSession)
+        assertEquals(0, current.unlockCount)
+        assertTrue(!current.emergencyUnlockUsed)
+        assertEquals(10_000.0, current.requiredNow.getValue("steps"), EPS)
+        assertTrue(history.importAttempts.isEmpty())
+        assertEquals(listOf(Instant.parse("2026-08-23T02:00:00Z")), alarmScheduler.dayResets)
+        assertIs<GateState.SessionActive>(engine.states.value.getValue("b1"))
+    }
+
+    @Test
+    fun `boundary change drops an expired session while resetting daily counters`() = runTest {
+        clock.current = Instant.parse("2026-08-23T01:00:00Z")
+        gateStateRepository.save(
+            BlockDayState(
+                blockId = "b1",
+                dayKey = "2026-08-23",
+                requiredNow = mapOf("steps" to 25_000.0, "workout" to 200.0),
+                activeSession = dev.hablock.app.domain.model.Session(
+                    blockId = "b1",
+                    startedAtMillis = clock.current.minusSeconds(3_600).toEpochMilli(),
+                    endsAtMillis = clock.current.minusSeconds(60).toEpochMilli(),
+                ),
+                unlockCount = 7,
+                emergencyUnlockUsed = true,
+            ),
+        )
+        val engine = newEngine(backgroundScope)
+
+        boundaryMinutes = 4 * 60
+        engine.onDayBoundaryChanged()
+
+        val current = assertNotNull(gateStateRepository.stored("b1"))
+        assertNull(current.activeSession)
+        assertEquals(0, current.unlockCount)
+        assertTrue(!current.emergencyUnlockUsed)
+        assertEquals(listOf("b1"), alarmScheduler.cancelledSessions)
+        assertEquals(listOf("b1"), notifier.cancelledNotifications)
+        assertIs<GateState.Locked>(engine.states.value.getValue("b1"))
+    }
+
+    @Test
+    fun `emergency change unlock is recorded on the current block day`() = runTest {
+        val engine = newEngine(backgroundScope)
+
+        engine.markEmergencyUnlockUsed("b1")
+        engine.markEmergencyUnlockUsed("b1")
+
+        assertTrue(assertNotNull(gateStateRepository.stored("b1")).emergencyUnlockUsed)
+    }
+
+    @Test
     fun `refresh publishes enabled blocks only and applies enforcement`() = runTest {
         blockRepository.upsert(testBlock(id = "b2", packages = setOf("com.example.video"), conditions = conditions, enabled = false))
         val engine = newEngine(backgroundScope)
         engine.refreshAll()
 
         assertEquals(setOf("b1"), engine.states.value.keys)
-        assertEquals(listOf(engine.states.value), enforcement.applied)
+        assertEquals(setOf(SOCIAL), enforcement.applied.single().blockedPackages)
     }
+
+    @Test
+    fun `scheduled block is inactive before its window while progress still uses the Hablock day`() = runTest {
+        blockRepository.upsert(block.copy(schedule = sundaySchedule(startMinute = 12 * 60, endMinute = 13 * 60)))
+        val engine = newEngine(backgroundScope)
+
+        engine.refreshAll()
+        engine.unlock("b1")
+
+        val state = assertIs<GateState.Inactive>(engine.states.value.getValue("b1"))
+        assertEquals(2, state.progress.size)
+        assertEquals(Instant.parse("2026-08-22T22:00:00Z") to clock.current, metricProvider.windows.first())
+        assertTrue(enforcement.applied.last().blockedPackages.isEmpty())
+        assertNull(gateStateRepository.stored("b1")?.activeSession)
+        assertEquals(Instant.parse("2026-08-23T10:00:00Z"), alarmScheduler.scheduleTransitions.last())
+    }
+
+    @Test
+    fun `schedule transition reevaluates enforcement and arms the following transition`() = runTest {
+        blockRepository.upsert(block.copy(schedule = sundaySchedule(startMinute = 12 * 60, endMinute = 13 * 60)))
+        val engine = newEngine(backgroundScope)
+        engine.refreshAll()
+        assertIs<GateState.Inactive>(engine.states.value.getValue("b1"))
+
+        clock.current = Instant.parse("2026-08-23T10:00:00Z")
+        engine.onScheduleTransition()
+
+        assertIs<GateState.Locked>(engine.states.value.getValue("b1"))
+        assertEquals(setOf(SOCIAL), enforcement.applied.last().blockedPackages)
+        assertEquals(Instant.parse("2026-08-23T11:00:00Z"), alarmScheduler.scheduleTransitions.last())
+    }
+
+    @Test
+    fun `session remains active after its schedule closes and expires normally`() = runTest {
+        blockRepository.upsert(block.copy(schedule = sundaySchedule(startMinute = 10 * 60, endMinute = 11 * 60 + 10)))
+        metricProvider.values = mapOf("steps" to 10_300.0)
+        val engine = newEngine(backgroundScope)
+        engine.refreshAll()
+        engine.unlock("b1")
+        assertIs<GateState.SessionActive>(engine.states.value.getValue("b1"))
+
+        clock.advance(15 * 60_000L)
+        engine.onScheduleTransition()
+
+        assertIs<GateState.SessionActive>(engine.states.value.getValue("b1"))
+        assertTrue(enforcement.applied.last().blockedPackages.isEmpty())
+
+        clock.advance(16 * 60_000L)
+        engine.onSessionExpired("b1")
+
+        assertIs<GateState.Inactive>(engine.states.value.getValue("b1"))
+        assertNull(gateStateRepository.stored("b1")?.activeSession)
+        assertTrue(enforcement.applied.last().blockedPackages.isEmpty())
+    }
+
+    @Test
+    fun `default all-blocks policy requires sessions for every overlapping block`() = runTest {
+        blockRepository.upsert(testBlock(id = "b2", packages = setOf(SOCIAL), conditions = conditions, thresholdN = 1))
+        metricProvider.values = mapOf("steps" to 10_300.0)
+        val engine = newEngine(backgroundScope)
+        engine.refreshAll()
+
+        engine.unlock("b1")
+
+        assertIs<GateState.SessionActive>(engine.states.value.getValue("b1"))
+        assertIs<GateState.Open>(engine.states.value.getValue("b2"))
+        assertEquals("b2", enforcement.applied.last().blockingBlockId(SOCIAL))
+
+        engine.onAppForegrounded(SOCIAL)
+        assertEquals(listOf(SOCIAL to "b2"), enforcement.blocked)
+
+        engine.unlock("b2")
+        assertTrue(enforcement.applied.last().blockedPackages.isEmpty())
+    }
+
+    @Test
+    fun `changing overlap policy reapplies enforcement on the existing engine`() = runTest {
+        blockRepository.upsert(testBlock(id = "b2", packages = setOf(SOCIAL), conditions = conditions, thresholdN = 1))
+        metricProvider.values = mapOf("steps" to 10_300.0)
+        val engine = newEngine(backgroundScope)
+        engine.refreshAll()
+        engine.unlock("b1")
+        assertEquals("b2", enforcement.applied.last().blockingBlockId(SOCIAL))
+
+        overlapPolicies.value = OverlapPolicy.ANY_BLOCK
+        yield()
+
+        assertTrue(enforcement.applied.last().blockedPackages.isEmpty())
+    }
+
     @Test
     fun `expiry interrupts the foreground app even when the next goals are met`() = runTest {
         metricProvider.values = mapOf("steps" to 10_300.0)
@@ -462,7 +693,7 @@ class DefaultGateEngineTest {
         clock.advance(31 * 60_000L)
         engine.onSessionExpired("b1")
         assertEquals(2, enforcement.blocked.size)
-        assertIs<GateState.Locked>(ownerBackend.applied.last().getValue("b1"))
+        assertEquals(setOf(SOCIAL), ownerBackend.applied.last().blockedPackages)
     }
 
     @Test
@@ -480,5 +711,11 @@ class DefaultGateEngineTest {
         assertEquals(listOf("b1"), alarmScheduler.cancelledSessions)
         assertIs<GateState.Locked>(restarted.states.value.getValue("b1"))
     }
+
+    private fun sundaySchedule(startMinute: Int, endMinute: Int) = BlockSchedule(
+        weekdays = setOf(Weekday.SUNDAY),
+        startMinute = startMinute,
+        endMinute = endMinute,
+    )
 
 }

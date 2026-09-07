@@ -2,9 +2,50 @@ package dev.hablock.app.domain.enforcement
 
 import dev.hablock.app.domain.model.Block
 import dev.hablock.app.domain.model.GateState
+import dev.hablock.app.domain.model.OverlapPolicy
+
+data class EnforcementPlan(
+    val blockedByPackage: Map<String, String>,
+) {
+    val blockedPackages: Set<String> get() = blockedByPackage.keys
+
+    fun blockingBlockId(packageName: String): String? = blockedByPackage[packageName]
+}
+
+/** Resolves overlap policy once so every enforcement backend acts on the same package set. */
+fun resolveEnforcementPlan(
+    blocks: List<Block>,
+    states: Map<String, GateState>,
+    policy: OverlapPolicy,
+): EnforcementPlan {
+    val enabled = blocks
+        .filter { it.enabled && states[it.id] !is GateState.Inactive }
+        .sortedBy { it.id }
+    val packages = enabled.flatMapTo(sortedSetOf()) { it.blockedPackages }
+    val blockedByPackage = buildMap {
+        for (packageName in packages) {
+            val matching = enabled.filter { packageName in it.blockedPackages }
+            val activeCount = matching.count { states[it.id] is GateState.SessionActive }
+            val released = when (policy) {
+                OverlapPolicy.ALL_BLOCKS -> activeCount == matching.size
+                OverlapPolicy.ANY_BLOCK -> activeCount > 0
+            }
+            if (released) continue
+
+            val unresolved = matching.filterNot { states[it.id] is GateState.SessionActive }
+            val candidates = if (policy == OverlapPolicy.ANY_BLOCK) {
+                unresolved.filter { states[it.id] is GateState.Open }.ifEmpty { unresolved }
+            } else {
+                unresolved
+            }
+            candidates.firstOrNull()?.let { put(packageName, it.id) }
+        }
+    }
+    return EnforcementPlan(blockedByPackage)
+}
 
 interface EnforcementBackend {
-    suspend fun applyState(blocks: List<Block>, states: Map<String, GateState>)
+    suspend fun applyState(plan: EnforcementPlan)
     suspend fun showBlocked(packageName: String, blockId: String)
 
     /** True when first use of an unlocked app will reach GateEngine.onAppForegrounded. */
@@ -41,8 +82,7 @@ class EnforcementCoordinator(
     private fun active(): EnforcementBackend =
         if (deviceOwner.isDeviceOwner()) deviceOwnerBackend else accessibilityBackend
 
-    override suspend fun applyState(blocks: List<Block>, states: Map<String, GateState>) =
-        active().applyState(blocks, states)
+    override suspend fun applyState(plan: EnforcementPlan) = active().applyState(plan)
 
     override suspend fun showBlocked(packageName: String, blockId: String) =
         accessibilityBackend.showBlocked(packageName, blockId)

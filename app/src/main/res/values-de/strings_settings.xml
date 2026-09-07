@@ -13,7 +13,63 @@
     <string name="settings_section_language">Sprache</string>
     <string name="settings_language_system">Systemstandard</string>
     <string name="settings_language_dialog_title">Sprache wählen</string>
-    <string name="settings_language_current">%1$s</string>
+    <string name="settings_section_behavior">Verhalten</string>
+    <string name="settings_overlap_title">Überlappende Blöcke</string>
+    <string name="settings_overlap_body">Wenn eine App zu mehreren aktiven Blöcken gehört, wähle, wie viele geöffnet sein müssen, bevor die App freigegeben wird.</string>
+    <string name="settings_overlap_all">Alle Blöcke</string>
+    <string name="settings_overlap_any">Ein beliebiger Block</string>
+    <string name="settings_day_boundary_title">Der Hablock-Tag beginnt</string>
+    <string name="settings_day_boundary_body">Fortschritt und Tagesziele werden zu dieser Uhrzeit zurückgesetzt.</string>
+    <string name="settings_behavior_locked">Diese Einstellungen sind deaktiviert, solange die Änderungen eines Blocks gesperrt sind.</string>
+    <string name="settings_time_picker_title">Tagesbeginn wählen</string>
+    <string name="settings_time_picker_confirm">Speichern</string>
+    <string name="settings_section_diagnostics">Diagnose</string>
+    <string name="settings_diagnostics_backend">Aktives Backend</string>
+    <string name="settings_diagnostics_backend_accessibility">Bedienungshilfen</string>
+    <string name="settings_diagnostics_backend_device_owner">Gerätebesitzer</string>
+    <string name="settings_diagnostics_unknown">Unbekannt</string>
+    <string name="settings_diagnostics_accessibility">Bedienungshilfen-Dienst</string>
+    <string name="settings_diagnostics_accessibility_value">%1$s · Letztes Ereignis: %2$s</string>
+    <string name="settings_diagnostics_connected">Verbunden</string>
+    <string name="settings_diagnostics_disconnected">Getrennt</string>
+    <string name="settings_diagnostics_evaluation">Letzte Auswertung</string>
+    <string name="settings_diagnostics_evaluation_value">%1$s · Ausgewertet: %2$d · Gesperrt: %3$d</string>
+    <string name="settings_diagnostics_enforcement">Letzte Durchsetzung</string>
+    <string name="settings_diagnostics_suspension_failures">Fehlgeschlagene Sperrungen</string>
+    <string name="settings_diagnostics_none">Keine</string>
+    <string name="settings_diagnostics_permissions">Zugriffe</string>
+    <string name="settings_diagnostics_permissions_value">Bedienungshilfen %1$s · Nutzung %2$s · Health %3$s · Exakte Wecker %4$s</string>
+    <string name="settings_diagnostics_schedule">Geplante Prüfungen</string>
+    <string name="settings_diagnostics_schedule_value">Reset %1$s · Wechsel %2$s</string>
+    <string name="settings_diagnostics_never">Nie</string>
+    <string name="settings_diagnostics_run_ok">OK · %1$s</string>
+    <string name="settings_diagnostics_run_failed">Fehlgeschlagen · %1$s</string>
+    <string name="settings_diagnostics_off">Aus</string>
+    <string name="settings_diagnostics_health_unavailable">Nicht verfügbar</string>
+    <string name="settings_diagnostics_health_limited">Erlaubt (eingeschränkt)</string>
+    <string name="settings_diagnostics_health_granted">Erlaubt</string>
+    <string name="settings_diagnostics_health_permission_missing">Berechtigung fehlt</string>
+    <string name="settings_diagnostics_not_scheduled">Nicht geplant</string>
+    <string name="settings_section_archive">Sichern und Wiederherstellen</string>
+    <string name="settings_archive_export_title">Archiv exportieren</string>
+    <string name="settings_archive_export_body">Speichert Blöcke, bis zu ein Jahr Verlauf und globale Verhaltenseinstellungen. Änderungssperren und Notfallfreigaben bleiben nur auf diesem Gerät.</string>
+    <string name="settings_archive_export_button">Exportieren</string>
+    <string name="settings_archive_import_title">Archiv importieren</string>
+    <string name="settings_archive_import_body">Zeigt vor dem Hinzufügen eine Vorschau eines Hablock-JSON-Archivs. Vorhandene Blöcke und Verläufe werden nie überschrieben.</string>
+    <string name="settings_archive_import_button">Importieren</string>
+    <string name="settings_archive_working">Wird verarbeitet…</string>
+    <string name="settings_archive_preview_title">Dieses Archiv importieren?</string>
+    <string name="settings_archive_preview_counts">Blöcke: %1$d neu, %2$d bereits vorhanden\nVerlauf: %3$d neu, %4$d bereits vorhanden</string>
+    <string name="settings_archive_preview_settings_restore">Da keine Blöcke vorhanden sind, werden auch die globalen Verhaltenseinstellungen des Archivs wiederhergestellt.</string>
+    <string name="settings_archive_preview_settings_keep">Die aktuellen globalen Verhaltenseinstellungen bleiben erhalten.</string>
+    <string name="settings_archive_confirm_import">Zu Hablock hinzufügen</string>
+    <string name="settings_archive_export_success_title">Archiv exportiert</string>
+    <string name="settings_archive_export_success_message">%1$d Blöcke und %2$d Verlaufseinträge gespeichert.</string>
+    <string name="settings_archive_import_success_title">Archiv importiert</string>
+    <string name="settings_archive_import_success_message">%1$d Blöcke hinzugefügt und %2$d vorhandene übersprungen. %3$d Verlaufseinträge hinzugefügt und %4$d vorhandene übersprungen.</string>
+    <string name="settings_archive_error_title">Archiv fehlgeschlagen</string>
+    <string name="settings_archive_export_error">Das Archiv konnte nicht erstellt oder geschrieben werden. Wähle ein anderes Ziel und versuche es erneut.</string>
+    <string name="settings_archive_import_error">Diese Datei konnte nicht als gültiges, unterstütztes Hablock-Archiv gelesen werden.</string>
     <string name="settings_emergency_body">Nutze diese, um in einem Notfall die Änderungssperre eines Blocks aufzuheben. Sie füllen sich nach 30 Tagen wieder auf.</string>
     <string name="settings_device_owner">Gerätebesitzer</string>
     <string name="settings_device_owner_optional">Optional — macht die Sperre deinstallierfest</string>
@@ -46,7 +102,6 @@
         <item>Führe den Befehl unten genau wie geschrieben aus.</item>
         <item>Hablock neu öffnen. Gerätebesitzer zeigt An.</item>
     </string-array>
-    <string name="settings_guide_adb_command" translatable="false">adb shell dpm set-device-owner dev.hablock.app/.system.HablockDeviceAdminReceiver</string>
     <string name="settings_guide_copy_command">Befehl kopieren</string>
     <string name="settings_guide_warning">Das funktioniert nur auf einem frisch zurückgesetzten Gerät ohne Konten. Sobald Hablock das Gerät besitzt, führt der einzige Weg zurück über den 3-Tage-Timer unten.</string>
 </resources>
