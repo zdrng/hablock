@@ -65,6 +65,23 @@ class DefaultGateEngineTest {
     )
 
     @Test
+    fun `days without an unlock are persisted and finalized across resets`() = runTest {
+        val history = FakeHistoryRepository()
+        val engine = newEngine(backgroundScope, historyRepository = history)
+        engine.refreshAll()
+        assertNotNull(gateStateRepository.stored("b1"))
+
+        repeat(2) {
+            clock.advance(24 * 60 * 60_000L)
+            engine.onDayReset()
+        }
+
+        val days = history.latest("b1")
+        assertEquals(setOf("2026-08-23", "2026-08-24"), days.map { it.dayKey }.toSet())
+        assertTrue(days.all { it.unlockCount == 0 })
+    }
+
+    @Test
     fun `foregrounding a blocked app while locked shows the block screen`() = runTest {
         val engine = newEngine(backgroundScope)
         engine.onAppForegrounded(SOCIAL)

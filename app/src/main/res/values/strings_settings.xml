@@ -14,10 +14,8 @@
     <string name="settings_language_system">System default</string>
     <string name="settings_language_dialog_title">Choose language</string>
     <string name="settings_section_behavior">Behavior</string>
-    <string name="settings_overlap_title">Overlapping blocks</string>
-    <string name="settings_overlap_body">When an app belongs to multiple active blocks, choose how many must open before the app is released.</string>
-    <string name="settings_overlap_all">All blocks</string>
-    <string name="settings_overlap_any">Any block</string>
+    <string name="settings_overlap_title">Require all blocks to unlock an app</string>
+    <string name="settings_overlap_body">When off, opening any active block unlocks the app.</string>
     <string name="settings_day_boundary_title">Hablock day starts</string>
     <string name="settings_day_boundary_body">Progress and daily goals reset at this time.</string>
     <string name="settings_behavior_locked">These settings are disabled while any block’s changes are locked.</string>

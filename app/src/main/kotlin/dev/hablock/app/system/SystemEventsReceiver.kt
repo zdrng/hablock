@@ -28,6 +28,10 @@ class SystemEventsReceiver : BroadcastReceiver() {
             try {
                 container.alarmScheduler.scheduleDayReset(container.dayClock.nextReset())
                 val now = container.dayClock.now()
+                container.settingsRepository.relinquishDeadlineMillis.first()?.let { deadline ->
+                    // Deliver past deadlines too if the device was off when the timer elapsed.
+                    container.alarmScheduler.scheduleRelinquishReady(Instant.ofEpochMilli(deadline))
+                }
                 container.gateStateRepository.dayStates.first().values.forEach { state ->
                     val session = state.activeSession ?: return@forEach
                     val endsAt = Instant.ofEpochMilli(session.endsAtMillis)

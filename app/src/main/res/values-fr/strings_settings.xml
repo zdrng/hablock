@@ -14,10 +14,8 @@
     <string name="settings_language_system">Valeur système</string>
     <string name="settings_language_dialog_title">Choisir la langue</string>
     <string name="settings_section_behavior">Comportement</string>
-    <string name="settings_overlap_title">Blocs qui se chevauchent</string>
-    <string name="settings_overlap_body">Lorsqu’une app appartient à plusieurs blocs actifs, choisis combien doivent être ouverts avant de libérer l’app.</string>
-    <string name="settings_overlap_all">Tous les blocs</string>
-    <string name="settings_overlap_any">N’importe quel bloc</string>
+    <string name="settings_overlap_title">Exiger tous les blocs pour déverrouiller une app</string>
+    <string name="settings_overlap_body">Si cette option est désactivée, ouvrir un bloc actif suffit à déverrouiller l’app.</string>
     <string name="settings_day_boundary_title">La journée Hablock commence</string>
     <string name="settings_day_boundary_body">La progression et les objectifs quotidiens sont réinitialisés à cette heure.</string>
     <string name="settings_behavior_locked">Ces réglages sont désactivés tant que les modifications d’un bloc sont verrouillées.</string>

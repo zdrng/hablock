@@ -14,10 +14,8 @@
     <string name="settings_language_system">Systeemstandaard</string>
     <string name="settings_language_dialog_title">Taal kiezen</string>
     <string name="settings_section_behavior">Gedrag</string>
-    <string name="settings_overlap_title">Overlappende blokken</string>
-    <string name="settings_overlap_body">Als een app bij meerdere actieve blokken hoort, kies je hoeveel er open moeten zijn voordat de app wordt vrijgegeven.</string>
-    <string name="settings_overlap_all">Alle blokken</string>
-    <string name="settings_overlap_any">Een willekeurig blok</string>
+    <string name="settings_overlap_title">Alle blokken vereisen om een app te ontgrendelen</string>
+    <string name="settings_overlap_body">Als dit uitstaat, wordt de app ontgrendeld zodra een actief blok wordt geopend.</string>
     <string name="settings_day_boundary_title">De Hablock-dag begint</string>
     <string name="settings_day_boundary_body">Voortgang en dagelijkse doelen worden op dit tijdstip gereset.</string>
     <string name="settings_behavior_locked">Deze instellingen zijn uitgeschakeld zolang de wijzigingen van een blok zijn vergrendeld.</string>

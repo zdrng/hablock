@@ -14,10 +14,8 @@
     <string name="settings_language_system">Systemstandard</string>
     <string name="settings_language_dialog_title">Sprache wählen</string>
     <string name="settings_section_behavior">Verhalten</string>
-    <string name="settings_overlap_title">Überlappende Blöcke</string>
-    <string name="settings_overlap_body">Wenn eine App zu mehreren aktiven Blöcken gehört, wähle, wie viele geöffnet sein müssen, bevor die App freigegeben wird.</string>
-    <string name="settings_overlap_all">Alle Blöcke</string>
-    <string name="settings_overlap_any">Ein beliebiger Block</string>
+    <string name="settings_overlap_title">Alle Blöcke zum Entsperren einer App verlangen</string>
+    <string name="settings_overlap_body">Wenn deaktiviert, entsperrt das Öffnen eines beliebigen aktiven Blocks die App.</string>
     <string name="settings_day_boundary_title">Der Hablock-Tag beginnt</string>
     <string name="settings_day_boundary_body">Fortschritt und Tagesziele werden zu dieser Uhrzeit zurückgesetzt.</string>
     <string name="settings_behavior_locked">Diese Einstellungen sind deaktiviert, solange die Änderungen eines Blocks gesperrt sind.</string>

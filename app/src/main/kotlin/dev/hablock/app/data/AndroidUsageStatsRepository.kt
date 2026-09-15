@@ -11,6 +11,7 @@ import kotlinx.coroutines.withContext
 
 private const val MILLIS_PER_MINUTE = 60_000.0
 private const val MIN_REPORTED_MINUTES = 0.5
+private const val LOOKBACK_MILLIS = 7 * 24 * 60 * 60 * 1000L
 
 class AndroidUsageStatsRepository(context: Context) : UsageStatsRepository {
 
@@ -39,28 +40,26 @@ class AndroidUsageStatsRepository(context: Context) : UsageStatsRepository {
             val toMillis = to.toEpochMilli()
             if (toMillis <= fromMillis) return@withContext emptyMap()
 
-            val totals = mutableMapOf<String, Long>()
-            val openedAt = mutableMapOf<String, Long>()
-            val events = runCatching { manager.queryEvents(fromMillis, toMillis) }.getOrNull()
+            val usage = ForegroundUsageAccumulator(fromMillis, toMillis)
+            // Replay retained events before the boundary to recover an already-open app.
+            val events = runCatching { manager.queryEvents(fromMillis - LOOKBACK_MILLIS, toMillis) }.getOrNull()
                 ?: return@withContext emptyMap()
             val event = UsageEvents.Event()
 
             while (events.getNextEvent(event)) {
+                if (event.eventType == UsageEvents.Event.DEVICE_SHUTDOWN ||
+                    event.eventType == UsageEvents.Event.SCREEN_NON_INTERACTIVE
+                ) {
+                    usage.closeAll(event.timeStamp)
+                    continue
+                }
                 val packageName = event.packageName ?: continue
                 when (event.eventType) {
-                    UsageEvents.Event.MOVE_TO_FOREGROUND -> openedAt[packageName] = event.timeStamp
-                    UsageEvents.Event.MOVE_TO_BACKGROUND -> {
-                        val start = openedAt.remove(packageName) ?: fromMillis
-                        totals.add(packageName, event.timeStamp - start)
-                    }
+                    UsageEvents.Event.MOVE_TO_FOREGROUND -> usage.open(packageName, event.timeStamp)
+                    UsageEvents.Event.MOVE_TO_BACKGROUND -> usage.close(packageName, event.timeStamp)
                 }
             }
-            openedAt.forEach { (packageName, start) -> totals.add(packageName, toMillis - start) }
-            totals
+            usage.totals()
         }
 
-    private fun MutableMap<String, Long>.add(packageName: String, millis: Long) {
-        if (millis <= 0L) return
-        this[packageName] = (this[packageName] ?: 0L) + millis
-    }
 }

@@ -55,6 +55,17 @@ See the [development guide](docs/DEVELOPMENT.md) for build instructions and a sh
 architecture overview. Please describe bugs with your Android version and steps
 to reproduce them. For security issues, follow the [security policy](SECURITY.md).
 
+With Nix on macOS (Apple Silicon or Intel) or x86_64 NixOS/Linux, launch a local
+Android emulator and install the app:
+
+```sh
+make run
+```
+
+Run `make help` for other commands. If Make is not installed, use
+`nix develop -c make run`. See the development guide for hardware acceleration
+setup and headless testing.
+
 ## License
 
 [GNU General Public License v3.0 only](LICENSE).

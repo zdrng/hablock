@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -37,6 +36,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
@@ -54,7 +54,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.os.LocaleListCompat
@@ -683,24 +682,21 @@ private fun BehaviorSettingsSection(
     GroupedListItem(
         position = GroupPosition.First,
         modifier = Modifier.alpha(if (enabled) 1f else 0.55f),
+        onClick = if (enabled) {
+            { onPolicySelected(settings.overlapPolicy.toggled()) }
+        } else {
+            null
+        },
         title = stringResource(R.string.settings_overlap_title),
         supporting = stringResource(R.string.settings_overlap_body),
-    ) {
-        Column(Modifier.padding(top = 8.dp)) {
-            PolicyOption(
-                label = stringResource(R.string.settings_overlap_all),
-                selected = settings.overlapPolicy == OverlapPolicy.ALL_BLOCKS,
+        trailing = {
+            Switch(
+                checked = settings.overlapPolicy == OverlapPolicy.ALL_BLOCKS,
+                onCheckedChange = null,
                 enabled = enabled,
-                onClick = { onPolicySelected(OverlapPolicy.ALL_BLOCKS) },
             )
-            PolicyOption(
-                label = stringResource(R.string.settings_overlap_any),
-                selected = settings.overlapPolicy == OverlapPolicy.ANY_BLOCK,
-                enabled = enabled,
-                onClick = { onPolicySelected(OverlapPolicy.ANY_BLOCK) },
-            )
-        }
-    }
+        },
+    )
     GroupedListItem(
         position = GroupPosition.Last,
         modifier = Modifier.alpha(if (enabled) 1f else 0.55f),
@@ -725,28 +721,9 @@ private fun BehaviorSettingsSection(
     }
 }
 
-@Composable
-private fun PolicyOption(
-    label: String,
-    selected: Boolean,
-    enabled: Boolean,
-    onClick: () -> Unit,
-) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .selectable(
-                selected = selected,
-                enabled = enabled,
-                role = Role.RadioButton,
-                onClick = onClick,
-            )
-            .padding(vertical = 2.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        RadioButton(selected = selected, onClick = null, enabled = enabled)
-        Text(label, Modifier.padding(start = 8.dp), style = MaterialTheme.typography.bodyLarge)
-    }
+private fun OverlapPolicy.toggled(): OverlapPolicy = when (this) {
+    OverlapPolicy.ALL_BLOCKS -> OverlapPolicy.ANY_BLOCK
+    OverlapPolicy.ANY_BLOCK -> OverlapPolicy.ALL_BLOCKS
 }
 
 @Composable

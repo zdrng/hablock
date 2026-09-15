@@ -384,7 +384,7 @@ class DefaultGateEngine(
 
     private suspend fun resolveDayState(block: Block, dayKey: String, now: Instant): BlockDayState {
         val stored = gateStateRepository.get(block.id)
-        if (stored == null) return freshDayState(block, dayKey)
+        if (stored == null) return freshDayState(block, dayKey).also { gateStateRepository.save(it) }
         if (stored.dayKey == dayKey) return stored
         return rollover(block, stored, dayKey, now)
     }

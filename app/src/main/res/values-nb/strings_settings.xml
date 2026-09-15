@@ -14,10 +14,8 @@
     <string name="settings_language_system">Systemstandard</string>
     <string name="settings_language_dialog_title">Velg språk</string>
     <string name="settings_section_behavior">Oppførsel</string>
-    <string name="settings_overlap_title">Overlappende blokker</string>
-    <string name="settings_overlap_body">Når en app tilhører flere aktive blokker, velger du hvor mange som må åpnes før appen frigis.</string>
-    <string name="settings_overlap_all">Alle blokker</string>
-    <string name="settings_overlap_any">En vilkårlig blokk</string>
+    <string name="settings_overlap_title">Krev alle blokker for å låse opp en app</string>
+    <string name="settings_overlap_body">Når den er av, låses appen opp når en vilkårlig aktiv blokk åpnes.</string>
     <string name="settings_day_boundary_title">Hablock-dagen starter</string>
     <string name="settings_day_boundary_body">Fremdrift og daglige mål nullstilles på dette tidspunktet.</string>
     <string name="settings_behavior_locked">Disse innstillingene er deaktivert mens endringene i en blokk er låst.</string>
