@@ -85,6 +85,7 @@ import dev.hablock.app.ui.format.formatCountdown
 import dev.hablock.app.ui.gateViewModel
 import dev.hablock.app.ui.system.openAccessibilitySettings
 import dev.hablock.app.ui.system.openExactAlarmSettings
+import dev.hablock.app.ui.system.openSupportPage
 import dev.hablock.app.ui.system.openUsageAccessSettings
 import dev.hablock.app.ui.theme.LocalHablockAccents
 import dev.hablock.app.ui.theme.numeralStyle
@@ -336,10 +337,16 @@ fun SettingsScreen() {
                 },
             )
             GroupedListItem(
-                position = GroupPosition.Last,
+                position = GroupPosition.Middle,
                 title = stringResource(R.string.settings_offline_title),
                 supporting = stringResource(R.string.settings_offline_body),
                 trailing = { MetChip() },
+            )
+            GroupedListItem(
+                position = GroupPosition.Last,
+                title = stringResource(R.string.settings_support_title),
+                supporting = stringResource(R.string.settings_support_body),
+                onClick = { context.openSupportPage() },
             )
         }
     }

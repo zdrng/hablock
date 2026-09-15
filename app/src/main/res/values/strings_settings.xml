@@ -79,6 +79,8 @@
     <string name="settings_relinquish_failed">Couldn\'t hand back control. Try again.</string>
     <string name="settings_owner_missing">Without device owner, Hablock blocks apps but can still be uninstalled. Set it up above for a lock that holds.</string>
     <string name="settings_section_about">About</string>
+    <string name="settings_support_title">Support development</string>
+    <string name="settings_support_body">Hablock is free and open source. If it helps you, consider supporting its development. Opens in your browser.</string>
     <string name="settings_version">Version</string>
     <string name="settings_version_value">Hablock %1$s</string>
     <string name="settings_offline_title">Fully offline</string>

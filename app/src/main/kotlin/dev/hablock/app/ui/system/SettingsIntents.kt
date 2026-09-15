@@ -20,6 +20,14 @@ private fun Context.startSafely(intent: Intent, fallback: Intent? = null) {
 fun Context.openAccessibilitySettings() =
     startSafely(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
 
+fun Context.openSupportPage() =
+    startSafely(
+        Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse("https://github.com/zdrng/hablock#support-development"),
+        ),
+    )
+
 fun Context.openUsageAccessSettings() =
     startSafely(
         Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS),

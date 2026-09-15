@@ -1,128 +1,60 @@
 # Hablock
 
-A playful, fully-offline Android app blocker that opens your distracting apps only after the
-day's habits are done.
+Build better habits before opening distracting apps.
 
-<p align="center">
-  <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22dev.hablock.app%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2Fzdrng%2Fhablock%22%2C%22author%22%3A%22zdrng%22%2C%22name%22%3A%22Hablock%22%7D">
-    <img src="docs/badge_obtainium.png" width="161" alt="Get it on Obtainium" />
-  </a>
-  &nbsp;
-  <a href="https://github.com/zdrng/hablock/releases">
-    <img src="https://img.shields.io/github/v/release/zdrng/hablock?display_name=tag&label=Download" alt="Latest release" />
-  </a>
+Hablock is a free, open-source Android app blocker. Set goals for steps, exercise,
+meditation, or time in a chosen app, and earn time with the apps you want to use less.
+Everything runs on your phone. No accounts, ads, tracking, or paid features.
+
+[Download the latest release](https://github.com/zdrng/hablock/releases/latest) ·
+[Report an issue](https://github.com/zdrng/hablock/issues)
+
+<p>
+  <img src="docs/screenshot-home.png" width="270" alt="Hablock home screen showing app blocks and habit goals" />
+  <img src="docs/screenshot-blocked.png" width="270" alt="Hablock lock screen shown when a blocked app is opened" />
 </p>
 
-Pick the apps that steal your evenings ("Blocks"), attach conditions — minutes in a helper app,
-steps, workout or meditation minutes from Health Connect — and choose how many of them (N of M)
-unlock the day. Opening an unlocked app starts a 30-minute session; when it ends, each met
-condition's requirement ratchets up a little, so the next session costs slightly more. Everything
-resets at local midnight.
+## How it works
 
-<p align="center">
-  <img src="docs/screenshot-home.png" width="270" alt="Blocks screen" />
-  &nbsp;&nbsp;
-  <img src="docs/screenshot-blocked.png" width="270" alt="Blocked screen" />
-</p>
+1. Choose the apps you want to block.
+2. Add habit goals and choose how many you need to complete.
+3. Meet your goals to unlock a 30-minute session.
 
-## Highlights
+After each session, the goals increase a little before the next unlock. They reset
+at midnight, so each day starts fresh. Steps, exercise, and meditation goals use
+Health Connect where supported.
 
-- **No internet, no accounts.** The app does not hold the INTERNET permission — nothing it reads
-  can leave the phone, enforced by the OS.
-- **Habit-gated sessions with a ratchet.** Meeting today's goals buys a 30-minute session;
-  goals nudge up after each unlock.
-- **Two enforcement levels.** Out of the box, an accessibility service notices when a blocked
-  app comes to the foreground and shows a lock screen over it. Optionally, device-owner mode
-  suspends blocked apps at the OS level and makes Hablock itself uninstall-proof.
-- **A deliberate exit.** Giving up device-owner mode requires a 3-day cooldown — long enough to
-  outlast a weak moment, short enough to stay reversible.
-- **Material 3 Expressive UI** with Material You dynamic color.
+For stronger blocking, optional device-owner mode prevents uninstalling Hablock and
+suspends blocked apps at the Android system level. Turning it off requires a
+three-day cooldown. Read the [setup guide](docs/SETUP.md) before enabling it.
 
-## Building
+## Install
 
-With [Nix](https://nixos.org) (pinned toolchain — JDK 17, Android SDK, Gradle 8):
+Requires **Android 8.0 or newer**.
 
-```sh
-nix develop -c gradle assembleDebug
-nix develop -c gradle test
-```
+Download the APK from [GitHub Releases](https://github.com/zdrng/hablock/releases/latest).
+For updates through Obtainium, add `https://github.com/zdrng/hablock` as an app source.
 
-Without Nix you need JDK 17 and an Android SDK (platform 36, build-tools 36.0.0) with
-`ANDROID_HOME` set:
+## Privacy
 
-```sh
-./gradlew assembleDebug
-./gradlew test
-```
+Hablock has no internet permission and keeps its data on your device.
+Accessibility access detects which app is open; it does not read screen content.
+Usage access measures time in apps, and Health Connect supplies the habit data you
+choose to share.
 
-Install: `adb install -r app/build/outputs/apk/debug/app-debug.apk`. Debug builds shorten
-sessions to 1 minute for easier testing.
+See [permissions and setup](docs/SETUP.md) for details.
 
-Release builds are signed via a local `keystore.properties` + keystore (not in the repo — see
-`app/build.gradle.kts` for the expected properties; generate your own with `keytool`).
+## Support development
 
-For local testing, explicitly include the emergency-use reset gesture:
+You can help by [reporting bugs or suggesting improvements](https://github.com/zdrng/hablock/issues),
+contributing code, or sharing Hablock with someone who would find it useful.
 
-```sh
-nix develop -c gradle assembleDebug -PenableEmergencyReset=true
-# Also supported with assembleRelease for a locally signed test build.
-```
+## Contribute
 
-Tap the version row in Settings five times, with no more than one second between taps,
-to restore both emergency unlocks. A toast confirms the reset. This restores the allowance;
-it does not unlock any block. The default is disabled for **all** build types. The gesture
-and reset implementation live in a separate source directory excluded from normal builds,
-so exclusion does not depend on R8. Do not set this property in shared Gradle properties
-or distribution CI. Rebuild without the flag to produce a normal APK.
-
-## Permissions & privacy
-
-Hablock asks for a lot of sensitive access, so here is exactly what each permission does:
-
-| Permission | Used for |
-|---|---|
-| Accessibility service | Only to notice which app comes to the foreground so blocked apps can be locked. `canRetrieveWindowContent` is off — it never reads screen content. |
-| Usage access | Counting foreground minutes in helper apps and the Screen Time view. |
-| Health Connect (read steps / exercise / mindfulness) | Evaluating step, workout and meditation conditions for today's window. |
-| Exact alarms | Ending sessions and resetting the day on time. Without it, re-locks fire up to 2 minutes late. |
-| Notifications | A heads-up when a session ends or the relinquish timer completes. |
-
-There is **no INTERNET permission**, no analytics, no accounts. All data lives in a local
-DataStore file.
-
-## Device-owner mode (optional)
-
-Device-owner mode suspends blocked apps at the OS level and prevents uninstalling Hablock.
-It can only be granted on a device without other accounts/work profiles, via adb:
-
-```sh
-adb shell dpm set-device-owner dev.hablock.app/.system.HablockDeviceAdminReceiver
-```
-
-To hand back control, start the relinquish timer in Settings; after the 3-day cooldown you can
-confirm, which unsuspends everything, drops ownership, and makes the app uninstallable again.
-(A factory reset also always works.)
-
-## Architecture
-
-Single Gradle module, manual DI (no Hilt), no Room/WorkManager/navigation-compose:
-
-- `domain/` — pure Kotlin: models, gate math (`GateEvaluator`, `SessionMath`), the
-  `DefaultGateEngine` orchestrator, repository interfaces. Zero Android imports, enforced by a
-  unit test (`ArchitectureTest`).
-- `data/` — DataStore + kotlinx.serialization, UsageStatsManager, Health Connect,
-  DevicePolicyManager implementations.
-- `enforcement/` — the two enforcement backends behind an `EnforcementCoordinator`.
-- `system/` — accessibility service (a dumb foreground sensor with zero policy), broadcast
-  receivers, alarms, notifications.
-- `ui/` — Jetpack Compose + ViewModels, Material 3 Expressive.
-
-JVM unit tests cover the domain layer (`nix develop -c gradle test`); hand-written fakes, no
-mocking library.
-
-Known i18n caveat: compact duration tokens ("2h 15m") and the day header are formatted in code
-and not yet translatable; everything else lives in `res/values/strings*.xml`.
+See the [development guide](docs/DEVELOPMENT.md) for build instructions and a short
+architecture overview. Please describe bugs with your Android version and steps
+to reproduce them. For security issues, follow the [security policy](SECURITY.md).
 
 ## License
 
-[GPL-3.0-only](LICENSE).
+[GNU General Public License v3.0 only](LICENSE).
